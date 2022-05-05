@@ -208,7 +208,9 @@ namespace UmamusumeDeserializeDB5
                     AddStory(triggerName, eventName, storyData, choices);
                 }
             }
+
             foreach (var i in failed.Distinct()) Console.WriteLine(i);
+            SuccessEvent.Generate(events);
             File.WriteAllText("output/id.json", JsonConvert.SerializeObject(TextData.Where(x => x.id == 4).ToDictionary(x => x.index, x => x.text), Formatting.Indented));
             File.WriteAllText("output/events.json", JsonConvert.SerializeObject(events.DistinctBy(x => x.Id), Formatting.Indented));
 
