@@ -47,11 +47,11 @@ namespace UmamusumeDeserializeDB5
                      }
                  }
             }));
-            //爱娇、切者、练习上手
+            //爱娇、切者、练习上手、注目株
             for (int i = 0; i < stories.Count; i++)
             {
                 var Choices = new List<SuccessChoice>();
-                Choices.AddRange(stories[i].Choices.Where(x => (x.SuccessEffect.Contains("愛嬌◯") || x.SuccessEffect.Contains("切れ者") || x.SuccessEffect.Contains("練習上手◯")) && !String.IsNullOrEmpty(x.FailedEffect) && x.FailedEffect != "-").Select(x => new SuccessChoice
+                Choices.AddRange(stories[i].Choices.Where(x => (x.SuccessEffect.Contains("愛嬌◯") || x.SuccessEffect.Contains("切れ者") || x.SuccessEffect.Contains("練習上手◯") || x.SuccessEffect.Contains("注目株")) && !String.IsNullOrEmpty(x.FailedEffect) && x.FailedEffect != "-").Select(x => new SuccessChoice
                 {
                     ChoiceIndex=stories[i].Choices.IndexOf(x)+1,
                     SelectIndex=2,
