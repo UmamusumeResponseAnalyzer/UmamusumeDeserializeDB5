@@ -8,7 +8,7 @@ namespace UmamusumeDeserializeDB5
 {
     public static class UmamusumeDeserializeDB5
     {
-        public const string UmamusumeDatabaseFilePath = @"C:\Users\micro\AppData\LocalLow\Cygames\umamusume\master\master.mdb";
+        public const string UmamusumeDatabaseFilePath = @"C:\Users\Administrator\AppData\LocalLow\Cygames\umamusume\master\master.mdb";
         public static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;

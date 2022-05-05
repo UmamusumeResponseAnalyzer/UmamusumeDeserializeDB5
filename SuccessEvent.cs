@@ -9,6 +9,7 @@ namespace UmamusumeDeserializeDB5
 {
     public static class SuccessEvent
     {
+        internal static string SUCCESS_EVENT_FILEPATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UmamusumeResponseAnalyzer", "successevents.json");
         public static void Generate(List<Story> stories)
         {
             var successEvent = new List<SuccessStory>();
@@ -24,7 +25,7 @@ namespace UmamusumeDeserializeDB5
                            SelectIndex=1,
                            Effects=new SuccessChoiceEffectDictionary
                            {
-                               { 0, "体力+30、スキルPt+10" }
+                               { 0, "体力+30、技能点+10" }
                            }
                      }
                  }
@@ -46,8 +47,38 @@ namespace UmamusumeDeserializeDB5
                      }
                  }
             }));
+            //爱娇、切者、练习上手
+            for (int i = 0; i < stories.Count; i++)
+            {
+                var Choices = new List<SuccessChoice>();
+                Choices.AddRange(stories[i].Choices.Where(x => (x.SuccessEffect.Contains("愛嬌◯") || x.SuccessEffect.Contains("切れ者") || x.SuccessEffect.Contains("練習上手◯")) && !String.IsNullOrEmpty(x.FailedEffect) && x.FailedEffect != "-").Select(x => new SuccessChoice
+                {
+                    ChoiceIndex=stories[i].Choices.IndexOf(x)+1,
+                    SelectIndex=2,
+                    Effects=new SuccessChoiceEffectDictionary
+                    {
+                        { 0, x.SuccessEffect }
+                    }
+                }));
+                if (Choices.Count > 0)
+                {
+                    var dvent = new SuccessStory
+                    {
+                        Name = stories[i].Name,
+                        Choices = Choices
+                    };
+                    successEvent.Add(dvent);
+                }
+            }
 
-            File.WriteAllText($"output/successevent.json", JsonConvert.SerializeObject(successEvent, Formatting.Indented));
+            if (File.Exists(SUCCESS_EVENT_FILEPATH))//如果本地SuccessEvents中有数据，则拼接在后方并去重
+            {
+                string successEvent_old = File.ReadAllText(SUCCESS_EVENT_FILEPATH);
+                List<SuccessStory> SuccessEvent_old = JsonConvert.DeserializeObject<List<SuccessStory>>(successEvent_old);
+                SuccessEvent_old.AddRange(successEvent);
+                successEvent = SuccessEvent_old.ToLookup(item => item.Name).ToDictionary(item => item.Key, item => item.First()).Values.ToList();
+            }
+            File.WriteAllText($"output/successevents.json", JsonConvert.SerializeObject(successEvent, Formatting.Indented));
         }
     }
     public class SuccessStory
