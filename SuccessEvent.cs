@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,9 +13,10 @@ namespace UmamusumeDeserializeDB5
         internal static string SUCCESS_EVENT_FILEPATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UmamusumeResponseAnalyzer", "successevents.json");
         public static void Generate(List<Story> stories)
         {
-            var successEvent = new List<SuccessStory>();
+            //加载已有事件
+            var successEvent = JsonConvert.DeserializeObject<List<SuccessStory>>(new WebClient().DownloadString("https://raw.githubusercontent.com/EtherealAO/UmamusumeResponseAnalyzer/48d10e25b781bf408545bc00b4d1e051896a3ae2/successevents.json"));
             //吃饭
-            successEvent.AddRange(stories.Where(x => x.Choices.Count == 2 && x.Choices[1].SuccessEffect == "体力+30、スキルPt+10").Select(x => new SuccessStory
+            foreach (var i in stories.Where(x => x.Choices.Count == 2 && x.Choices[1].SuccessEffect == "体力+30、スキルPt+10").Select(x => new SuccessStory
             {
                 Name = x.Name,
                 Choices = new List<SuccessChoice>
@@ -29,7 +31,11 @@ namespace UmamusumeDeserializeDB5
                            }
                      }
                  }
-            }));
+            }))
+            {
+                if (successEvent.FirstOrDefault(x => x.Name == i.Name) == default)
+                    successEvent.Add(i);
+            }
             //无选项事件且随机给不同技能hint
             successEvent.AddRange(stories.Where(x => x.Choices.Count == 1 && x.Choices[0].SuccessEffect.Contains("ヒントLv") && x.Choices[0].FailedEffect.Contains("ヒントLv")).Select(x => new SuccessStory
             {
@@ -71,13 +77,7 @@ namespace UmamusumeDeserializeDB5
                 }
             }
 
-            if (File.Exists(SUCCESS_EVENT_FILEPATH))//如果本地SuccessEvents中有数据，则拼接在后方并去重
-            {
-                string successEvent_old = File.ReadAllText(SUCCESS_EVENT_FILEPATH);
-                List<SuccessStory> SuccessEvent_old = JsonConvert.DeserializeObject<List<SuccessStory>>(successEvent_old);
-                SuccessEvent_old.AddRange(successEvent);
-                successEvent = SuccessEvent_old.ToLookup(item => item.Name).ToDictionary(item => item.Key, item => item.First()).Values.ToList();
-            }
+            successEvent = successEvent.ToLookup(item => item.Name).ToDictionary(item => item.Key, item => item.First()).Values.ToList();
             File.WriteAllText($"output/successevents.json", JsonConvert.SerializeObject(successEvent, Formatting.Indented));
         }
     }
