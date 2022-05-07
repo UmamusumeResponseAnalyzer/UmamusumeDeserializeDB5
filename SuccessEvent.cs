@@ -56,28 +56,25 @@ namespace UmamusumeDeserializeDB5
             //爱娇、切者、练习上手、注目株
             for (int i = 0; i < stories.Count; i++)
             {
-                var Choices = new List<SuccessChoice>();
-                Choices.AddRange(stories[i].Choices.Where(x => (x.SuccessEffect.Contains("愛嬌◯") || x.SuccessEffect.Contains("切れ者") || x.SuccessEffect.Contains("練習上手◯") || x.SuccessEffect.Contains("注目株")) && !String.IsNullOrEmpty(x.FailedEffect) && x.FailedEffect != "-").Select(x => new SuccessChoice
+                var choices = stories[i].Choices
+                    .Where(x => (x.SuccessEffect.Contains("愛嬌◯") || x.SuccessEffect.Contains("切れ者") || x.SuccessEffect.Contains("練習上手◯") || x.SuccessEffect.Contains("注目株"))
+                && !string.IsNullOrEmpty(x.FailedEffect) && x.FailedEffect != "-").Select(x => new SuccessChoice
                 {
-                    ChoiceIndex=stories[i].Choices.IndexOf(x)+1,
-                    SelectIndex=2,
-                    Effects=new SuccessChoiceEffectDictionary
+                    ChoiceIndex = stories[i].Choices.IndexOf(x) + 1,
+                    SelectIndex = 2,
+                    Effects = new SuccessChoiceEffectDictionary
                     {
                         { 0, x.SuccessEffect }
                     }
-                }));
-                if (Choices.Count > 0)
+                });
+                if (!choices.Any() || successEvent.FirstOrDefault(x => x.Name == stories[i].Name) != default) continue;
+                successEvent.Add(new SuccessStory
                 {
-                    var dvent = new SuccessStory
-                    {
-                        Name = stories[i].Name,
-                        Choices = Choices
-                    };
-                    successEvent.Add(dvent);
-                }
+                    Name = stories[i].Name,
+                    Choices = choices.ToList()
+                });
             }
-
-            successEvent = successEvent.ToLookup(item => item.Name).ToDictionary(item => item.Key, item => item.First()).Values.ToList();
+            
             File.WriteAllText($"output/successevents.json", JsonConvert.SerializeObject(successEvent, Formatting.Indented));
         }
     }
