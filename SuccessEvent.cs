@@ -74,7 +74,25 @@ namespace UmamusumeDeserializeDB5
                     Choices = choices.ToList()
                 });
             }
-            
+            //固有
+            foreach (var i in new[] { "バレンタイン", "ファン感謝祭", "クリスマス" })
+                successEvent.Add(new SuccessStory
+                {
+                    Name = i,
+                    Choices = new List<SuccessChoice>
+                    {
+                        new SuccessChoice
+                        {
+                            ChoiceIndex=1,
+                            SelectIndex=2,
+                            Effects=new SuccessChoiceEffectDictionary
+                            {
+                                { 0, stories.First(x=>x.Name==i).Choices[0].SuccessEffect }
+                            }
+                        }
+                    }
+                });
+
             File.WriteAllText($"output/successevents.json", JsonConvert.SerializeObject(successEvent, Formatting.Indented));
         }
     }
