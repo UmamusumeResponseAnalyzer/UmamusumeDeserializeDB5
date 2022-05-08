@@ -83,6 +83,7 @@ namespace UmamusumeDeserializeDB5
             new SkillDataMgr().Generate();
             new CardName().Generate();
             new ClimaxItems().Generate();
+            new TalentSkillSet().Generate();
             UraraWin.Init();
             //源: https://kamigame.jp/umamusume/page/152540608660042049.html
             File.WriteAllText("kamigame.json", new WebClient().DownloadString("https://storage.googleapis.com/vls-kamigame-gametool/json/1JrYvw5XiwWeKR5c2BKVQykutI_Lj2_zauLvaWtnzvDo_411452117.json"));
