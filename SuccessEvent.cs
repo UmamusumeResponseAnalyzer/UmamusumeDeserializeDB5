@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace UmamusumeDeserializeDB5
 {
-    public static class SuccessEvent
+    public class SuccessEvent
     {
         internal static string SUCCESS_EVENT_FILEPATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UmamusumeResponseAnalyzer", "successevents.json");
-        public static void Generate(List<Story> stories)
+        public void Generate(List<Story> stories)
         {
             //加载已有事件
             var successEvent = JsonConvert.DeserializeObject<List<SuccessStory>>(new WebClient().DownloadString("https://raw.githubusercontent.com/EtherealAO/UmamusumeResponseAnalyzer/48d10e25b781bf408545bc00b4d1e051896a3ae2/successevents.json"));

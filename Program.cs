@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Spectre.Console;
 using System.Data.SQLite;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace UmamusumeDeserializeDB5
 {
@@ -33,7 +35,7 @@ namespace UmamusumeDeserializeDB5
                 }
             }
             var StoryTextData = TextData.Where(x => x.id == 181 && x.category == 181).ToDictionary(x => x.index, x => x);
-            var NameToId = TextData.Where(x => (x.id == 4 && x.category == 4) || (x.id == 6 && x.category == 6) || (x.id == 5 && x.category == 5) || (x.id == 75 && x.category == 75)).ToDictionary(x => x.text, x => x.index); //P-本名-S
+            var NameToId = TextData.Where(x => (x.id == 4 && x.category == 4) || (x.id == 6 && x.category == 6) || (x.id == 75 && x.category == 75)).ToDictionary(x => x.text, x => x.index); //P-本名-S
             var SupportCardIdToCharaId = new Dictionary<long, long>();
             using (var cmd = conn.CreateCommand())
             {
@@ -80,85 +82,56 @@ namespace UmamusumeDeserializeDB5
                 }
             }
 
-            new SkillDataMgr().Generate();
-            new CardName().Generate();
-            new ClimaxItems().Generate();
-            new TalentSkillSet().Generate();
-            UraraWin.Init();
             //源: https://kamigame.jp/umamusume/page/152540608660042049.html
-            File.WriteAllText("kamigame.json", new WebClient().DownloadString("https://storage.googleapis.com/vls-kamigame-gametool/json/1JrYvw5XiwWeKR5c2BKVQykutI_Lj2_zauLvaWtnzvDo_411452117.json"));
-            var regexed = Regex.Replace(File.ReadAllText("kamigame.json"), "\\\\\"(.+?)\\\\\"", "“$1”");
-            var kamigame = JArray.Parse(File.ReadAllText("kamigame.json") //接下来的一大片都是修复事件名使其与CY数据库中的事件名相匹配
-                        .Replace(@"\n", "[Linebreak]").Replace("[Linebreak]\"", "\"").Replace("〜", "～").Replace("......", "……")
-                        .Replace("なかよし☆こよしちゃん～探求編～", "なかよし☆こよしちゃん　～探求編～").Replace("なかよし☆こよしちゃん～調査編～", "なかよし☆こよしちゃん　～調査編～").Replace("なかよし☆こよしちゃん～実践編～", "なかよし☆こよしちゃん　～実践編～").Replace("ヒシアマ姐さん奮闘記～問題児編～", "ヒシアマ姐さん奮闘記　～問題児編～").Replace("ヒシアマ姐さん奮闘記～追い込み編～", "ヒシアマ姐さん奮闘記　～追い込み編～")
-                        .Replace("クリスマスオグリ", "[キセキの白星]オグリキャップ").Replace("サンタビワハヤヒデ", "[ノエルージュ・キャロル]ビワハヤヒデ").Replace("ハロウィンスーパークリーク", "[シフォンリボンマミー]スーパークリーク")
-                        .Replace("ハロウィンライスシャワー", "[Make up Vampire!]ライスシャワー").Replace("フルアーマー・フクキタル", "[吉兆・初あらし]マチカネフクキタル").Replace("花嫁エアグルーヴ", "[クエルクス・キウィーリス]エアグルーヴ")
-                        .Replace("花嫁マヤノトップガン", "[サンライト・ブーケ]マヤノトップガン").Replace("桐生院葵", "[共に同じ道を！]桐生院葵").Replace("新ゴールドシチー", "[秋桜ダンツァトリーチェ]ゴールドシチー").Replace("新シンボリルドルフ", "[皓月の弓取り]シンボリルドルフ")
-                        .Replace("新衣装エルコンドルパサー", "[ククルカン・モンク]エルコンドルパサー").Replace("新衣装グラスワンダー", "[セイントジェード・ヒーラー]グラスワンダー").Replace("新衣装トウカイテイオー", "[ビヨンド・ザ・ホライズン]トウカイテイオー")
-                        .Replace("新衣装メジロマックイーン", "[エンド・オブ・スカイ]メジロマックイーン").Replace("水着スペシャルウィーク", "[ほっぴん♪ビタミンハート]スペシャルウィーク").Replace("水着マルゼンスキー", "[ぶっとび☆さまーナイト]マルゼンスキー")
-                        .Replace("正月ハルウララ", "[初うらら♪さくさくら]ハルウララ").Replace("正月テイエムオペラオー", "[初晴・青き絢爛]テイエムオペラオー").Replace("バレンタインミホノブルボン", "[CODE：グラサージュ]ミホノブルボン")
-                        .Replace("バレンタインエイシンフラッシュ", "[コレクト・ショコラティエ]エイシンフラッシュ")
-                        .Replace("WeareBNW！！", "We are BNW！！").Replace("俊敏にして豪腕", "俊敏にして剛腕").Replace("メラメラ・ファイアー", "メラメラ・ファイアー！").Replace("世界級の…！？", "世界級の……！？").Replace("ダシが重要！？", "ダシが重要！！")
-                        .Replace("08:36/朝寝坊、やばっ", "08:36／朝寝坊、やばっ").Replace("13:12/昼休み、気合い入れなきゃ", "13:12／昼休み、気合い入れなきゃ").Replace("甦れ！ゴルシ印のソース焼きそば！", "甦れ！　ゴルシ印のソース焼きそば！")
-                        .Replace("強敵と書いて「トモ」と読むッ！！", "強敵と書いて『とも』と読むッ！！").Replace("諦めないで！可能性は無限大！", "諦めないで！　可能性は無限大！").Replace("イエス！レッツ・ハグ☆", "イエス！　レッツ・ハグ☆")
-                        .Replace("オゥ！トゥナイト・パーティー☆", "オゥ！　トゥナイト・パーティー☆").Replace("#bff#Party!", "#bff #Party!").Replace("#lol#Party!!#2nd", "#lol #Party!! #2nd").Replace("きんぐちゃんとがんばる！", "キングちゃんとがんばる！")
-                        .Replace("熱い誓い！アタシはヒーローになる！", "熱い誓い！　アタシはヒーローになる！").Replace("猛特訓！現れたキャロットマン！？", "猛特訓！　現れたキャロットマン！？").Replace("決戦！栄光の勝利をこの手に！", "決戦！　栄光の勝利をこの手に！")
-                        .Replace("私...改革ですっ", "私……改革ですっ").Replace("にんじん…買ってくださいっ", "にんじん……買ってくださいっ")
-                        .Replace("筋肉とともに明日へ！", "筋肉と共に明日へ！").Replace("剛毅木訥、仁に近し", "剛毅朴訥、仁に近し")
-                        .Replace("「いつもの」ください", "『いつもの』ください！").Replace("いきなりマーダーミステリー！その1", "いきなりマーダーミステリー！　その1").Replace("いきなりマーダーミステリー！その2", "いきなりマーダーミステリー！　その2")
-                        .Replace("いきなりマーダーミステリー！その3", "いきなりマーダーミステリー！　その3").Replace("『せんでん』最高！！", "『せんでん』最高！！")
-                        .Replace("Wo ein Wille ist, ist auch ein Weg", "Wo ein Wille ist\\\\[COMMA] ist auch ein Weg.").Replace("'女帝\\\"の血族", "“女帝”の血族").Replace("愉悦ッ！密着取材！", "愉快ッ！　密着取材！")
-                        .Replace("トレーナー並みの知識", "トレーナー並の知識").Replace("決起ッ！夜明け前ッ！！", "決起ッ！　夜明け前ッ！！").Replace("愉快ッ！密着取材！", "愉快ッ！　密着取材！").Replace("あと1曲！あと1曲だけ……！", "あと1曲！　あと1曲だけ……！")
-                        .Replace("推し事探訪～入門編～", "推し事探訪　～入門編～").Replace("推し事探訪～極編～", "推し事探訪　～極編～").Replace("推し事探訪～免許皆伝編～", "推し事探訪　～免許皆伝編～")
-                        .Replace("ユーザーネーム『W&T』", "ユーザーネーム『W＆T』").Replace("宝塚記念の後に・君はもう", "宝塚記念の後に・君はもう――").Replace("菊花賞の後に・Vorwarts gerichtet", "菊花賞の後に・Vorwärts gerichtet")
-                        .Replace("Leichter gesagt als getan", "Leichter gesagt als getan.").Replace("デビュー戦の後に・突然の大宣言", "デビュー戦の後に・突然の大宣言！").Replace("ホット&フライ！", "ホット＆フライ！").Replace("オグリキャップ登場", "オグリキャップ登場！")
-                        .Replace("ふたりの進む、その先へ", "ふたりの進む、その“先”へ").Replace("有馬記念の後に・芦毛の怪物、立つ", "有馬記念の後に・葦毛の怪物、立つ").Replace("すべてはーのため", "すべては――のため").Replace("私に一番似合う服", "私に1番似合う服")
-                        .Replace("追って追われて", "追って、追われて").Replace("『一流ウマ娘』キングヘイロー", "『一流ウマ娘、キングヘイロー』").Replace("届かぬ人", "届かぬひと").Replace("ヘルプ！テスト前パニック", "ヘルプ！　テスト前パニック")
-                        .Replace("ゴールドシチー登場", "ゴールドシチー登場！").Replace("熱血ッ！エアバスケッ！", "熱血ッ！　エアバスケッ！").Replace("ホープフルＳの後に・エデンへの道", "ホープフルSの後に・エデンへの道").Replace("バクシン的トレーニング…？", "バクシン的トレーニング……？")
-                        .Replace("高松宮記念の後に・有終バクシン", "高松宮記念の後に・有終バクシン！").Replace("セントウルSの後に・3600！", "セントウルSの後に・3600！！！").Replace("実直！実験！実証！", "実直！　実験！　実証！").Replace("粋か！バクシンか！", "粋か！　バクシンか！")
-                        .Replace("家事は大変", "家事は大変！").Replace("ダービートレーナー", "『ダービートレーナー』").Replace("ダービー記者会見", "ダービー記者会見！")
-                        .Replace("日本ダービーの後に・「そうだね」", "日本ダービーの後に・『そうだね』").Replace("「ただいま」", "『ただいま』")
-                        .Replace("宝塚記念の後に・『つまんない』②", "宝塚記念の後に・『つまんない』")
-                        .Replace("ユニコーンSの後に・砂塵を超えて", "ユニコーンSの後に・砂塵を越えて").Replace("日本ダービーの後に・アイツの背中", "日本ダービーの後に・アイツの姿")
-                        .Replace("目標達成の後に・毎日ボーノ配置☆", "目標達成の後に・毎日ボーノ配信☆")
-                        .Replace("タイマン！スケバン！勝負服！", "タイマン！　スケバン！　勝負服！")
-                        .Replace("\\\"皇帝”の激励", "“皇帝”の激励").Replace("桜花賞の後に・次のティアラへ", "桜花賞の後に・次のティアラヘ").Replace("オークスの後に・最後のティアラへ", "オークスの後に・最後のティアラヘ").Replace("高松宮記念の後に・遠ざかる背中＜1着時＞", "高松宮記念の後に・遠ざかる背中")
-                        .Replace("＠DREAM_MAKER", "@DREAM_MAKER").Replace("弥生賞の後に・次は……え！？", "弥生賞の後に・次は……え？").Replace("食い倒れ！七福神グルメめぐり", "食い倒れ！　七福神グルメめぐり").Replace("目指せ！大人のちゃんこ鍋☆", "目指せ！　大人のちゃんこ鍋☆")
-                        .Replace("待ち\\\"豆”来たらず", "待ち“豆”来たらず").Replace("ライ ホウ シャ", "ライ　ホウ　シャ").Replace("RIVER　RUNS……", "RIVER RUNS……").Replace("募る思い、嗚呼届いていますか", "募る想い、嗚呼届いていますか").Replace("来襲！スペース野球ゾンビ", "来襲！　スペース野球ゾンビ")
-                        .Replace("マッスル一発", "マッスル一発！").Replace("寝不足で...…", "寝不足で……").Replace("デビュー戦の後に・突然の大宣言！！", "デビュー戦の後に・突然の大宣言！").Replace("日本ダービーの後に・現実の高低差", "日本ダービーの後に・現実の高度差")
-                        .Replace("もう一度、決意を", "もう1度、決意を").Replace("夜の学校のご老公？", "夜の学園のご老公？").Replace("・・・ボクは健康だもん", "……ボクは健康だもん").Replace("天皇賞(秋)の後に・未踏の栄光", "天皇賞（秋）の後に・未踏の栄光")
-                        .Replace("デビュー戦の後に・First step", "デビュー戦の後に・First Step").Replace("エリザベス女王杯の後に・Win！", "エリザベス女王杯の後に・Win!").Replace("エリザベス女王杯の後に・Lost", "エリザベス女王杯の後に・Lost...").Replace("有馬記念の後に・Still with you", "有馬記念の後に・Still with You")
-                        .Replace("皐月賞の後に・汝が吠えるは", "皐月賞の後に・汝が吼えるは").Replace("毎日王冠の後に・運命、此処に集いて", "毎日王冠の後に・運命、彼方に集いて").Replace("道分かたれて", "道、分かたれて").Replace("日本ダービーの後に・希望の灯火", "日本ダービーの後に・希望の灯光")
-                        .Replace("ジャパンCにの後に・重なり合う源流", "ジャパンCの後に・重なり合う源流").Replace("開設ッ！特別ショップ！", "開店ッ！特別ショップ！").Replace("ファル子の愛情ブレンド", "ファル子の愛情ブレンド☆").Replace("皐月賞の後に・次は絶対", "皐月賞の後に・次は絶対！")
-                        .Replace("目指せ、頼れるお姉ちゃん", "目指せ！頼れるお姉ちゃん").Replace("鼻血がでるのも悪くない", "鼻血が出るのも悪くない").Replace("『全力』&『普通』ダイエット！", "『全力』＆『普通』ダイエット！").Replace("『退学」を賭けた勝負", "『退学』を賭けた勝負")
-                        .Replace("たまにはホワイトに", "たまには、ホワイトに").Replace("委員達の井戸端会議", "委員たちの井戸端会議").Replace("マーベラス☆ダイブ！", "マーベラス☆ダイブ！！")
-                        .Replace("レース勝利！", "[レース勝]利！").Replace("レース勝利", "レース勝利！").Replace("[レース勝]利！", "レース勝利！")
-                        .Replace("強敵と書いて「トモ」と読むッ！！", "強敵と書いて『とも』と読むッ！！").Replace("ブライアンは見た…", "ブライアンは見た……！").Replace("砂の修行！", "砂の修業！")
-                        .Replace("支えられて、見守られて", "支えらえて、見守られて").Replace("ふたりのゆめはおわらない", "2人の夢は終わらない")
-                        .Replace("凛と咲く", "凜と咲く")
-                ); ;
+            var kamigame = JArray.Parse(new WebClient().DownloadString("https://kamigame.jp/vls-kamigame-gametool/json/1JrYvw5XiwWeKR5c2BKVQykutI_Lj2_zauLvaWtnzvDo_411452117.json").Replace(@"\n", "[Linebreak]").Replace("[Linebreak]\"", "\""));
+            var correctedEventNames = new Dictionary<string, string>();
+            var correctedTriggerNames = new Dictionary<string, string>();
+            if (File.Exists(@"correctedEventNames.txt"))
+            {
+                correctedEventNames = File.ReadAllLines(@"correctedEventNames.txt").Select(x => x.Split("【分隔符】")).ToDictionary(x => x[0], x => x[1]);
+                correctedEventNames.TryAdd("きんぐちゃんとがんばる！", "キングちゃんとがんばる！");
+                correctedEventNames.TryAdd("「いつもの」ください", "『いつもの』ください！");
+                for (var i = 0; i < kamigame.Count; i++)
+                {
+                    if (correctedEventNames.TryGetValue(kamigame[i][0]!.ToString(), out var correctedEventName))
+                    {
+                        kamigame[i][0] = correctedEventName;
+                    }
+                }
+            }
+            if (File.Exists(@"correctedTriggerNames.txt"))
+            {
+                correctedTriggerNames = File.ReadAllLines(@"correctedTriggerNames.txt").Select(x => x.Split("【分隔符】")).ToDictionary(x => x[0], x => x[1]);
+                for (var i = 0; i < kamigame.Count; i++)
+                {
+                    if (correctedTriggerNames.TryGetValue(kamigame[i][2]!.ToString(), out var correctedTriggerName))
+                    {
+                        kamigame[i][2] = correctedTriggerName;
+                    }
+                }
+            }
 
             var events = new List<Story>();
             var failed = new List<string>();
             for (var i = 1; i < kamigame.Count; i++)
             {
                 var item = kamigame[i];
-                var eventName = item[0].ToString();
-                eventName = Regex.Replace(eventName, "\"(.+?)\"", "“$1”");
-                if (eventName.Count(x => x == '“') < 2)
-                    eventName = Regex.Replace(eventName, "”(.+?)”", "“$1”");
-                if (string.IsNullOrEmpty(eventName)) continue;
-                var eventCategory = item[1].ToString();
-                var triggerName = item[2].ToString();
-                var options = item[4].ToString().Split("[Linebreak]");
-                var successEffect = item[5].ToString().Split("[Linebreak]");
-                var failureEffect = item[6].ToString().Split("[Linebreak]");
-                //这上面也差不多都是修复事件名
+                var eventName = item[0]!.ToString();
+                if (string.IsNullOrEmpty(eventName) || string.IsNullOrEmpty(item[2]!.ToString())) continue;
+                var eventCategory = item[1]!.ToString();
+                var triggerName = NameToId.FirstOrDefault(x => x.Key == item[2]!.ToString()).Key;
+                if (triggerName == default && !correctedTriggerNames.TryGetValue(item[2]!.ToString(), out triggerName))
+                {
+                    var corrected = CorrectTriggerName(item[2]!.ToString(), eventCategory == "サポートカード");
+                    triggerName = corrected;
+                    correctedTriggerNames.Add(item[2]!.ToString(), corrected);
+                }
+                var options = item[4]!.ToString().Split("[Linebreak]");
+                var successEffect = item[5]!.ToString().Split("[Linebreak]");
+                var failureEffect = item[6]!.ToString().Split("[Linebreak]");
                 var choices = new List<Choice>();
                 for (var j = 0; j < options.Length; j++)
                 {
-                    //if ((j + 1) > successEffect.Length)
-                    //Console.WriteLine(item[0].ToString());
                     choices.Add(new Choice
                     {
                         Option = options[j],
@@ -178,32 +151,21 @@ namespace UmamusumeDeserializeDB5
                     id = 0;
                     charaId = 0;
                 }
-                //if (eventCategory == "サポートカード" && id != 0)
-                //{
-                //    using var cmd = conn.CreateCommand();
-                //    cmd.CommandText = $"select chara_id from support_card_data where id={id}";
-                //    var reader = cmd.ExecuteReader();
-                //    reader.Read();
-                //    charaId = (long)reader["chara_id"];
-                //}
                 var storyData = SingleModeStoryData.Where(x => x.Name == eventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
                 if (!storyData.Any())
                 {
-                    //试图匹配一个差不多的事件名，也是摆烂的做法
-                    var correctedEventName = CorrectEventName(eventName);
-                    if (!string.IsNullOrEmpty(correctedEventName))
+                    if (correctedEventNames.ContainsKey(eventName)) continue;
+                    var correctedEventName = CorrectEventName(eventName, charaId, id);
+                    if (eventName == correctedEventName)
                     {
-                        storyData = SingleModeStoryData.Where(x => x.Name == correctedEventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
-                        if (!storyData.Any())
-                        {
-                            //反正我自己看得懂（
-                            failed.Add($"Can't Find {eventName}||{correctedEventName} For {id}||{charaId}||{triggerName} In Cy's Database!");
-                        }
-                        else
-                        {
-                            AddStory(triggerName, correctedEventName, storyData, choices);
-                        }
+                        failed.Add($"Can't Find {eventName}||{correctedEventName} For {id}||{charaId}||{triggerName} In Cy's Database!");
+                        continue;
                     }
+                    correctedEventNames.Add(eventName, correctedEventName);
+                    Console.WriteLine($"纠正 {eventName} 为 {correctedEventName}");
+                    storyData = SingleModeStoryData.Where(x => x.Name == correctedEventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
+                    if (storyData.Any())
+                        AddStory(triggerName, correctedEventName, storyData, choices);
                 }
                 else
                 {
@@ -212,7 +174,14 @@ namespace UmamusumeDeserializeDB5
             }
 
             foreach (var i in failed.Distinct()) Console.WriteLine(i);
-            SuccessEvent.Generate(events);
+            File.WriteAllLines("failed.txt", failed.Distinct());
+            File.WriteAllLines("correctedEventNames.txt", correctedEventNames.Select(x => $"{x.Key}【分隔符】{x.Value}"));
+            File.WriteAllLines("correctedTriggerNames.txt", correctedTriggerNames.Select(x => $"{x.Key}【分隔符】{x.Value}"));
+            new SkillDataMgr().Generate();
+            new CardName().Generate();
+            new ClimaxItems().Generate();
+            new TalentSkillSet().Generate();
+            new SuccessEvent().Generate(events);
             events = new UnknownEvents().Generate(SingleModeStoryData, events, TextData);
             File.WriteAllText("output/id.json", JsonConvert.SerializeObject(TextData.Where(x => x.id == 4).ToDictionary(x => x.index, x => x.text), Formatting.Indented));
             File.WriteAllText("output/events.json", JsonConvert.SerializeObject(events.DistinctBy(x => x.Id), Formatting.Indented));
@@ -260,79 +229,76 @@ namespace UmamusumeDeserializeDB5
                     case "あんし～ん笹針師、出☆没":
                         return "[ブスッといっとく？]安心沢刺々美";
                 }
-
-                var urarawinEvent = UraraWin.Units.Where(x => x.Events.Contains(eventName));
-                if (urarawinEvent.Any())
-                {
-                    if (urarawinEvent.Count() > 1)
-                    {
-                        return urarawinEvent.First().Name;
-                    }
-                    else if (urarawinEvent.Count() == 1)
-                    {
-                        return $"[{urarawinEvent.First().Prefix}]{urarawinEvent.First().Name}";
-                    }
-                    else
-                    {
-                        failed.Add($"UraraWin Can't Find Support Card: {eventName}");
-                    }
-                }
-                else if (!corrected)
-                {
-                    using var cmd = conn.CreateCommand();
-                    cmd.CommandText = $"select *,count(*) from text_data where text like '{eventName[..(eventName.Length / 2)]}%'";
-                    var reader = cmd.ExecuteReader();
-                    if (reader.HasRows)
-                    {
-                        reader.Read();
-                        var count = (long)reader["count(*)"];
-                        if (count > 1)
-                        {
-                            failed.Add($"UraraWin Not Found: {eventName} AND TOO MANY TO MATCH");
-                        }
-                        else if (count == 1)
-                        {
-                            corrected = true;
-                            eventName = (string)reader["text"];
-                            return GetSupportCardNameByEventName(eventName, corrected);
-                        }
-                        else
-                        {
-                            failed.Add($"UraraWin Not Found: {eventName}");
-                        }
-                    }
-                }
-                else
-                {
-                    failed.Add($"UraraWin Can't Find Event: {eventName}");
-                }
-                return string.Empty;
+                var data = SingleModeStoryData.First(x => x.Name == eventName);
+                var actualId = Math.Max(data.support_chara_id, data.support_card_id); //这两个必定有一个是0
+                return NameToId.First(x => x.Value == actualId).Key;
             }
-            string CorrectEventName(string eventName, bool corrected = false)
+            string CorrectEventName(string eventName, long charaId, long id)
             {
-                using var cmd = conn.CreateCommand();
-                cmd.CommandText = $"select *,count(*) from text_data where text like '{eventName[..(eventName.Length / 2)]}%'";
-                var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
+                var prompt = "NONE";
+                var offset = 1;
+                do
                 {
-                    reader.Read();
-                    var count = (long)reader["count(*)"];
-                    if (count > 2)
-                    {
-                        failed.Add($"Correct Failed: {eventName} AND TOO MANY TO MATCH");
-                    }
-                    else if (count > 0)
-                    {
-                        corrected = true;
-                        eventName = (string)reader["text"];
-                        return eventName;
-                    }
-                    else
-                    {
-                        failed.Add($"Correct Failed: {eventName}");
-                    }
-                }
-                return string.Empty;
+                    var fragment = eventName.Length - offset;
+                    var possibleNames = SingleModeStoryData
+                        .Where(x => (
+                            x.Name.StartsWith(eventName[..fragment]) ||
+                            x.Name.EndsWith(eventName[fragment..]) ||
+                            x.Name.Contains(eventName[..fragment][fragment..])) &&
+                            (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId))
+                        .Select(x => x.Name)
+                        .ToList();
+                    offset++;
+                    if (possibleNames.Count == 1) return possibleNames[0];
+                    if (!possibleNames.Any()) continue;
+                    if (offset == eventName.Length + 1) return eventName;
+                    prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                        .Title($"Select correct event name for {eventName}")
+                        .PageSize(10)
+                        .AddChoices(possibleNames
+                            .Distinct()
+                            .Where(x => x.Intersect(eventName).Count() > 2)
+                            .OrderByDescending(x => x.Intersect(eventName).Count())
+                            .Append("SHOW MORE")
+                            .Append("NONE")
+                            .Select(x => x.EscapeMarkup()))
+                        );
+                    if (prompt == "NONE") return eventName;
+                } while (prompt == "SHOW MORE");
+                return prompt.Replace("[[", "[").Replace("]]", "]");
+            }
+            string CorrectTriggerName(string triggerName, bool isSupportCard)
+            {
+                var prompt = "KEEP CURRENT";
+                var offset = 1;
+                do
+                {
+                    var fragment = triggerName.Length - offset;
+                    var possibleNames = TextData.Where(x => x.id == 6 || x.id == (isSupportCard ? 75 : 4))
+                        .Where(x => (
+                            x.text.StartsWith(triggerName[..fragment]) ||
+                            x.text.EndsWith(triggerName[fragment..]) ||
+                            x.text.Contains(triggerName[..fragment][fragment..])))
+                        .Select(x => x.text)
+                        .ToList();
+                    offset++;
+                    if (possibleNames.Count == 1) return possibleNames[0];
+                    if (!possibleNames.Any()) continue;
+                    if (offset == triggerName.Length + 1) return triggerName;
+                    prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                        .Title($"Select correct trigger name for {triggerName}")
+                        .PageSize(10)
+                        .AddChoices(possibleNames
+                            .Distinct()
+                            .Where(x => x.Intersect(triggerName).Count() > 2)
+                            .OrderByDescending(x => x.Intersect(triggerName).Count())
+                            .Append("SHOW MORE")
+                            .Append("KEEP CURRENT")
+                            .Select(x => x.EscapeMarkup()))
+                        );
+                    if (prompt == "KEEP CURRENT") return triggerName;
+                } while (prompt == "SHOW MORE");
+                return prompt.Replace("[[", "[").Replace("]]", "]"); // un-EscapeMarkup
             }
         }
     }
