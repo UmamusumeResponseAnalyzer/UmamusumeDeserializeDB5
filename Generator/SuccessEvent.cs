@@ -265,6 +265,32 @@ namespace UmamusumeDeserializeDB5.Generator
                 }
             });
             #endregion
+            #region #3
+            foreach (var i in stories)
+            {
+                var choice = i.Choices.FirstOrDefault(x => x.SuccessEffect.Contains("ヒントLv"));
+                if (choice != default && !string.IsNullOrEmpty(choice.FailedEffect))
+                {
+                    var index = i.Choices.IndexOf(choice);
+                    var story = new SuccessStory
+                    {
+                        Id = i.Id,
+                        Choices = Enumerable.Range(0, index + 1).Select(x => new List<SuccessChoice>().ToArray()).ToArray()
+                    };
+                    story.Choices[index] = new[]
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex=1,
+                            Scenario=0,
+                            State=1,
+                            Effect=choice.SuccessEffect
+                        }
+                    };
+                    successEvent.Add(story);
+                }
+            }
+            #endregion
 
             Save("successevents", successEvent);
         }
