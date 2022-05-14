@@ -8,9 +8,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UmamusumeDeserializeDB5
+namespace UmamusumeDeserializeDB5.Generator
 {
-    internal class CardName
+    internal class CardName : GeneratorBase
     {
         public void Generate()
         {
@@ -82,7 +82,8 @@ namespace UmamusumeDeserializeDB5
                     dic.Add(id, sb.ToString());
                 }
             }
-            File.WriteAllText(@"output/name_cn.json", JsonConvert.SerializeObject(dic, Formatting.Indented));
+
+            Save("name_cn", dic);
         }
     }
 }

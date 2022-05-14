@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UmamusumeDeserializeDB5
+namespace UmamusumeDeserializeDB5.Generator
 {
-    public class TalentSkillSet
+    internal class TalentSkillSet : GeneratorBase
     {
         public void Generate()
         {
@@ -36,7 +36,8 @@ namespace UmamusumeDeserializeDB5
                 SkillId = y.skill_id,
                 Rank = y.need_rank
             }));
-            File.WriteAllText(@"output/talentskillsets.json", JsonConvert.SerializeObject(result, Formatting.Indented));
+
+            Save("talentskillsets", result);
         }
     }
     public class AvailableSkillSetTable

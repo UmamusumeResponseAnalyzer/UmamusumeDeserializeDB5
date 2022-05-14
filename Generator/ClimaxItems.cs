@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UmamusumeDeserializeDB5
+namespace UmamusumeDeserializeDB5.Generator
 {
-    public class ClimaxItems
+    internal class ClimaxItems : GeneratorBase
     {
         public void Generate()
         {
@@ -26,7 +26,8 @@ namespace UmamusumeDeserializeDB5
                     dic.Add((long)reader["index"], CN(jp));
                 }
             }
-            File.WriteAllText($"output/climaxitems.json", JsonConvert.SerializeObject(dic, Formatting.Indented));
+
+            Save("climaxitems", dic);
         }
         static string CN(string text)
         {

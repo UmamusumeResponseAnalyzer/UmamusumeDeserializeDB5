@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UmamusumeDeserializeDB5
+namespace UmamusumeDeserializeDB5.Generator
 {
-    public class UnknownEvents
+    internal class UnknownEvents : GeneratorBase
     {
         public List<Story> Generate(List<SingleModeStoryData> dbStories, List<Story> stories, List<TextData> textData)
         {

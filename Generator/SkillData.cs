@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UmamusumeDeserializeDB5
+namespace UmamusumeDeserializeDB5.Generator
 {
-    public class SkillDataMgr
+    internal class SkillDataMgr : GeneratorBase
     {
         List<SkillDataTable> SkillList = new();
         Dictionary<long, long> SkillNeedPointTable = new();
@@ -125,7 +125,8 @@ namespace UmamusumeDeserializeDB5
                 }
                 list.Add(skill);
             }
-            File.WriteAllText(@"output/skilldata.json", JsonConvert.SerializeObject(list, Formatting.Indented));
+
+            Save("skilldata", list);
         }
     }
     public class SkillDataTable
