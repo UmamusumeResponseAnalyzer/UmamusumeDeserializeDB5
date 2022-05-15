@@ -136,7 +136,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 SelectIndex=2,
                                 Scenario=4,
                                 State=int.MaxValue,
-                                Effect="体力-20"
+                                Effect="体力-20,大概率更新商店道具"
                             },
                         },
                         new[]
@@ -146,7 +146,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 SelectIndex=1,
                                 Scenario=4,
                                 State=1,
-                                Effect="体力-10"
+                                Effect="体力-10,大概率更新商店道具"
                             },
                             new SuccessChoice
                             {
@@ -160,7 +160,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 SelectIndex=3,
                                 Scenario=4,
                                 State=0,
-                                Effect="体力-25"
+                                Effect="体力-25,大概率更新商店道具"
                             },
                             new SuccessChoice
                             {
@@ -201,7 +201,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 SelectIndex=2,
                                 Scenario=4,
                                 State=int.MaxValue,
-                                Effect="体力-25"
+                                Effect="体力-25,大概率更新商店道具"
                             },
                         },
                         new[]
@@ -211,7 +211,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 SelectIndex=1,
                                 Scenario=4,
                                 State=1,
-                                Effect="体力-15"
+                                Effect="体力-15,大概率更新商店道具"
                             },
                             new SuccessChoice
                             {
@@ -225,7 +225,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 SelectIndex=3,
                                 Scenario=4,
                                 State=0,
-                                Effect="体力-35"
+                                Effect="体力-35,大概率更新商店道具"
                             },
                             new SuccessChoice
                             {
