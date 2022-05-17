@@ -16,11 +16,15 @@ namespace UmamusumeDeserializeDB5
         public static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            new Events().Generate();
+            var stories = new Events().Generate();
+            new SuccessEvent().Generate(stories);
             new SkillDataMgr().Generate();
             new CardName().Generate();
             new ClimaxItems().Generate();
             new TalentSkillSet().Generate();
+
+            Story.SerializeIsSupportCard = true;
+            new Generator.UmamusumeEventEditor.Events().Generate(stories);
         }
     }
 
@@ -38,8 +42,22 @@ namespace UmamusumeDeserializeDB5
         public long Id { get; set; }
         public string Name { get; set; }
         public string TriggerName { get; set; }
+        public bool IsSupportCard { get; set; }
         public List<Choice> Choices { get; set; }
 
+        [JsonIgnore]
+        public static bool SerializeIsSupportCard { get; set; } = false;
+        public bool ShouldSerializeIsSupportCard()
+        {
+            if (SerializeIsSupportCard)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
     public class Choice
     {

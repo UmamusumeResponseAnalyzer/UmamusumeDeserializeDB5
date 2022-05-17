@@ -14,7 +14,7 @@ namespace UmamusumeDeserializeDB5.Generator
 {
     internal class Events : GeneratorBase
     {
-        public void Generate()
+        public List<Story> Generate()
         {
             var SingleModeStoryData = new List<SingleModeStoryData>();
             var TextData = new List<TextData>();
@@ -82,6 +82,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     SupportCardIdToCharaId.Add((long)reader["id"], (long)reader["chara_id"]);
                 }
             }
+            var SpecialCardEvents = SingleModeStoryData.Where(x => x.card_id != 0).GroupBy(x => x.card_id).ToDictionary(x => x.Key, x => x.ToList()); //胜负服事件
 
             //源: https://kamigame.jp/umamusume/page/152540608660042049.html
             var kamigame = JArray.Parse(new WebClient().DownloadString("https://kamigame.jp/vls-kamigame-gametool/json/1JrYvw5XiwWeKR5c2BKVQykutI_Lj2_zauLvaWtnzvDo_411452117.json")
@@ -181,11 +182,11 @@ namespace UmamusumeDeserializeDB5.Generator
                     Console.WriteLine($"纠正 {eventName} 为 {correctedEventName}");
                     storyData = SingleModeStoryData.Where(x => x.Name == correctedEventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
                     if (storyData.Any())
-                        AddStory(triggerName, correctedEventName, storyData, choices);
+                        AddStory(triggerName, correctedEventName, eventCategory, storyData, choices);
                 }
                 else
                 {
-                    AddStory(triggerName, eventName, storyData, choices);
+                    AddStory(triggerName, eventName, eventCategory, storyData, choices);
                 }
             }
 
@@ -193,12 +194,12 @@ namespace UmamusumeDeserializeDB5.Generator
             File.WriteAllLines("failed.txt", failed.Distinct());
             File.WriteAllLines("correctedEventNames.txt", correctedEventNames.Select(x => $"{x.Key}【分隔符】{x.Value}"));
             File.WriteAllLines("correctedTriggerNames.txt", correctedTriggerNames.Select(x => $"{x.Key}【分隔符】{x.Value}"));
-            events = new UnknownEvents().Generate(SingleModeStoryData, events, TextData);
-            new SuccessEvent().Generate(events);
+            events = new UnknownEvents().Generate(SingleModeStoryData, events, TextData).DistinctBy(x => x.Id).ToList();
             Save("id", TextData.Where(x => x.id == 4).ToDictionary(x => x.index, x => x.text));
-            Save("events", events.DistinctBy(x => x.Id));
+            Save("events", events);
+            return events;
 
-            void AddStory(string triggerName, string eventName, IEnumerable<SingleModeStoryData> storyData, List<Choice> choices)
+            void AddStory(string triggerName, string eventName, string eventCategory, IEnumerable<SingleModeStoryData> storyData, List<Choice> choices)
             {
                 if (triggerName == "共通")
                 {
@@ -213,6 +214,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             Id = j.story_id,
                             Name = eventName,
                             TriggerName = triggerName,
+                            IsSupportCard = eventCategory == "サポートカード",
                             Choices = choices
                         });
                     };
@@ -224,11 +226,20 @@ namespace UmamusumeDeserializeDB5.Generator
                     {
                         return;
                     }
+                    if (((j.card_chara_id != 0 && j.card_id == 0) || j.support_chara_id != 0) && triggerName.Contains(']'))
+                    {
+                        triggerName = triggerName[triggerName.IndexOf(']')..];
+                    }
+                    if (SpecialCardEvents.Any(x=>x.Value.Contains(j)) && !triggerName.Contains(']'))
+                    {
+                        triggerName = NameToId.First(x => x.Value == j.card_id).Key;
+                    }
                     events.Add(new Story
                     {
                         Id = j.story_id,
                         Name = eventName,
                         TriggerName = triggerName,
+                        IsSupportCard = eventCategory == "サポートカード",
                         Choices = choices
                     });
                 }
