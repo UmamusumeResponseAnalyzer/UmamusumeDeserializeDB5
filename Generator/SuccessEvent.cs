@@ -62,9 +62,15 @@ namespace UmamusumeDeserializeDB5.Generator
             #region 爱娇、切者、练习上手、注目株
             for (int i = 0; i < stories.Count; i++)
             {
+                var successStory = new SuccessStory
+                {
+                    Id = stories[i].Id,
+                    Choices = new List<List<SuccessChoice>>()
+                };
                 for (var j = 0; j < stories[i].Choices.Count; ++j)
                 {
                     var choice = stories[i].Choices[j];
+                    if (successStory.Choices.Count <= j) successStory.Choices.Add(new List<SuccessChoice>());
                     if (choice.Any(x => string.IsNullOrEmpty(x.FailedEffect)) || successEvent.Any(x => x.Id == stories[i].Id) != default) continue;
                     var isA = choice.FirstOrDefault(x => x.SuccessEffect.Contains("愛嬌◯"));
                     var isB = choice.FirstOrDefault(x => x.SuccessEffect.Contains("切れ者"));
@@ -79,20 +85,10 @@ namespace UmamusumeDeserializeDB5.Generator
                         State = 1,
                         Effect = realChoice.SuccessEffect
                     };
-                    var successStory = new SuccessStory
-                    {
-                        Id = stories[i].Id,
-                        Choices = new List<List<SuccessChoice>>
-                        {
-                            new List<SuccessChoice>
-                            {
-                                successChoice
-                            }
-                        }
-                    };
-
-                    successEvent.Add(successStory);
+                    successStory.Choices[j] = new List<SuccessChoice> { successChoice };
                 }
+                if (successStory.Choices.Any(x => x.Any()))
+                    successEvent.Add(successStory);
             }
             #endregion
             #region 固有
@@ -110,7 +106,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 SelectIndex=2,
                                 Scenario=0,
                                 State=1,
-                                Effect=stories.First(x=>x.Id==i.Id).Choices[0][0].SuccessEffect
+                                Effect=i.Choices[0][0].SuccessEffect
                             }
                         }
                     }

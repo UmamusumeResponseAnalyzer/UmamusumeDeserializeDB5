@@ -69,9 +69,9 @@ namespace UmamusumeDeserializeDB5.Generator
                         support_card_id = (long)reader["support_card_id"],
                         support_chara_id = (long)reader["support_chara_id"],
                     };
-                    data.Name = StoryTextData.ContainsKey(data.story_id) ? StoryTextData[data.story_id].text : "未找到事件名";
+                    data.Name = StoryTextData.ContainsKey(data.story_id) ? StoryTextData[data.story_id].text : "成長のヒント";
                     if (data.short_story_id != 0)
-                        data.ShortStoryName = StoryTextData.ContainsKey(data.short_story_id) ? StoryTextData[data.short_story_id].text : "未找到事件名";
+                        data.ShortStoryName = StoryTextData.ContainsKey(data.short_story_id) ? StoryTextData[data.short_story_id].text : "成長のヒント";
                     SingleModeStoryData.Add(data);
                 }
             }
