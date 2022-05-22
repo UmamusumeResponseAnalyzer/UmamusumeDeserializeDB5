@@ -16,6 +16,7 @@ namespace UmamusumeDeserializeDB5.Generator
             //加载已有事件
             //var successEvent = JsonConvert.DeserializeObject<List<SuccessStory>>(new WebClient().DownloadString("https://raw.githubusercontent.com/EtherealAO/UmamusumeResponseAnalyzer/48d10e25b781bf408545bc00b4d1e051896a3ae2/successevents.json"))!;
             var successEvent = new List<SuccessStory>();
+            //后添加的 不会 覆盖之前添加的，所以需要把模糊匹配的事件放在最后
             #region 吃饭
             foreach (var i in stories.Where(x => x.Choices.Count == 2 && x.Choices[1].Any(x => x.SuccessEffect == "体力+30、スキルPt+10")).Select(x => new SuccessStory
             {
@@ -38,57 +39,6 @@ namespace UmamusumeDeserializeDB5.Generator
             {
                 if (!successEvent.Any(x => x.Id == i.Id))
                     successEvent.Add(i);
-            }
-            #endregion
-            #region 无选项事件且随机给不同技能hint
-            successEvent.AddRange(stories.Where(x => x.Choices.Count == 1 && x.Choices[0].Any(x => x.SuccessEffect.Contains("ヒントLv")) && x.Choices[0].Any(x => x.FailedEffect.Contains("ヒントLv"))).Select(x => new SuccessStory
-            {
-                Id = x.Id,
-                Choices = new List<List<SuccessChoice>>
-                 {
-                     new()
-                     {
-                         new SuccessChoice
-                         {
-                           SelectIndex=1,
-                           Scenario=0,
-                           State=1,
-                           Effect= x.Choices[0][0].SuccessEffect
-                         }
-                     }
-                 }
-            }));
-            #endregion
-            #region 爱娇、切者、练习上手、注目株
-            for (int i = 0; i < stories.Count; i++)
-            {
-                var successStory = new SuccessStory
-                {
-                    Id = stories[i].Id,
-                    Choices = new List<List<SuccessChoice>>()
-                };
-                for (var j = 0; j < stories[i].Choices.Count; ++j)
-                {
-                    var choice = stories[i].Choices[j];
-                    if (successStory.Choices.Count <= j) successStory.Choices.Add(new List<SuccessChoice>());
-                    if (choice.Any(x => string.IsNullOrEmpty(x.FailedEffect)) || successEvent.Any(x => x.Id == stories[i].Id) != default) continue;
-                    var isA = choice.FirstOrDefault(x => x.SuccessEffect.Contains("愛嬌◯"));
-                    var isB = choice.FirstOrDefault(x => x.SuccessEffect.Contains("切れ者"));
-                    var isC = choice.FirstOrDefault(x => x.SuccessEffect.Contains("練習上手◯"));
-                    var isD = choice.FirstOrDefault(x => x.SuccessEffect.Contains("注目株"));
-                    var realChoice = new[] { isA, isB, isC, isD }.FirstOrDefault(x => x != default);
-                    if (realChoice == default) continue;
-                    var successChoice = new SuccessChoice
-                    {
-                        SelectIndex = 2,
-                        Scenario = 0,
-                        State = 1,
-                        Effect = realChoice.SuccessEffect
-                    };
-                    successStory.Choices[j] = new List<SuccessChoice> { successChoice };
-                }
-                if (successStory.Choices.Any(x => x.Any()))
-                    successEvent.Add(successStory);
             }
             #endregion
             #region 固有
@@ -264,6 +214,235 @@ namespace UmamusumeDeserializeDB5.Generator
                 }
             });
             #endregion
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830078001,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                         SelectIndex=1,
+                         State=1,
+                         Scenario=0,
+                         Effect="全ステータス+7、スキルPt+7、マチカネフクキタルの絆ゲージ+7"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830078002,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                         SelectIndex=1,
+                         State=1,
+                         Scenario=0,
+                         Effect="全ステータス+7、スキルPt+7、マチカネフクキタルの絆ゲージ+7"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830078003,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                         SelectIndex=0,
+                         State=0,
+                         Scenario=0,
+                         Effect="スキルPt+7、「ラッキーセブン」のヒントLv+3、マチカネフクキタルの絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                         SelectIndex=1,
+                         State=1,
+                         Scenario=0,
+                         Effect="全ステータス+7、スキルPt+7、「スーパーラッキーセブン」のヒントLv+1、マチカネフクキタルの絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                         SelectIndex=2,
+                         State=2,
+                         Scenario=0,
+                         Effect="全ステータス+7、スキルPt+77、「スーパーラッキーセブン」のヒントLv+3、マチカネフクキタルの絆ゲージ+5"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830041001,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力-10,SP+45"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 501020524,
+                Choices = CreateChoices(new List<SuccessChoice>(), new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 3,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力+20,获得【深呼吸】"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 809006004,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力+15~19，耐力+10~13，ペースアップ的hint+3，解锁理事长的外出事件"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 501001720,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "全属性+20"
+                    }
+                }, new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 3,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "直接习得コーナー回復◯、直線回復"
+                    }
+                }, new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 5,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力最大值+12，体力+40，治愈所有负面效果"
+                    }
+                }, new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 7,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力+20，干劲提升，获得爱娇"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830045001,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "干劲提升，直线一气的Hint+2"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 501026524,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力-10，力量+20，技能点+10"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 501022524,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 2,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力+30，技能点+15（待确认）"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 820034001,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 2,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力+10，速度+5,智力+5，技能点+10"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 820034001,
+                Choices = CreateChoices(new List<SuccessChoice>(),new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "干劲提升，力量+15，直线一气的Hint+2"
+                    }
+                },
+                new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 4,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "干劲提升，智力+15，中距离直线的Hint+2"
+                    }
+                },
+                new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 7,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "干劲提升，速度+15，隠れ蓑的Hint+2"
+                    }
+                })
+            });
             #region #3
             foreach (var i in stories)
             {
@@ -290,8 +469,67 @@ namespace UmamusumeDeserializeDB5.Generator
                 }
             }
             #endregion
+            #region 爱娇、切者、练习上手、注目株
+            for (int i = 0; i < stories.Count; i++)
+            {
+                var successStory = new SuccessStory
+                {
+                    Id = stories[i].Id,
+                    Choices = new List<List<SuccessChoice>>()
+                };
+                for (var j = 0; j < stories[i].Choices.Count; ++j)
+                {
+                    var choice = stories[i].Choices[j];
+                    if (successStory.Choices.Count <= j) successStory.Choices.Add(new List<SuccessChoice>());
+                    if (choice.Any(x => string.IsNullOrEmpty(x.FailedEffect)) || successEvent.Any(x => x.Id == stories[i].Id) != default) continue;
+                    var isA = choice.FirstOrDefault(x => x.SuccessEffect.Contains("愛嬌◯"));
+                    var isB = choice.FirstOrDefault(x => x.SuccessEffect.Contains("切れ者"));
+                    var isC = choice.FirstOrDefault(x => x.SuccessEffect.Contains("練習上手◯"));
+                    var isD = choice.FirstOrDefault(x => x.SuccessEffect.Contains("注目株"));
+                    var realChoice = new[] { isA, isB, isC, isD }.FirstOrDefault(x => x != default);
+                    if (realChoice == default) continue;
+                    var successChoice = new SuccessChoice
+                    {
+                        SelectIndex = 2,
+                        Scenario = 0,
+                        State = 1,
+                        Effect = realChoice.SuccessEffect
+                    };
+                    successStory.Choices[j] = new List<SuccessChoice> { successChoice };
+                }
+                if (successStory.Choices.Any(x => x.Any()))
+                    successEvent.Add(successStory);
+            }
+            #endregion
+            #region 无选项事件且随机给不同技能hint
+            successEvent.AddRange(
+                stories.Where(x => x.Choices.Count == 1 && x.Choices[0].Any(x => x.SuccessEffect.Contains("ヒントLv")) && x.Choices[0].Any(x => x.FailedEffect.Contains("ヒントLv"))).Select(x => new SuccessStory
+                {
+                    Id = x.Id,
+                    Choices = new List<List<SuccessChoice>>
+                 {
+                     new()
+                     {
+                         new SuccessChoice
+                         {
+                           SelectIndex=1,
+                           Scenario=0,
+                           State=1,
+                           Effect= x.Choices[0][0].SuccessEffect
+                         }
+                     }
+                 }
+                }));
+            #endregion
 
             Save("successevents", successEvent.DistinctBy(x => x.Id));
+
+            List<List<SuccessChoice>> CreateChoices(params List<SuccessChoice>[] choices)
+            {
+                var list = new List<List<SuccessChoice>>();
+                list.AddRange(choices);
+                return list;
+            }
         }
     }
     public class SuccessStory
