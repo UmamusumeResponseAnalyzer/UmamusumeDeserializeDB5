@@ -17,13 +17,13 @@ namespace UmamusumeDeserializeDB5.Generator
             //var successEvent = JsonConvert.DeserializeObject<List<SuccessStory>>(new WebClient().DownloadString("https://raw.githubusercontent.com/EtherealAO/UmamusumeResponseAnalyzer/48d10e25b781bf408545bc00b4d1e051896a3ae2/successevents.json"))!;
             var successEvent = new List<SuccessStory>();
             #region 吃饭
-            foreach (var i in stories.Where(x => x.Choices.Count == 2 && x.Choices[1].SuccessEffect == "体力+30、スキルPt+10").Select(x => new SuccessStory
+            foreach (var i in stories.Where(x => x.Choices.Count == 2 && x.Choices[1].Any(x => x.SuccessEffect == "体力+30、スキルPt+10")).Select(x => new SuccessStory
             {
                 Id = x.Id,
-                Choices = new[]
+                Choices = new List<List<SuccessChoice>>
                 {
-                    Array.Empty<SuccessChoice>(),
-                    new[]
+                    new(),
+                    new()
                     {
                         new SuccessChoice
                         {
@@ -41,19 +41,19 @@ namespace UmamusumeDeserializeDB5.Generator
             }
             #endregion
             #region 无选项事件且随机给不同技能hint
-            successEvent.AddRange(stories.Where(x => x.Choices.Count == 1 && x.Choices[0].SuccessEffect.Contains("ヒントLv") && x.Choices[0].FailedEffect.Contains("ヒントLv")).Select(x => new SuccessStory
+            successEvent.AddRange(stories.Where(x => x.Choices.Count == 1 && x.Choices[0].Any(x => x.SuccessEffect.Contains("ヒントLv")) && x.Choices[0].Any(x => x.FailedEffect.Contains("ヒントLv"))).Select(x => new SuccessStory
             {
                 Id = x.Id,
-                Choices = new[]
+                Choices = new List<List<SuccessChoice>>
                  {
-                     new[]
+                     new()
                      {
                          new SuccessChoice
                          {
                            SelectIndex=1,
                            Scenario=0,
                            State=1,
-                           Effect= x.Choices[0].SuccessEffect
+                           Effect= x.Choices[0][0].SuccessEffect
                          }
                      }
                  }
@@ -62,34 +62,37 @@ namespace UmamusumeDeserializeDB5.Generator
             #region 爱娇、切者、练习上手、注目株
             for (int i = 0; i < stories.Count; i++)
             {
-                var choices = stories[i].Choices
-                    .Where(x => (
-                        x.SuccessEffect.Contains("愛嬌◯") ||
-                        x.SuccessEffect.Contains("切れ者") ||
-                        x.SuccessEffect.Contains("練習上手◯") ||
-                        x.SuccessEffect.Contains("注目株")) &&
-                        !string.IsNullOrEmpty(x.FailedEffect))
-                    .Select(x => (stories[i].Choices.IndexOf(x), new SuccessChoice
+                for (var j = 0; j < stories[i].Choices.Count; ++j)
+                {
+                    var choice = stories[i].Choices[j];
+                    if (choice.Any(x => string.IsNullOrEmpty(x.FailedEffect)) || successEvent.Any(x => x.Id == stories[i].Id) != default) continue;
+                    var isA = choice.FirstOrDefault(x => x.SuccessEffect.Contains("愛嬌◯"));
+                    var isB = choice.FirstOrDefault(x => x.SuccessEffect.Contains("切れ者"));
+                    var isC = choice.FirstOrDefault(x => x.SuccessEffect.Contains("練習上手◯"));
+                    var isD = choice.FirstOrDefault(x => x.SuccessEffect.Contains("注目株"));
+                    var realChoice = new[] { isA, isB, isC, isD }.FirstOrDefault(x => x != default);
+                    if (realChoice == default) continue;
+                    var successChoice = new SuccessChoice
                     {
                         SelectIndex = 2,
                         Scenario = 0,
                         State = 1,
-                        Effect = x.SuccessEffect
-                    }));
-                if (!choices.Any() || successEvent.Any(x => x.Id == stories[i].Id) != default) continue;
-                var successStory = new SuccessStory
-                {
-                    Id = stories[i].Id
-                };
-                var choiceArray = new List<List<SuccessChoice>>();
-                foreach (var j in choices)
-                {
-                    if (choiceArray.ElementAtOrDefault(j.Item1) == default)
-                        choiceArray.AddRange(Enumerable.Range(0, j.Item1 + 1).Select(x => new List<SuccessChoice>()));
-                    choiceArray[j.Item1].Add(j.Item2);
+                        Effect = realChoice.SuccessEffect
+                    };
+                    var successStory = new SuccessStory
+                    {
+                        Id = stories[i].Id,
+                        Choices = new List<List<SuccessChoice>>
+                        {
+                            new List<SuccessChoice>
+                            {
+                                successChoice
+                            }
+                        }
+                    };
+
+                    successEvent.Add(successStory);
                 }
-                successStory.Choices = choiceArray.Select(x => x.ToArray()).ToArray();
-                successEvent.Add(successStory);
             }
             #endregion
             #region 固有
@@ -98,16 +101,16 @@ namespace UmamusumeDeserializeDB5.Generator
                 successEvent.Add(new SuccessStory
                 {
                     Id = i.Id,
-                    Choices = new[]
+                    Choices = new List<List<SuccessChoice>>
                     {
-                        new[]
+                        new List<SuccessChoice>
                         {
                             new SuccessChoice
                             {
                                 SelectIndex=2,
                                 Scenario=0,
                                 State=1,
-                                Effect=stories.First(x=>x.Id==i.Id).Choices[0].SuccessEffect
+                                Effect=stories.First(x=>x.Id==i.Id).Choices[0][0].SuccessEffect
                             }
                         }
                     }
@@ -115,14 +118,14 @@ namespace UmamusumeDeserializeDB5.Generator
             }
             #endregion
             #region 赛后
-            foreach (var i in stories.Where(x => x.Name.Contains("レース勝利") && x.Choices[0].SuccessEffect.Contains("体力-")))
+            foreach (var i in stories.Where(x => x.Name.Contains("レース勝利") && x.Choices[0].Any(x => x.SuccessEffect.Contains("体力-"))))
             {
                 successEvent.Add(new SuccessStory
                 {
                     Id = i.Id,
-                    Choices = new[]
+                    Choices = new List<List<SuccessChoice>>
                     {
-                        new[]
+                        new List<SuccessChoice>
                         {
                             new SuccessChoice
                             {
@@ -139,7 +142,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 Effect="体力-20,大概率更新商店道具"
                             },
                         },
-                        new[]
+                        new List<SuccessChoice>
                         {
                             new SuccessChoice
                             {
@@ -180,14 +183,14 @@ namespace UmamusumeDeserializeDB5.Generator
                     }
                 });
             }
-            foreach (var i in stories.Where(x => x.Name.Contains("レース入着") && x.Choices[0].SuccessEffect.Contains("体力-")))
+            foreach (var i in stories.Where(x => x.Name.Contains("レース入着") && x.Choices[0].Any(x => x.SuccessEffect.Contains("体力-"))))
             {
                 successEvent.Add(new SuccessStory
                 {
                     Id = i.Id,
-                    Choices = new[]
+                    Choices = new List<List<SuccessChoice>>
                     {
-                        new[]
+                        new List<SuccessChoice>
                         {
                             new SuccessChoice
                             {
@@ -204,7 +207,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 Effect="体力-25,大概率更新商店道具"
                             },
                         },
-                        new[]
+                        new List<SuccessChoice>
                         {
                             new SuccessChoice
                             {
@@ -243,9 +246,9 @@ namespace UmamusumeDeserializeDB5.Generator
             successEvent.Add(new SuccessStory
             {
                 Id = stories.First(x => x.Name == "ライバルに勝利！").Id,
-                Choices = new[]
+                Choices = new List<List<SuccessChoice>>
                 {
-                    new[]
+                    new List<SuccessChoice>
                     {
                         new SuccessChoice
                         {
@@ -268,23 +271,23 @@ namespace UmamusumeDeserializeDB5.Generator
             #region #3
             foreach (var i in stories)
             {
-                var choice = i.Choices.FirstOrDefault(x => x.SuccessEffect.Contains("ヒントLv"));
-                if (choice != default && !string.IsNullOrEmpty(choice.FailedEffect))
+                var choice = i.Choices.FirstOrDefault(x => x.Any(y => y.SuccessEffect.Contains("ヒントLv")));
+                if (choice != default && !string.IsNullOrEmpty(choice[0].FailedEffect))
                 {
                     var index = i.Choices.IndexOf(choice);
                     var story = new SuccessStory
                     {
                         Id = i.Id,
-                        Choices = Enumerable.Range(0, index + 1).Select(x => new List<SuccessChoice>().ToArray()).ToArray()
+                        Choices = Enumerable.Range(0, index + 1).Select(x => new List<SuccessChoice>()).ToList()
                     };
-                    story.Choices[index] = new[]
+                    story.Choices[index] = new List<SuccessChoice>
                     {
                         new SuccessChoice
                         {
                             SelectIndex=1,
                             Scenario=0,
                             State=1,
-                            Effect=choice.SuccessEffect
+                            Effect=choice[0].SuccessEffect
                         }
                     };
                     successEvent.Add(story);
@@ -292,13 +295,13 @@ namespace UmamusumeDeserializeDB5.Generator
             }
             #endregion
 
-            Save("successevents", successEvent);
+            Save("successevents", successEvent.DistinctBy(x => x.Id));
         }
     }
     public class SuccessStory
     {
         public long Id { get; set; }
-        public SuccessChoice[][] Choices { get; set; }
+        public List<List<SuccessChoice>> Choices { get; set; }
     }
     public class SuccessChoice
     {

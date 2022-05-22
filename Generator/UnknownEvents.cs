@@ -18,54 +18,69 @@ namespace UmamusumeDeserializeDB5.Generator
                     Name = i.Name,
                     Id = i.story_id,
                     TriggerName = i.card_chara_id == 0 ? "系统" : textData.First(x => x.id == 6 && x.category == 6 && x.index == i.card_chara_id).text,
-                    Choices = new List<Choice>
+                    Choices = new List<List<Choice>>
                     {
-                        new Choice
+                        new()
                         {
-                            Option = "未知选项",
-                            SuccessEffect = "未知效果",
-                            FailedEffect = "未知效果"
+                            new Choice
+                            {
+                                Option = "未知选项",
+                                SuccessEffect = "未知效果",
+                                FailedEffect = "未知效果"
+                            }
                         }
                     }
                 };
                 var similarEvent = stories.FirstOrDefault(x => x.Name == i.Name);
                 if (i.Name == "お大事に！")
                 {
-                    story.Choices = new List<Choice>
+                    story.Choices = new List<List<Choice>>
                         {
-                              new Choice
-                              {
+                            new()
+                            {
+                                new Choice
+                                {
                                     Option = "きっちり休ませる",
-                                    SuccessEffect = similarEvent!.Choices[0].SuccessEffect,
-                                    FailedEffect = similarEvent!.Choices[1].FailedEffect
-                              },
-                              new Choice
-                              {
+                                    SuccessEffect = similarEvent!.Choices[0][0].SuccessEffect,
+                                    FailedEffect = similarEvent!.Choices[1][0].FailedEffect
+                                }
+                            },
+                            new()
+                            {
+                                new Choice
+                                {
                                     Option = "頑張らせる",
-                                    SuccessEffect = similarEvent!.Choices[0].SuccessEffect,
-                                    FailedEffect = similarEvent!.Choices[1].FailedEffect
-                              },
-                         };
+                                    SuccessEffect = similarEvent!.Choices[0][0].SuccessEffect,
+                                    FailedEffect = similarEvent!.Choices[1][0].FailedEffect
+                                }
+                            },
+                        };
                     stories.Add(story);
                     continue;
                 }
                 if (i.Name == "無茶は厳禁！")
                 {
-                    story.Choices = new List<Choice>
+                    story.Choices = new List<List<Choice>>
                         {
-                              new Choice
-                              {
+                            new()
+                            {
+                                  new Choice
+                                {
                                     Option = "とにかく労わる",
-                                    SuccessEffect = similarEvent!.Choices[0].SuccessEffect,
-                                    FailedEffect = similarEvent!.Choices[1].FailedEffect
-                              },
-                              new Choice
-                              {
+                                    SuccessEffect = similarEvent!.Choices[0][0].SuccessEffect,
+                                    FailedEffect = similarEvent!.Choices[1][0].FailedEffect
+                                }
+                            },
+                            new()
+                            {
+                                  new Choice
+                                {
                                     Option = "厳しくいく！",
-                                    SuccessEffect = similarEvent!.Choices[0].SuccessEffect,
-                                    FailedEffect = similarEvent!.Choices[1].FailedEffect
-                              },
-                         };
+                                    SuccessEffect = similarEvent!.Choices[0][0].SuccessEffect,
+                                    FailedEffect = similarEvent!.Choices[1][0].FailedEffect
+                                }
+                            },
+                        };
                     stories.Add(story);
                     continue;
                 }

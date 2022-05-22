@@ -43,7 +43,7 @@ namespace UmamusumeDeserializeDB5
         public string Name { get; set; }
         public string TriggerName { get; set; }
         public bool IsSupportCard { get; set; }
-        public List<Choice> Choices { get; set; }
+        public List<List<Choice>> Choices { get; set; }
 
         [JsonIgnore]
         public static bool SerializeIsSupportCard { get; set; } = false;
@@ -68,6 +68,7 @@ namespace UmamusumeDeserializeDB5
     public class SingleModeStoryData
     {
         public string Name { get; set; } = "未找到";
+        public string ShortStoryName { get; set; } = "未找到";
         public long id { get; set; }
         public long story_id { get; set; }
         public long short_story_id { get; set; }

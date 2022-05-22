@@ -44,10 +44,8 @@ namespace UmamusumeDeserializeDB5.Generator
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    var storyId = (long)reader["story_id"];
-                    SingleModeStoryData.Add(new SingleModeStoryData
+                    var data = new SingleModeStoryData
                     {
-                        Name = StoryTextData.ContainsKey(storyId) ? StoryTextData[storyId].text : "成長のヒント",
                         id = (long)reader["id"],
                         card_chara_id = (long)reader["card_chara_id"],
                         card_id = (long)reader["card_id"],
@@ -67,10 +65,14 @@ namespace UmamusumeDeserializeDB5.Generator
                         show_progress_1 = (long)reader["show_progress_1"],
                         show_progress_2 = (long)reader["show_progress_2"],
                         show_succession = (long)reader["show_succession"],
-                        story_id = storyId,
+                        story_id = (long)reader["story_id"],
                         support_card_id = (long)reader["support_card_id"],
                         support_chara_id = (long)reader["support_chara_id"],
-                    });
+                    };
+                    data.Name = StoryTextData.ContainsKey(data.story_id) ? StoryTextData[data.story_id].text : "未找到事件名";
+                    if (data.short_story_id != 0)
+                        data.ShortStoryName = StoryTextData.ContainsKey(data.short_story_id) ? StoryTextData[data.short_story_id].text : "未找到事件名";
+                    SingleModeStoryData.Add(data);
                 }
             }
             using (var cmd = conn.CreateCommand())
@@ -168,7 +170,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     id = 0;
                     charaId = 0;
                 }
-                var storyData = SingleModeStoryData.Where(x => x.Name == eventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
+                var storyData = SingleModeStoryData.Where(x => (x.ShortStoryName == eventName || x.Name == eventName) && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
                 if (!storyData.Any())
                 {
                     if (correctedEventNames.ContainsKey(eventName)) continue;
@@ -215,7 +217,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             Name = eventName,
                             TriggerName = triggerName,
                             IsSupportCard = eventCategory == "サポートカード",
-                            Choices = choices
+                            Choices = choices.Select(x => new List<Choice> { x }).ToList()
                         });
                     };
                 }
@@ -230,7 +232,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     {
                         triggerName = triggerName[triggerName.IndexOf(']')..];
                     }
-                    if (SpecialCardEvents.Any(x=>x.Value.Contains(j)) && !triggerName.Contains(']'))
+                    if (SpecialCardEvents.Any(x => x.Value.Contains(j)) && !triggerName.Contains(']'))
                     {
                         triggerName = NameToId.First(x => x.Value == j.card_id).Key;
                     }
@@ -240,7 +242,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         Name = eventName,
                         TriggerName = triggerName,
                         IsSupportCard = eventCategory == "サポートカード",
-                        Choices = choices
+                        Choices = choices.Select(x => new List<Choice> { x }).ToList()
                     });
                 }
             }
@@ -276,7 +278,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (!possibleNames.Any()) continue;
                     if (offset == eventName.Length + 1) return eventName;
                     prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                        .Title($"Select correct event name for {eventName}")
+                        .Title($"Select correct event name for {eventName} ({NameToId.First(x => x.Value == id || x.Value == charaId).Key})")
                         .PageSize(10)
                         .AddChoices(possibleNames
                             .Distinct()

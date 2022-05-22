@@ -44,6 +44,15 @@ namespace UmamusumeDeserializeDB5.Generator
                 while (reader.Read())
                 {
                     var jp = (string)reader["text"];
+                    jp = jp switch
+                    {
+                        "ツルマルツヨシ" => "鹤丸刚志",
+                        "ハッピーミーク" => "快乐米可",
+                        "ビターグラッセ" => "Bitter Glasse",
+                        "リトルココン" => "Little Cocon",
+                        "秋川やよい" => "秋川弥生",
+                        _ => jp
+                    };
                     var translated = cn.ContainsKey(jp) ? cn[jp] : jp;
                     translated = translated switch
                     {
@@ -52,6 +61,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         "鲁道夫象征" => "皇帝", //大概不是错翻但是我喊皇帝喊习惯了
                         "雷电顶载" => "成田路",
                         "山宁泽弗" => "也文摄辉",
+                        "海比先生" => "Mr.CB",
                         _ => translated
                     };
                     dic.Add((long)reader["index"], translated);
