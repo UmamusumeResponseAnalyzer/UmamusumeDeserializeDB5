@@ -29,9 +29,16 @@ namespace UmamusumeDeserializeDB5.Generator
                         new SuccessChoice
                         {
                             SelectIndex = 1,
-                            Scenario=0,
                             State=1,
+                            Scenario=0,
                             Effect = "体力+30、技能点+10"
+                        },
+                        new SuccessChoice
+                        {
+                            SelectIndex = 2,
+                            State=0,
+                            Scenario=0,
+                            Effect = "体力+30、技能点+10、速度-5、力量-5、获得『太り気味』"
                         }
                     }
                 }
@@ -57,6 +64,13 @@ namespace UmamusumeDeserializeDB5.Generator
                                 Scenario=0,
                                 State=1,
                                 Effect=i.Choices[0][0].SuccessEffect
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=0,
+                                Effect=i.Choices[0][0].FailedEffect
                             }
                         }
                     }
@@ -214,6 +228,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 }
             });
             #endregion
+            #region 福来
             successEvent.Add(new SuccessStory
             {
                 Id = 830078001,
@@ -225,6 +240,13 @@ namespace UmamusumeDeserializeDB5.Generator
                          State=1,
                          Scenario=0,
                          Effect="全ステータス+7、スキルPt+7、マチカネフクキタルの絆ゲージ+7"
+                    },
+                    new SuccessChoice
+                    {
+                         SelectIndex=2,
+                         State=0,
+                         Scenario=0,
+                         Effect="智+4，事件中断"
                     }
                 })
             });
@@ -239,6 +261,13 @@ namespace UmamusumeDeserializeDB5.Generator
                          State=1,
                          Scenario=0,
                          Effect="全ステータス+7、スキルPt+7、マチカネフクキタルの絆ゲージ+7"
+                    },
+                    new SuccessChoice
+                    {
+                         SelectIndex=2,
+                         State=0,
+                         Scenario=0,
+                         Effect="智+4，事件中断"
                     }
                 })
             });
@@ -249,24 +278,113 @@ namespace UmamusumeDeserializeDB5.Generator
                 {
                     new SuccessChoice
                     {
-                         SelectIndex=0,
+                         SelectIndex=3,
                          State=0,
                          Scenario=0,
                          Effect="スキルPt+7、「ラッキーセブン」のヒントLv+3、マチカネフクキタルの絆ゲージ+5"
                     },
                     new SuccessChoice
                     {
-                         SelectIndex=1,
+                         SelectIndex=2,
                          State=1,
                          Scenario=0,
                          Effect="全ステータス+7、スキルPt+7、「スーパーラッキーセブン」のヒントLv+1、マチカネフクキタルの絆ゲージ+5"
                     },
                     new SuccessChoice
                     {
-                         SelectIndex=2,
+                         SelectIndex=1,
                          State=2,
                          Scenario=0,
                          Effect="全ステータス+7、スキルPt+77、「スーパーラッキーセブン」のヒントLv+3、マチカネフクキタルの絆ゲージ+5"
+                    }
+                })
+            });
+            #endregion
+            #region 打针
+            foreach (var i in stories.Where(x => x.Name == "あんし～ん笹針師、参☆上"))
+            {
+                successEvent.Add(new SuccessStory
+                {
+                    Id = i.Id,
+                    Choices = CreateChoices(new List<SuccessChoice>
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex = 1,
+                            State = 1,
+                            Scenario = 0,
+                            Effect = "全属性+20"
+                        }
+                    }, new List<SuccessChoice>
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex = 3,
+                            State = 1,
+                            Scenario = 0,
+                            Effect = "直接习得コーナー回復◯、直線回復"
+                        }
+                    }, new List<SuccessChoice>
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex = 5,
+                            State = 1,
+                            Scenario = 0,
+                            Effect = "体力最大值+12，体力+40，治愈所有负面效果"
+                        }
+                    }, new List<SuccessChoice>
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex = 7,
+                            State = 1,
+                            Scenario = 0,
+                            Effect = "体力+20，干劲提升，获得爱娇"
+                        }
+                    })
+                });
+            }
+            #endregion
+            #region 根诗歌剧
+            foreach (var i in GetStoriesByName("求む、個性！"))
+            {
+                successEvent.Add(new SuccessStory
+                {
+                    Id = i.Id,
+                    Choices = CreateChoices(new List<SuccessChoice>(), new List<SuccessChoice>
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex = 1,
+                            Scenario=0,
+                            State=1,
+                            Effect="体力+30，绊+5"
+                        }
+                    })
+                });
+            }
+            #endregion
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830098001,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力+15、「愛嬌◯」獲得、ハルウララの絆ゲージ+5"
+                    }
+                }, new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 2,
+                        State = 0,
+                        Scenario = 0,
+                        Effect = "体力+15、ハルウララの絆ゲージ+5"
                     }
                 })
             });
@@ -294,7 +412,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         SelectIndex = 3,
                         State = 1,
                         Scenario = 0,
-                        Effect = "体力+20,获得【深呼吸】"
+                        Effect = "体力+20,获得【深呼吸】的Hint"
                     }
                 })
             });
@@ -309,47 +427,13 @@ namespace UmamusumeDeserializeDB5.Generator
                         State = 1,
                         Scenario = 0,
                         Effect = "体力+15~19，耐力+10~13，ペースアップ的hint+3，解锁理事长的外出事件"
-                    }
-                })
-            });
-            successEvent.Add(new SuccessStory
-            {
-                Id = 501001720,
-                Choices = CreateChoices(new List<SuccessChoice>
-                {
+                    },
                     new SuccessChoice
                     {
-                        SelectIndex = 1,
-                        State = 1,
+                        SelectIndex = 2,
+                        State = 0,
                         Scenario = 0,
-                        Effect = "全属性+20"
-                    }
-                }, new List<SuccessChoice>
-                {
-                    new SuccessChoice
-                    {
-                        SelectIndex = 3,
-                        State = 1,
-                        Scenario = 0,
-                        Effect = "直接习得コーナー回復◯、直線回復"
-                    }
-                }, new List<SuccessChoice>
-                {
-                    new SuccessChoice
-                    {
-                        SelectIndex = 5,
-                        State = 1,
-                        Scenario = 0,
-                        Effect = "体力最大值+12，体力+40，治愈所有负面效果"
-                    }
-                }, new List<SuccessChoice>
-                {
-                    new SuccessChoice
-                    {
-                        SelectIndex = 7,
-                        State = 1,
-                        Scenario = 0,
-                        Effect = "体力+20，干劲提升，获得爱娇"
+                        Effect = "『おひとり様◯』的Hint Lv+5，樫本理子绊-10，无法与理事长外出"
                     }
                 })
             });
@@ -412,7 +496,7 @@ namespace UmamusumeDeserializeDB5.Generator
             successEvent.Add(new SuccessStory
             {
                 Id = 820034001,
-                Choices = CreateChoices(new List<SuccessChoice>(),new List<SuccessChoice>
+                Choices = CreateChoices(new List<SuccessChoice>(), new List<SuccessChoice>
                 {
                     new SuccessChoice
                     {
@@ -529,6 +613,10 @@ namespace UmamusumeDeserializeDB5.Generator
                 var list = new List<List<SuccessChoice>>();
                 list.AddRange(choices);
                 return list;
+            }
+            IEnumerable<Story> GetStoriesByName(string name)
+            {
+                return stories.Where(x => x.Name == name);
             }
         }
     }

@@ -24,7 +24,8 @@ namespace UmamusumeDeserializeDB5
             new TalentSkillSet().Generate();
 
             Story.SerializeIsSupportCard = true;
-            new Generator.UmamusumeEventEditor.Events().Generate(stories);
+            new Generator.UmamusumeEventEditor.Events().Generate(stories, new Events().GenerateSingleModeStoryData());
+            new Generator.UmamusumeEventEditor.Cards().Generate();
         }
     }
 

@@ -84,6 +84,39 @@ namespace UmamusumeDeserializeDB5.Generator
                     stories.Add(story);
                     continue;
                 }
+                if (i.Name == "成長のヒント")
+                {
+                    var charaId = int.Parse(i.story_id.ToString()[2..6]);
+                    story.TriggerName = Data.NameToId.First(x => x.Value == charaId).Key;
+                    story.IsSupportCard = true;
+                }
+                else if (i.Name == "想いの継承" && i.story_id.ToString()[0] != '4')
+                {
+                    var charaId = int.Parse(i.story_id.ToString()[2..6]);
+                    story.TriggerName = Data.NameToId.First(x => x.Value == charaId).Key;
+                    story.IsSupportCard = false;
+                }
+                if (i.gallery_main_scenario != 0)
+                {
+                    story.TriggerName = i.gallery_main_scenario switch
+                    {
+                        1 => "URA",
+                        2 => "青春杯",
+                        4 => "巅峰杯",
+                        _ => "未知剧本"
+                    };
+                }
+                else
+                {
+                    if (new long[] { 400004013, 400004014, 400004015 }.Contains(i.story_id))
+                    {
+                        story.TriggerName = "巅峰杯";
+                    }
+                    else if (new long[] { 400002116 }.Contains(i.story_id))
+                    {
+                        story.TriggerName = "青春杯";
+                    }
+                }
                 stories.Add(story);
             }
             return stories;

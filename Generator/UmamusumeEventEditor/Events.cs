@@ -9,39 +9,25 @@ namespace UmamusumeDeserializeDB5.Generator.UmamusumeEventEditor
 {
     internal class Events : GeneratorBase
     {
-        public void Generate(List<Story> stories)
+        public void Generate(List<Story> stories, List<SingleModeStoryData> singleModeStoryData)
         {
-            var TextData = new List<TextData>();
-            using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
-            conn.Open();
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from text_data";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    TextData.Add(new TextData
-                    {
-                        category = (long)reader["category"],
-                        id = (long)reader["id"],
-                        index = (long)reader["index"],
-                        text = (string)reader["text"]
-                    });
-                }
-            }
-            var NameToId = TextData.Where(x => (x.id == 4 && x.category == 4) || (x.id == 6 && x.category == 6) || (x.id == 75 && x.category == 75)).ToDictionary(x => x.text, x => x.index); //P-本名-S
-
             var events = new EditorEvents();
             var grouped = stories.GroupBy(x => x.IsSupportCard).ToDictionary(x => x.Key, x => x.ToList());
             foreach (var i in grouped[true])
             {
             }
-            events.Supports = grouped[true].GroupBy(x => (int)NameToId[x.TriggerName]).OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.ToList());
-            foreach (var i in grouped[false])
+            events.Supports = grouped[true].GroupBy(x => (int)Data.NameToId[x.TriggerName]).OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.ToList());
+            for (var i = 0; i < grouped[false].Count; ++i)
             {
-
             }
-            events.Characters = grouped[false].Where(x => NameToId.ContainsKey(x.TriggerName)).GroupBy(x => (int)NameToId[x.TriggerName]).OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.ToList());
+            events.Characters = grouped[false].Where(x => Data.NameToId.ContainsKey(x.TriggerName))
+                .GroupBy(x => (int)Data.NameToId[x.TriggerName])
+                .OrderBy(x => x.Key)
+                .ToDictionary(x => x.Key, x => x.ToList());
+            events.Characters.Add(0, grouped[false].Where(x => !Data.NameToId.ContainsKey(x.TriggerName) && x.TriggerName != "URA" && x.TriggerName != "青春杯" && x.TriggerName != "アオハル杯" && x.TriggerName != "巅峰杯" && x.TriggerName != "クライマックス").ToList());
+            events.Characters.Add(1, grouped[false].Where(x => x.TriggerName == "URA").ToList());
+            events.Characters.Add(2, grouped[false].Where(x => x.TriggerName == "青春杯" || x.TriggerName == "アオハル杯").ToList());
+            events.Characters.Add(4, grouped[false].Where(x => x.TriggerName == "巅峰杯" || x.TriggerName == "クライマックス").ToList());
 
             Save("editorevents", events);
         }
