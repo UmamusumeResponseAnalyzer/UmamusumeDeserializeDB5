@@ -69,7 +69,6 @@ namespace UmamusumeDeserializeDB5
     public class SingleModeStoryData
     {
         public string Name { get; set; } = "未找到";
-        public string ShortStoryName { get; set; } = "未找到";
         public long id { get; set; }
         public long story_id { get; set; }
         public long short_story_id { get; set; }

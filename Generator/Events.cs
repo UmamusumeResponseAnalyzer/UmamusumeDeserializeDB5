@@ -68,9 +68,37 @@ namespace UmamusumeDeserializeDB5.Generator
                         support_chara_id = (long)reader["support_chara_id"],
                     };
                     data.Name = StoryTextData.ContainsKey(data.story_id) ? StoryTextData[data.story_id].text : "成長のヒント";
-                    if (data.short_story_id != 0)
-                        data.ShortStoryName = StoryTextData.ContainsKey(data.short_story_id) ? StoryTextData[data.short_story_id].text : "成長のヒント";
                     SingleModeStoryData.Add(data);
+                    if (data.short_story_id != 0)
+                    {
+                        var shorted = new SingleModeStoryData
+                        {
+                            id = (long)reader["id"],
+                            card_chara_id = (long)reader["card_chara_id"],
+                            card_id = (long)reader["card_id"],
+                            ending_type = (long)reader["ending_type"],
+                            event_title_chara_icon = (long)reader["event_title_chara_icon"],
+                            event_title_dress_icon = (long)reader["event_title_dress_icon"],
+                            event_title_style = (long)reader["event_title_style"],
+                            gallery_flag = (long)reader["gallery_flag"],
+                            gallery_list_id = (long)reader["gallery_list_id"],
+                            gallery_main_scenario = (long)reader["gallery_main_scenario"],
+                            mini_game_result = (long)reader["mini_game_result"],
+                            past_race_id = (long)reader["past_race_id"],
+                            race_event_flag = (long)reader["race_event_flag"],
+                            se_change = (long)reader["se_change"],
+                            short_story_id = (long)reader["short_story_id"],
+                            show_clear = (long)reader["show_clear"],
+                            show_progress_1 = (long)reader["show_progress_1"],
+                            show_progress_2 = (long)reader["show_progress_2"],
+                            show_succession = (long)reader["show_succession"],
+                            story_id = (long)reader["story_id"],
+                            support_card_id = (long)reader["support_card_id"],
+                            support_chara_id = (long)reader["support_chara_id"],
+                        };
+                        shorted.Name = StoryTextData.ContainsKey(shorted.short_story_id) ? StoryTextData[shorted.short_story_id].text : "成長のヒント";
+                        SingleModeStoryData.Add(shorted);
+                    }
                 }
             }
             return SingleModeStoryData;
@@ -187,7 +215,10 @@ namespace UmamusumeDeserializeDB5.Generator
                     triggerName = GetSupportCardNameByEventName(eventName);
                     if (string.IsNullOrEmpty(triggerName))
                     {
-                        eventName = CorrectEventName(eventName, 0, 0);
+                        var correctedEventName = CorrectEventName(eventName, 0, 0);
+                        correctedEventNames.Add(eventName, correctedEventName);
+                        Console.WriteLine($"纠正 {eventName} 为 {correctedEventName}");
+                        eventName = correctedEventName;
                         triggerName = GetSupportCardNameByEventName(eventName);
                     }
                 }
@@ -199,7 +230,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     id = 0;
                     charaId = 0;
                 }
-                var storyData = SingleModeStoryData.Where(x => (x.ShortStoryName == eventName || x.Name == eventName) && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
+                var storyData = SingleModeStoryData.Where(x => x.Name == eventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
                 if (!storyData.Any())
                 {
                     if (correctedEventNames.ContainsKey(eventName)) continue;
@@ -213,12 +244,9 @@ namespace UmamusumeDeserializeDB5.Generator
                     Console.WriteLine($"纠正 {eventName} 为 {correctedEventName}");
                     storyData = SingleModeStoryData.Where(x => x.Name == correctedEventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
                     if (storyData.Any())
-                        AddStory(triggerName, correctedEventName, eventCategory, storyData, choices);
+                        eventName = correctedEventName;
                 }
-                else
-                {
-                    AddStory(triggerName, eventName, eventCategory, storyData, choices);
-                }
+                AddStory(triggerName, eventName, eventCategory, storyData, choices);
             }
 
             foreach (var i in failed.Distinct()) Console.WriteLine(i);
@@ -345,7 +373,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (!possibleNames.Any()) continue;
                     if (offset == eventName.Length + 1) return eventName;
                     prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                        .Title($"Select correct event name for {eventName.EscapeMarkup()})")
+                        .Title($"Select correct event name for {eventName.EscapeMarkup()}({NameToId.FirstOrDefault(x => x.Value == charaId).Key})")
                         .PageSize(10)
                         .AddChoices(possibleNames
                             .Distinct()
