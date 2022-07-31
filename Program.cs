@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using Spectre.Console;
 using System.Data.SQLite;
+using System.IO.Compression;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -22,10 +23,21 @@ namespace UmamusumeDeserializeDB5
             new CardName().Generate();
             new ClimaxItems().Generate();
             new TalentSkillSet().Generate();
+            new FactorIds().Generate();
 
             Story.SerializeIsSupportCard = true;
             new Generator.UmamusumeEventEditor.Events().Generate(stories, new Events().GenerateSingleModeStoryData());
             new Generator.UmamusumeEventEditor.Cards().Generate();
+
+            using var ms = new MemoryStream();
+            using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+            {
+                foreach (var i in Directory.EnumerateFiles("./output", "*.br", SearchOption.TopDirectoryOnly))
+                {
+                    zip.CreateEntryFromFile(i, Path.GetFileName(i));
+                }
+            }
+            File.WriteAllBytes(@$"./output/数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
         }
     }
 

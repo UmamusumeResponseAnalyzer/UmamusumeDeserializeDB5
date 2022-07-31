@@ -29,7 +29,7 @@ namespace UmamusumeDeserializeDB5.Generator.UmamusumeEventEditor
             events.Characters.Add(2, grouped[false].Where(x => x.TriggerName == "青春杯" || x.TriggerName == "アオハル杯").ToList());
             events.Characters.Add(4, grouped[false].Where(x => x.TriggerName == "巅峰杯" || x.TriggerName == "クライマックス").ToList());
 
-            Save("editorevents", events);
+            Save("editor/editorevents", events);
         }
 
         public class EditorEvents

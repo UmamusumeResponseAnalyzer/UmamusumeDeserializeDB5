@@ -59,9 +59,10 @@ namespace UmamusumeDeserializeDB5.Generator.UmamusumeEventEditor
                     characters.Add(ch);
                 }
             }
+            characterIds = characterIds.Where(x => characters.Any(y => y.Id == x.Item1)).ToList();
             var result = characterIds.Select(x => characters.First(y => x.Item1 == y.Id && x.Item2 == y.Rarity));
 
-            Save("editorcards", result);
+            Save("editor/editorcards", result);
         }
     }
     public class Character
