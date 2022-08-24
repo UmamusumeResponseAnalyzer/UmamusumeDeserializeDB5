@@ -90,6 +90,13 @@ namespace UmamusumeDeserializeDB5.Generator
                             new SuccessChoice
                             {
                                 SelectIndex=1,
+                                Scenario=3,
+                                State=int.MaxValue,
+                                Effect="体力-15"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
                                 Scenario=4,
                                 State=int.MaxValue,
                                 Effect="体力-20"
@@ -139,6 +146,20 @@ namespace UmamusumeDeserializeDB5.Generator
                                 State=1,
                                 Effect="体力-5"
                             },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=3,
+                                State=0,
+                                Effect="体力-5"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=3,
+                                State=0,
+                                Effect="体力-20"
+                            }
                         }
                     }
                 });
@@ -197,6 +218,13 @@ namespace UmamusumeDeserializeDB5.Generator
                                 State=0,
                                 Effect="体力-35"
                             },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=3,
+                                State=1,
+                                Effect="体力-10"
+                            }
                         }
                     }
                 });

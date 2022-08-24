@@ -255,6 +255,7 @@ namespace UmamusumeDeserializeDB5.Generator
             File.WriteAllLines("correctedTriggerNames.txt", correctedTriggerNames.Select(x => $"{x.Key}【分隔符】{x.Value}"));
             events = new UnknownEvents().Generate(SingleModeStoryData, events, TextData).DistinctBy(x => x.Id).ToList();
             Save("id", TextData.Where(x => x.id == 4).ToDictionary(x => x.index, x => x.text));
+            Console.WriteLine(events.Count);
             Save("events", events);
             return events;
 
@@ -290,6 +291,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             {
                                 1 => "URA",
                                 2 => "青春杯",
+                                3 => "GrandLive",
                                 4 => "巅峰杯",
                                 _ => "未知剧本"
                             };

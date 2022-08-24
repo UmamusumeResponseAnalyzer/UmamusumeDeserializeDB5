@@ -86,6 +86,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 }
                 if (i.Name == "成長のヒント")
                 {
+                    if (i.story_id.ToString()[0] == '4') continue;
                     var charaId = int.Parse(i.story_id.ToString()[2..6]);
                     story.TriggerName = Data.NameToId.First(x => x.Value == charaId).Key;
                     story.IsSupportCard = true;
@@ -102,6 +103,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     {
                         1 => "URA",
                         2 => "青春杯",
+                        3 => "GrandLive",
                         4 => "巅峰杯",
                         _ => "未知剧本"
                     };
