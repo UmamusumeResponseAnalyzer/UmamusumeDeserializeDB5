@@ -34,7 +34,7 @@ namespace UmamusumeDeserializeDB5.Generator
             dic.Add(103, "乙名史记者");
             dic.Add(104, "桐生院葵");
             dic.Add(106, "代理理事长");
-            dic.Add(108, "ライトハロー");
+            dic.Add(108, "轻柔致意");
 
             using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
             conn.Open();
@@ -63,6 +63,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         "雷电顶载" => "成田路",
                         "山宁泽弗" => "也文摄辉",
                         "海比先生" => "Mr.CB",
+                        "ライトハロー" => "轻柔致意",
                         _ => translated
                     };
                     dic.Add((long)reader["index"], translated);

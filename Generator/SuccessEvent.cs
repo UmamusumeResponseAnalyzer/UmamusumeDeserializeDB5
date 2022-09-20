@@ -150,7 +150,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             {
                                 SelectIndex=1,
                                 Scenario=3,
-                                State=0,
+                                State=1,
                                 Effect="体力-5"
                             },
                             new SuccessChoice

@@ -11,6 +11,7 @@ namespace UmamusumeDeserializeDB5
     {
         public static List<TextData> TextData;
         public static Dictionary<string, long> NameToId;
+        public static List<SupportCardData> SupportCardData;
         static Data()
         {
             TextData = new List<TextData>();
@@ -32,6 +33,39 @@ namespace UmamusumeDeserializeDB5
                 }
             }
             NameToId = TextData.Where(x => x.index != 9100101 && x.index != 9101101).Where(x => (x.id == 4 && x.category == 4) || (x.id == 6 && x.category == 6) || (x.id == 75 && x.category == 75)).ToDictionary(x => x.text, x => x.index);
+
+            SupportCardData = new();
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = $"select * from support_card_data";
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var scd = new SupportCardData
+                    {
+                        id = (long)reader["id"],
+                        chara_id = (long)reader["chara_id"],
+                        rarity = (long)reader["rarity"],
+                        effect_table_id = (long)reader["effect_table_id"],
+                        unique_effect_id = (long)reader["unique_effect_id"],
+                        command_type = (long)reader["command_type"],
+                        command_id = (long)reader["command_id"],
+                        support_card_type = (long)reader["support_card_type"]
+                    };
+                    SupportCardData.Add(scd);
+                }
+            }
         }
+    }
+    public struct SupportCardData
+    {
+        public long id;
+        public long chara_id;
+        public long rarity;
+        public long effect_table_id;
+        public long unique_effect_id;
+        public long command_type;
+        public long command_id;
+        public long support_card_type;
     }
 }
