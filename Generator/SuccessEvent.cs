@@ -764,32 +764,6 @@ namespace UmamusumeDeserializeDB5.Generator
                     }
                 })
             });//SSR大树快车 事件二，修正kamigame
-            #region #3
-            foreach (var i in stories)
-            {
-                var choice = i.Choices.FirstOrDefault(x => x.Any(y => y.SuccessEffect.Contains("ヒントLv")));
-                if (choice != default && !string.IsNullOrEmpty(choice[0].FailedEffect))
-                {
-                    var index = i.Choices.IndexOf(choice);
-                    var story = new SuccessStory
-                    {
-                        Id = i.Id,
-                        Choices = Enumerable.Range(0, index + 1).Select(x => new List<SuccessChoice>()).ToList()
-                    };
-                    story.Choices[index] = new List<SuccessChoice>
-                    {
-                        new SuccessChoice
-                        {
-                            SelectIndex=1,
-                            Scenario=0,
-                            State=1,
-                            Effect=choice[0].SuccessEffect
-                        }
-                    };
-                    successEvent.Add(story);
-                }
-            }
-            #endregion
             #region 爱娇、切者、练习上手、注目株
             for (int i = 0; i < stories.Count; i++)
             {
@@ -820,6 +794,32 @@ namespace UmamusumeDeserializeDB5.Generator
                 }
                 if (successStory.Choices.Any(x => x.Any()))
                     successEvent.Add(successStory);
+            }
+            #endregion
+            #region #3
+            foreach (var i in stories)
+            {
+                var choice = i.Choices.FirstOrDefault(x => x.Any(y => y.SuccessEffect.Contains("ヒントLv")));
+                if (choice != default && !string.IsNullOrEmpty(choice[0].FailedEffect))
+                {
+                    var index = i.Choices.IndexOf(choice);
+                    var story = new SuccessStory
+                    {
+                        Id = i.Id,
+                        Choices = Enumerable.Range(0, index + 1).Select(x => new List<SuccessChoice>()).ToList()
+                    };
+                    story.Choices[index] = new List<SuccessChoice>
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex=1,
+                            Scenario=0,
+                            State=1,
+                            Effect=choice[0].SuccessEffect
+                        }
+                    };
+                    successEvent.Add(story);
+                }
             }
             #endregion
             #region 无选项事件且随机给不同技能hint
