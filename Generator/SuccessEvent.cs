@@ -310,6 +310,96 @@ namespace UmamusumeDeserializeDB5.Generator
                 });
             }
             #endregion
+            #region 训练失败
+            foreach (var i in stories.Where(x => x.Name.Contains("お大事に！")))
+            {
+                successEvent.Add(new SuccessStory
+                {
+                    Id = i.Id,
+                    Choices = new List<List<SuccessChoice>>
+                    {
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="心情-1 上次训练属性-5"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="心情-1 上次训练属性-5 【练习下脚】"
+                            }
+                        },
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=0,
+                                Effect="心情-1 上次训练属性-10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=1,
+                                Effect="【练习上手】"
+                            }
+                        }
+                    }
+                });
+            }
+            foreach (var i in stories.Where(x => x.Name.Contains("無茶は厳禁！") ))
+            {
+                successEvent.Add(new SuccessStory
+                {
+                    Id = i.Id,
+                    Choices = new List<List<SuccessChoice>>
+                    {
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力+10 心情-3 上次训练属性-10 随机2属性-10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力+10 心情-3 上次训练属性-10 随机2属性-10 【练习下脚】"
+                            }
+                        },
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=0,
+                                Effect="心情-3 上次训练-10 随机2属性-10 【练习下脚】"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力+10 【练习上手】"
+                            }
+                        }
+                    }
+                });
+            }
+            #endregion
             #region ライバルに勝利
             successEvent.Add(new SuccessStory
             {
