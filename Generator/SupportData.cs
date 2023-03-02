@@ -58,6 +58,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                         226 => 30105,
                                         1 => 30001,
                                         97 => 30025,
+                                        263 => 30127,
                                     };
                                     break;
                                 }

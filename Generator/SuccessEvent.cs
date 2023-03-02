@@ -48,6 +48,134 @@ namespace UmamusumeDeserializeDB5.Generator
                     successEvent.Add(i);
             }
             #endregion
+            #region 三选项特殊吃饭
+            successEvent.Add(new SuccessStory
+            {
+                Id = 501006524,
+                Choices = new List<List<SuccessChoice>>
+                    {
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力+30、パワー+10、スキルPt+10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力+30、スピード−5、パワー+5、スキルPt+10、「太り気味」獲得"
+                            }
+                        },
+                        new List<SuccessChoice>(),
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力が全回復、パワー+20、スキルPt+20"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力が全回復、スピード−20、パワー+20、スキルPt+20、「太り気味」獲得"
+                            }
+                        }
+                    }
+            });//小栗帽
+            successEvent.Add(new SuccessStory
+            {
+                Id = 501013524,
+                Choices = new List<List<SuccessChoice>>
+                    {
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力+30、スタミナ+10、スキルPt+10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力+30、スピード−5、スタミナ+10、パワー+5、スキルPt+10、「太り気味」獲得"
+                            }
+                        },
+                        new List<SuccessChoice>(),
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力+50、賢さ+10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力+50、賢さ-10、「太り気味」獲得"
+                            }
+                        }
+                    }
+            });//麦昆
+            successEvent.Add(new SuccessStory
+            {
+                Id = 501001524,
+                Choices = new List<List<SuccessChoice>>
+                    {
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力+30、パワー+10、スキルPt+10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力+30、スピード−5、パワー+15、スキルPt+10、「太り気味」獲得"
+                            }
+                        },
+                        new List<SuccessChoice>(),
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力が全回復する"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力が全回復する、スピード−5、「太り気味」獲得"
+                            }
+                        }
+                    }
+            });//特别周
+            #endregion
             #region 固有
             foreach (var i in stories.Where(x => new[] { "バレンタイン", "ファン感謝祭", "クリスマス" }.Contains(x.Name)))
             {
@@ -108,6 +236,13 @@ namespace UmamusumeDeserializeDB5.Generator
                                 State=int.MaxValue,
                                 Effect="体力-20,大概率更新商店道具"
                             },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=5,
+                                State=int.MaxValue,
+                                Effect="体力-15"
+                            }
                         },
                         new List<SuccessChoice>
                         {
@@ -157,6 +292,20 @@ namespace UmamusumeDeserializeDB5.Generator
                             {
                                 SelectIndex=2,
                                 Scenario=3,
+                                State=0,
+                                Effect="体力-20"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=5,
+                                State=1,
+                                Effect="体力-5"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=5,
                                 State=0,
                                 Effect="体力-20"
                             }
@@ -392,6 +541,115 @@ namespace UmamusumeDeserializeDB5.Generator
                     })
                 });
             }
+            #endregion
+            #region 温泉抽奖
+            foreach (var i in stories.Where(x => x.Name.Contains("福引チャンス") ).Select(x => new SuccessStory
+            {
+                Id = x.Id,
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new(),
+                    new()
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex = 1,
+                            State=1,
+                            Scenario=0,
+                            Effect = "体力+30、やる気↑、全ステータス+10、URA優勝で温泉旅行"
+                        },
+                        new SuccessChoice
+                        {
+                            SelectIndex = 2,
+                            State=0,
+                            Scenario=0,
+                            Effect = "体力+30、やる気+2、全ステータス+10"
+                        },
+                        new SuccessChoice
+                        {
+                            SelectIndex = 3,
+                            State=0,
+                            Scenario=0,
+                            Effect = "体力+20、やる気+1、全ステータス+5"
+                        },
+                        new SuccessChoice
+                        {
+                            SelectIndex = 4,
+                            State=0,
+                            Scenario=0,
+                            Effect = "体力+20"
+                        },
+                        new SuccessChoice
+                        {
+                            SelectIndex = 5,
+                            State=0,
+                            Scenario=0,
+                            Effect = "やる気−1"
+                        }
+                    }
+                }
+            }))
+            {
+                if (!successEvent.Any(x => x.Id == i.Id))
+                    successEvent.Add(i);
+            }
+            #endregion
+            #region 根双涡轮
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830112001,
+                Choices = new List<List<SuccessChoice>>
+                    {
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="スピード(速度)+15、根性(毅力)+15、ツインターボの絆ゲージ+5"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力-20、スピード(速度)+10、根性(毅力)+10、『遊びはおしまいっ！』のヒントLv+1、ツインターボの絆ゲージ+5、※連続イベントが終了"
+                            }
+                        },
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="スキルPt(技能点数)+10、ツインターボの絆ゲージ+5"
+                            }
+                        }
+                    }
+            });//根两喷 事件一
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830112002,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力-5、スピード(速度)+15、根性(毅力)+15、スキルPt(技能点数)+15、ツインターボの絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                        SelectIndex = 2,
+                        State = 0,
+                        Scenario = 0,
+                        Effect = "スピード(速度)+10、根性(毅力)+10、『出力1000%！』のヒントLv+1、ツインターボの絆ゲージ+5、※連続イベントが終了"
+                    }
+                })
+            });//根两喷 事件二
             #endregion
             successEvent.Add(new SuccessStory
             {
