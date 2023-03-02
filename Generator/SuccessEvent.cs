@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -106,17 +105,6 @@ namespace UmamusumeDeserializeDB5.Generator
                             State=1,
                             Scenario=0,
                             Effect = x.Choices[0][0].SuccessEffect
-                        }
-                    },
-                    new(),
-                    new()
-                    {
-                        new SuccessChoice
-                        {
-                            SelectIndex = 1,
-                            State=1,
-                            Scenario=0,
-                            Effect = x.Choices[2][0].SuccessEffect
                         }
                     }
                 }
@@ -307,6 +295,13 @@ namespace UmamusumeDeserializeDB5.Generator
                             {
                                 SelectIndex=1,
                                 Scenario=3,
+                                State=1,
+                                Effect="体力-10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=5,
                                 State=1,
                                 Effect="体力-10"
                             }
@@ -529,7 +524,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     successEvent.Add(i);
             }
             #endregion
-            #region 根速双涡轮
+            #region 根双涡轮
             successEvent.Add(new SuccessStory
             {
                 Id = 830112001,
