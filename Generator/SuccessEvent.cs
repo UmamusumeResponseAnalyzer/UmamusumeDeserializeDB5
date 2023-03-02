@@ -529,7 +529,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     successEvent.Add(i);
             }
             #endregion
-            #region 根双涡轮
+            #region 根速双涡轮
             successEvent.Add(new SuccessStory
             {
                 Id = 830112001,
@@ -563,7 +563,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             }
                         }
                     }
-            });//根两喷 事件一
+            });//根两喷 事件一，修正kamigame
             successEvent.Add(new SuccessStory
             {
                 Id = 830112002,
@@ -584,7 +584,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         Effect = "スピード(速度)+10、根性(毅力)+10、『出力1000%！』のヒントLv+1、ツインターボの絆ゲージ+5、※連続イベントが終了"
                     }
                 })
-            });//根两喷 事件二
+            });//根两喷 事件二，修正kamigame
             #endregion
             successEvent.Add(new SuccessStory
             {
@@ -707,7 +707,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 {
                     new SuccessChoice
                     {
-                        SelectIndex = 2,
+                        SelectIndex = 1,
                         State = 1,
                         Scenario = 0,
                         Effect = "体力+10，速度+5,智力+5，技能点+10"
@@ -716,7 +716,7 @@ namespace UmamusumeDeserializeDB5.Generator
             });
             successEvent.Add(new SuccessStory
             {
-                Id = 820034001,
+                Id = 501033524,
                 Choices = CreateChoices(new List<SuccessChoice>(), new List<SuccessChoice>
                 {
                     new SuccessChoice
@@ -748,6 +748,27 @@ namespace UmamusumeDeserializeDB5.Generator
                     }
                 })
             });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830053002,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "パワー(力量)+15、『マイルコーナー◯』のヒントLv+2、タイキシャトルの絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                        SelectIndex = 2,
+                        State = 0,
+                        Scenario = 0,
+                        Effect = "パワー(力量)+10、連続イベントが終了"
+                    }
+                })
+            });//SSR大树快车 事件二，修正kamigame
             #region #3
             foreach (var i in stories)
             {
