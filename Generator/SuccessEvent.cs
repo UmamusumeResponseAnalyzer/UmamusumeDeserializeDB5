@@ -155,10 +155,10 @@ namespace UmamusumeDeserializeDB5.Generator
                             },
                             new SuccessChoice
                             {
-                                SelectIndex=2,
-                                Scenario=3,
-                                State=0,
-                                Effect="体力-20"
+                                SelectIndex=1,
+                                Scenario=5,
+                                State=1,
+                                Effect="体力-5"
                             }
                         }
                     }
