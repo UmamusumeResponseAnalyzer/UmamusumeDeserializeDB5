@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -51,90 +52,6 @@ namespace UmamusumeDeserializeDB5.Generator
             #region 三选项特殊吃饭
             successEvent.Add(new SuccessStory
             {
-                Id = 501006524,
-                Choices = new List<List<SuccessChoice>>
-                    {
-                        new List<SuccessChoice>
-                        {
-                            new SuccessChoice
-                            {
-                                SelectIndex=1,
-                                Scenario=0,
-                                State=1,
-                                Effect="体力+30、パワー+10、スキルPt+10"
-                            },
-                            new SuccessChoice
-                            {
-                                SelectIndex=2,
-                                Scenario=0,
-                                State=0,
-                                Effect="体力+30、スピード−5、パワー+5、スキルPt+10、「太り気味」獲得"
-                            }
-                        },
-                        new List<SuccessChoice>(),
-                        new List<SuccessChoice>
-                        {
-                            new SuccessChoice
-                            {
-                                SelectIndex=1,
-                                Scenario=0,
-                                State=1,
-                                Effect="体力が全回復、パワー+20、スキルPt+20"
-                            },
-                            new SuccessChoice
-                            {
-                                SelectIndex=2,
-                                Scenario=0,
-                                State=0,
-                                Effect="体力が全回復、スピード−20、パワー+20、スキルPt+20、「太り気味」獲得"
-                            }
-                        }
-                    }
-            });//小栗帽
-            successEvent.Add(new SuccessStory
-            {
-                Id = 501013524,
-                Choices = new List<List<SuccessChoice>>
-                    {
-                        new List<SuccessChoice>
-                        {
-                            new SuccessChoice
-                            {
-                                SelectIndex=1,
-                                Scenario=0,
-                                State=1,
-                                Effect="体力+30、スタミナ+10、スキルPt+10"
-                            },
-                            new SuccessChoice
-                            {
-                                SelectIndex=2,
-                                Scenario=0,
-                                State=0,
-                                Effect="体力+30、スピード−5、スタミナ+10、パワー+5、スキルPt+10、「太り気味」獲得"
-                            }
-                        },
-                        new List<SuccessChoice>(),
-                        new List<SuccessChoice>
-                        {
-                            new SuccessChoice
-                            {
-                                SelectIndex=1,
-                                Scenario=0,
-                                State=1,
-                                Effect="体力+50、賢さ+10"
-                            },
-                            new SuccessChoice
-                            {
-                                SelectIndex=2,
-                                Scenario=0,
-                                State=0,
-                                Effect="体力+50、賢さ-10、「太り気味」獲得"
-                            }
-                        }
-                    }
-            });//麦昆
-            successEvent.Add(new SuccessStory
-            {
                 Id = 501001524,
                 Choices = new List<List<SuccessChoice>>
                     {
@@ -174,7 +91,40 @@ namespace UmamusumeDeserializeDB5.Generator
                             }
                         }
                     }
-            });//特别周
+            });//特别周，修正kamigame
+            //三选项特殊吃饭通用匹配，选项1、3有失败率，selectIndex为1时成功
+            foreach (var i in stories.Where(x => x.Choices.Count == 3 && x.Choices[0].Any(x => x.FailedEffect.Contains("体力+30")) && x.Choices[0].Any(x => x.FailedEffect.Contains("「太り気味」獲得"))).Select(x => new SuccessStory
+            {
+                Id = x.Id,
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new()
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex = 1,
+                            State=1,
+                            Scenario=0,
+                            Effect = x.Choices[0][0].SuccessEffect
+                        }
+                    },
+                    new(),
+                    new()
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex = 1,
+                            State=1,
+                            Scenario=0,
+                            Effect = x.Choices[2][0].SuccessEffect
+                        }
+                    }
+                }
+            }))
+            {
+                if (!successEvent.Any(x => x.Id == i.Id))
+                    successEvent.Add(i);
+            }
             #endregion
             #region 固有
             foreach (var i in stories.Where(x => new[] { "バレンタイン", "ファン感謝祭", "クリスマス" }.Contains(x.Name)))
@@ -534,7 +484,6 @@ namespace UmamusumeDeserializeDB5.Generator
                 Id = x.Id,
                 Choices = new List<List<SuccessChoice>>
                 {
-                    new(),
                     new()
                     {
                         new SuccessChoice
@@ -547,21 +496,21 @@ namespace UmamusumeDeserializeDB5.Generator
                         new SuccessChoice
                         {
                             SelectIndex = 2,
-                            State=0,
+                            State=1,
                             Scenario=0,
                             Effect = "体力+30、やる気+2、全ステータス+10"
                         },
                         new SuccessChoice
                         {
                             SelectIndex = 3,
-                            State=0,
+                            State=1,
                             Scenario=0,
                             Effect = "体力+20、やる気+1、全ステータス+5"
                         },
                         new SuccessChoice
                         {
                             SelectIndex = 4,
-                            State=0,
+                            State=1,
                             Scenario=0,
                             Effect = "体力+20"
                         },
