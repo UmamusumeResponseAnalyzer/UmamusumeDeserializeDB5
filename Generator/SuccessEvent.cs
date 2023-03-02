@@ -48,6 +48,72 @@ namespace UmamusumeDeserializeDB5.Generator
                     successEvent.Add(i);
             }
             #endregion
+            #region 三选项特殊吃饭
+            successEvent.Add(new SuccessStory
+            {
+                Id = 501001524,
+                Choices = new List<List<SuccessChoice>>
+                    {
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力+30、パワー+10、スキルPt+10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力+30、スピード−5、パワー+15、スキルPt+10、「太り気味」獲得"
+                            }
+                        },
+                        new List<SuccessChoice>(),
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力が全回復する"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力が全回復する、スピード−5、「太り気味」獲得"
+                            }
+                        }
+                    }
+            });//特别周，修正kamigame
+            //三选项特殊吃饭通用匹配，选项1、3有失败率，selectIndex为1时成功
+            foreach (var i in stories.Where(x => x.Choices.Count == 3 && x.Choices[0].Any(x => x.FailedEffect.Contains("体力+30")) && x.Choices[0].Any(x => x.FailedEffect.Contains("「太り気味」獲得"))).Select(x => new SuccessStory
+            {
+                Id = x.Id,
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new()
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex = 1,
+                            State=1,
+                            Scenario=0,
+                            Effect = x.Choices[0][0].SuccessEffect
+                        }
+                    }
+                }
+            }))
+            {
+                if (!successEvent.Any(x => x.Id == i.Id))
+                    successEvent.Add(i);
+            }
+            #endregion
             #region 固有
             foreach (var i in stories.Where(x => new[] { "バレンタイン", "ファン感謝祭", "クリスマス" }.Contains(x.Name)))
             {
@@ -108,6 +174,13 @@ namespace UmamusumeDeserializeDB5.Generator
                                 State=int.MaxValue,
                                 Effect="体力-20,大概率更新商店道具"
                             },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=5,
+                                State=int.MaxValue,
+                                Effect="体力-15"
+                            }
                         },
                         new List<SuccessChoice>
                         {
@@ -224,6 +297,103 @@ namespace UmamusumeDeserializeDB5.Generator
                                 Scenario=3,
                                 State=1,
                                 Effect="体力-10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=5,
+                                State=1,
+                                Effect="体力-10"
+                            }
+                        }
+                    }
+                });
+            }
+            #endregion
+            #region 训练失败
+            foreach (var i in stories.Where(x => x.Name.Contains("お大事に！")))
+            {
+                successEvent.Add(new SuccessStory
+                {
+                    Id = i.Id,
+                    Choices = new List<List<SuccessChoice>>
+                    {
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="心情-1 上次训练属性-5"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="心情-1 上次训练属性-5 【练习下脚】"
+                            }
+                        },
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=0,
+                                Effect="心情-1 上次训练属性-10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=1,
+                                Effect="【练习上手】"
+                            }
+                        }
+                    }
+                });
+            }
+            foreach (var i in stories.Where(x => x.Name.Contains("無茶は厳禁！") ))
+            {
+                successEvent.Add(new SuccessStory
+                {
+                    Id = i.Id,
+                    Choices = new List<List<SuccessChoice>>
+                    {
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力+10 心情-3 上次训练属性-10 随机2属性-10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力+10 心情-3 上次训练属性-10 随机2属性-10 【练习下脚】"
+                            }
+                        },
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=0,
+                                Effect="心情-3 上次训练-10 随机2属性-10 【练习下脚】"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=1,
+                                Effect="体力+10 【练习上手】"
                             }
                         }
                     }
@@ -393,6 +563,114 @@ namespace UmamusumeDeserializeDB5.Generator
                 });
             }
             #endregion
+            #region 温泉抽奖
+            foreach (var i in stories.Where(x => x.Name.Contains("福引チャンス") ).Select(x => new SuccessStory
+            {
+                Id = x.Id,
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new()
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex = 1,
+                            State=1,
+                            Scenario=0,
+                            Effect = "体力+30、やる気↑、全ステータス+10、URA優勝で温泉旅行"
+                        },
+                        new SuccessChoice
+                        {
+                            SelectIndex = 2,
+                            State=1,
+                            Scenario=0,
+                            Effect = "体力+30、やる気+2、全ステータス+10"
+                        },
+                        new SuccessChoice
+                        {
+                            SelectIndex = 3,
+                            State=1,
+                            Scenario=0,
+                            Effect = "体力+20、やる気+1、全ステータス+5"
+                        },
+                        new SuccessChoice
+                        {
+                            SelectIndex = 4,
+                            State=1,
+                            Scenario=0,
+                            Effect = "体力+20"
+                        },
+                        new SuccessChoice
+                        {
+                            SelectIndex = 5,
+                            State=0,
+                            Scenario=0,
+                            Effect = "やる気−1"
+                        }
+                    }
+                }
+            }))
+            {
+                if (!successEvent.Any(x => x.Id == i.Id))
+                    successEvent.Add(i);
+            }
+            #endregion
+            #region 根双涡轮
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830112001,
+                Choices = new List<List<SuccessChoice>>
+                    {
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="スピード(速度)+15、根性(毅力)+15、ツインターボの絆ゲージ+5"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=2,
+                                Scenario=0,
+                                State=0,
+                                Effect="体力-20、スピード(速度)+10、根性(毅力)+10、『遊びはおしまいっ！』のヒントLv+1、ツインターボの絆ゲージ+5、※連続イベントが終了"
+                            }
+                        },
+                        new List<SuccessChoice>
+                        {
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=0,
+                                State=1,
+                                Effect="スキルPt(技能点数)+10、ツインターボの絆ゲージ+5"
+                            }
+                        }
+                    }
+            });//根两喷 事件一，修正kamigame
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830112002,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "体力-5、スピード(速度)+15、根性(毅力)+15、スキルPt(技能点数)+15、ツインターボの絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                        SelectIndex = 2,
+                        State = 0,
+                        Scenario = 0,
+                        Effect = "スピード(速度)+10、根性(毅力)+10、『出力1000%！』のヒントLv+1、ツインターボの絆ゲージ+5、※連続イベントが終了"
+                    }
+                })
+            });//根两喷 事件二，修正kamigame
+            #endregion
             successEvent.Add(new SuccessStory
             {
                 Id = 830098001,
@@ -514,7 +792,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 {
                     new SuccessChoice
                     {
-                        SelectIndex = 2,
+                        SelectIndex = 1,
                         State = 1,
                         Scenario = 0,
                         Effect = "体力+10，速度+5,智力+5，技能点+10"
@@ -523,7 +801,7 @@ namespace UmamusumeDeserializeDB5.Generator
             });
             successEvent.Add(new SuccessStory
             {
-                Id = 820034001,
+                Id = 501033524,
                 Choices = CreateChoices(new List<SuccessChoice>(), new List<SuccessChoice>
                 {
                     new SuccessChoice
@@ -555,32 +833,27 @@ namespace UmamusumeDeserializeDB5.Generator
                     }
                 })
             });
-            #region #3
-            foreach (var i in stories)
+            successEvent.Add(new SuccessStory
             {
-                var choice = i.Choices.FirstOrDefault(x => x.Any(y => y.SuccessEffect.Contains("ヒントLv")));
-                if (choice != default && !string.IsNullOrEmpty(choice[0].FailedEffect))
+                Id = 830053002,
+                Choices = CreateChoices(new List<SuccessChoice>
                 {
-                    var index = i.Choices.IndexOf(choice);
-                    var story = new SuccessStory
+                    new SuccessChoice
                     {
-                        Id = i.Id,
-                        Choices = Enumerable.Range(0, index + 1).Select(x => new List<SuccessChoice>()).ToList()
-                    };
-                    story.Choices[index] = new List<SuccessChoice>
+                        SelectIndex = 1,
+                        State = 1,
+                        Scenario = 0,
+                        Effect = "パワー(力量)+15、『マイルコーナー◯』のヒントLv+2、タイキシャトルの絆ゲージ+5"
+                    },
+                    new SuccessChoice
                     {
-                        new SuccessChoice
-                        {
-                            SelectIndex=1,
-                            Scenario=0,
-                            State=1,
-                            Effect=choice[0].SuccessEffect
-                        }
-                    };
-                    successEvent.Add(story);
-                }
-            }
-            #endregion
+                        SelectIndex = 2,
+                        State = 0,
+                        Scenario = 0,
+                        Effect = "パワー(力量)+10、連続イベントが終了"
+                    }
+                })
+            });//SSR大树快车 事件二，修正kamigame
             #region 爱娇、切者、练习上手、注目株
             for (int i = 0; i < stories.Count; i++)
             {
@@ -611,6 +884,32 @@ namespace UmamusumeDeserializeDB5.Generator
                 }
                 if (successStory.Choices.Any(x => x.Any()))
                     successEvent.Add(successStory);
+            }
+            #endregion
+            #region #3
+            foreach (var i in stories)
+            {
+                var choice = i.Choices.FirstOrDefault(x => x.Any(y => y.SuccessEffect.Contains("ヒントLv")));
+                if (choice != default && !string.IsNullOrEmpty(choice[0].FailedEffect))
+                {
+                    var index = i.Choices.IndexOf(choice);
+                    var story = new SuccessStory
+                    {
+                        Id = i.Id,
+                        Choices = Enumerable.Range(0, index + 1).Select(x => new List<SuccessChoice>()).ToList()
+                    };
+                    story.Choices[index] = new List<SuccessChoice>
+                    {
+                        new SuccessChoice
+                        {
+                            SelectIndex=1,
+                            Scenario=0,
+                            State=1,
+                            Effect=choice[0].SuccessEffect
+                        }
+                    };
+                    successEvent.Add(story);
+                }
             }
             #endregion
             #region 无选项事件且随机给不同技能hint

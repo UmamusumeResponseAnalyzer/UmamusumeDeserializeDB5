@@ -105,6 +105,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         2 => "青春杯",
                         3 => "GrandLive",
                         4 => "巅峰杯",
+                        5 => "GrandMasters",
                         _ => "未知剧本"
                     };
                 }
