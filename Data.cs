@@ -33,6 +33,7 @@ namespace UmamusumeDeserializeDB5
                 }
             }
             NameToId = TextData.Where(x => x.index != 9100101 && x.index != 9101101).Where(x => (x.id == 4 && x.category == 4) || (x.id == 6 && x.category == 6) || (x.id == 75 && x.category == 75)).ToDictionary(x => x.text, x => x.index);
+            NameToId.Add("系统", 1000);
 
             SupportCardData = new();
             using (var cmd = conn.CreateCommand())

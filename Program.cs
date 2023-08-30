@@ -24,7 +24,7 @@ namespace UmamusumeDeserializeDB5
             new ClimaxItems().Generate();
             new TalentSkillSet().Generate();
             new FactorIds().Generate();
-            new SupportDataGenerator().Generate();
+            //new SupportDataGenerator().Generate();
 
             Story.SerializeIsSupportCard = true;
             new Generator.UmamusumeEventEditor.Events().Generate(stories, new Events().GenerateSingleModeStoryData());

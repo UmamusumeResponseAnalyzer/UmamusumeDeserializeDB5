@@ -88,7 +88,10 @@ namespace UmamusumeDeserializeDB5.Generator
                 {
                     if (i.story_id.ToString()[0] == '4') continue;
                     var charaId = int.Parse(i.story_id.ToString()[2..6]);
-                    story.TriggerName = Data.NameToId.First(x => x.Value == charaId).Key;
+                    if (charaId == 1000)
+                        story.TriggerName = "系统";
+                    else
+                        story.TriggerName = Data.NameToId.First(x => x.Value == charaId).Key;
                     story.IsSupportCard = true;
                 }
                 else if (i.Name == "想いの継承" && i.story_id.ToString()[0] != '4')

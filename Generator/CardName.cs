@@ -64,6 +64,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         "山宁泽弗" => "也文摄辉",
                         "海比先生" => "Mr.CB",
                         "ライトハロー" => "轻柔致意",
+                        "ダーレーアラビアン" => "达利阿拉伯",
                         _ => translated
                     };
                     dic.Add((long)reader["index"], translated);
