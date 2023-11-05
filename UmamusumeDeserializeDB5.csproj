@@ -4,8 +4,6 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <BaseOutputPath>$(USERPROFILE)\source\builds\$(SolutionName)\Bin\$(AssemblyName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>$(USERPROFILE)\source\builds\$(SolutionName)\Obj\$(AssemblyName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
