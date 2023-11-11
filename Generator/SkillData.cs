@@ -99,7 +99,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 list.Add(skill);
             }
 
-            Save("skilldata", list);
+            Save("skill_data", list);
 
             SkillData.SkillProper ProcessCondition(string cond)
             {

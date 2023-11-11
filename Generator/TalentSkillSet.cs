@@ -91,7 +91,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     }
                 }
             }
-            Save("talentskillsets", result);
+            Save("talent_skill_sets", result);
         }
     }
     public class TalentSkill

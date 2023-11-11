@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using UmamusumeResponseAnalyzer.Entities;
 
 namespace UmamusumeDeserializeDB5.Generator
 {
@@ -14,27 +15,13 @@ namespace UmamusumeDeserializeDB5.Generator
     {
         public void Generate()
         {
-            var cn = new Dictionary<string, string>();
-            foreach (var i in JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(new WebClient().DownloadString("https://raw.githubusercontent.com/wrrwrr111/pretty-derby/master/src/assert/locales/zh_CN.json")))
-            {
-                // 因为源文件里有
-                // "Outfit as No": [
-                //     null,
-                //     ""
-                //   ],
-                // 这样的数据所以不能直接反序列化为Dictionary<string,string>
-                if (i.Value is string s)
-                {
-                    cn.Add(i.Key, s);
-                }
-            }
-            var dic = new Dictionary<long, string>();
-            dic.Add(101, "骏川手纲");
-            dic.Add(102, "理事长");
-            dic.Add(103, "乙名史记者");
-            dic.Add(104, "桐生院葵");
-            dic.Add(106, "代理理事长");
-            dic.Add(108, "轻柔致意");
+            var list = new List<BaseName>();
+            list.Add(new(101, "骏川手纲"));
+            list.Add(new(102, "理事长"));
+            list.Add(new(103, "乙名史记者"));
+            list.Add(new(104, "桐生院葵"));
+            list.Add(new(106, "代理理事长"));
+            list.Add(new(108, "轻柔致意"));
 
             using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
             conn.Open();
@@ -44,30 +31,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    var jp = (string)reader["text"];
-                    jp = jp switch
-                    {
-                        "ツルマルツヨシ" => "鹤丸刚志",
-                        "ハッピーミーク" => "快乐米可",
-                        "ビターグラッセ" => "Bitter Glasse",
-                        "リトルココン" => "Little Cocon",
-                        "秋川やよい" => "秋川弥生",
-                        _ => jp
-                    };
-                    var translated = cn.ContainsKey(jp) ? cn[jp] : jp;
-                    translated = translated switch
-                    {
-                        "梅吉罗布赖特" => "目白光明",
-                        "阿德米亚贝加" => "爱慕织姬",
-                        "鲁道夫象征" => "皇帝", //大概不是错翻但是我喊皇帝喊习惯了
-                        "雷电顶载" => "成田路",
-                        "山宁泽弗" => "也文摄辉",
-                        "海比先生" => "Mr.CB",
-                        "ライトハロー" => "轻柔致意",
-                        "ダーレーアラビアン" => "达利阿拉伯",
-                        _ => translated
-                    };
-                    dic.Add((long)reader["index"], translated);
+                    list.Add(new((long)reader["index"], (string)reader["text"]));
                 }
             }
             using (var cmd = conn.CreateCommand())
@@ -91,12 +55,52 @@ namespace UmamusumeDeserializeDB5.Generator
                         0 => "[友]",
                         _ => ""
                     });
-                    sb.Append(dic[chara_id]);
-                    dic.Add(id, sb.ToString());
+                    sb.Append(list.First(x => x.Id == chara_id).Name);
+                    list.Add(new SupportCardName(id, Data.TextData.First(x => x.category == 76 && x.index == id).text, command_id, chara_id));
                 }
             }
+            // 马名
+            foreach (var i in Data.TextData.Where(x => x.id == 5).ToDictionary(x => x.index, x => x.text))
+            {
+                list.Add(new UmaName(i.Key, i.Value));
+            }
 
-            Save("name_cn", dic);
+            Save("names", list, true);
+        }
+
+    }
+}
+
+namespace UmamusumeResponseAnalyzer.Entities
+{
+    public class BaseName
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+
+        public BaseName(long id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
+    }
+    public class SupportCardName : BaseName
+    {
+        public long CharaId { get; set; }
+        public long Type { get; set; }
+
+        public SupportCardName(long id, string name, long type, long charaId) : base(id, name)
+        {
+            Type = type;
+            CharaId = charaId;
+        }
+    }
+    public class UmaName : BaseName
+    {
+        public long CharaId { get; set; }
+        public UmaName(long id, string name) : base(id, name)
+        {
+            CharaId = long.Parse(id.ToString()[0] == '9' ? id.ToString()[1..5] : id.ToString()[..4]);
         }
     }
 }

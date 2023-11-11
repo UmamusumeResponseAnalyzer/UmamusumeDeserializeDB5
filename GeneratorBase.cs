@@ -9,7 +9,7 @@ namespace UmamusumeDeserializeDB5
 {
     internal class GeneratorBase
     {
-        public void Save(string filename, object content)
+        public void Save(string filename, object content, bool typename = false)
         {
             Directory.CreateDirectory("./output");
             Directory.CreateDirectory("./output/json/");
@@ -22,8 +22,18 @@ namespace UmamusumeDeserializeDB5
                     Directory.CreateDirectory(@$"./output/json/{i}/");
                 }
             }
-            File.WriteAllBytes(@$"./output/{filename}.br", Brotli.Compress(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(content))));
-            File.WriteAllText(@$"./output/json/{filename}.json", JsonConvert.SerializeObject(content, Formatting.Indented));
+            string text;
+            if (typename)
+            {
+                text = JsonConvert.SerializeObject(content, typename ? new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All } : null);
+                text = text.Replace("UmamusumeDeserializeDB5", "UmamusumeResponseAnalyzer");
+            }
+            else
+            {
+                text = JsonConvert.SerializeObject(content);
+            }
+            File.WriteAllBytes(@$"./output/{filename}.br", Brotli.Compress(Encoding.UTF8.GetBytes(text)));
+            File.WriteAllText(@$"./output/json/{filename}.json", JsonConvert.SerializeObject(JsonConvert.DeserializeObject(text), Formatting.Indented));
         }
     }
 }

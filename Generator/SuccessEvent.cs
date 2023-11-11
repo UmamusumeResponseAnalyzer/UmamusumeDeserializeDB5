@@ -933,7 +933,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 }));
             #endregion
 
-            Save("successevents", successEvent.DistinctBy(x => x.Id));
+            Save("success_events", successEvent.DistinctBy(x => x.Id));
 
             List<List<SuccessChoice>> CreateChoices(params List<SuccessChoice>[] choices)
             {

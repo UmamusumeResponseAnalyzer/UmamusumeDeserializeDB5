@@ -10,6 +10,7 @@ namespace UmamusumeDeserializeDB5.Generator
 {
     internal class ClimaxItems : GeneratorBase
     {
+        Dictionary<int, string> kv = new();
         public void Generate()
         {
             var dic = new Dictionary<long, string>();
@@ -26,8 +27,15 @@ namespace UmamusumeDeserializeDB5.Generator
                     dic.Add((long)reader["index"], CN(jp));
                 }
             }
-
-            Save("climaxitems", dic);
+            kv = new() { { 1001, "" }, { 1002, "" } };
+            var sb = new StringBuilder();
+            foreach (var i in dic)
+            {
+                sb.Append($"{{ {i.Key}, \"{i.Value}\" }}, ");
+            }
+            sb.Length -= 2;
+            Console.WriteLine($"Climax Items: {sb}");
+            //Save("climax_items", dic);
         }
         static string CN(string text)
         {
