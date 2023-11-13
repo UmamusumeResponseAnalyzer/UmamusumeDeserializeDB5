@@ -17,6 +17,7 @@ namespace UmamusumeDeserializeDB5
         public static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+            TLGTranslate.load();
             var stories = new Events().Generate();
             new SuccessEvent().Generate(stories);
             new SkillDataMgr().Generate();

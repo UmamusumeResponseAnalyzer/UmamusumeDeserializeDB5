@@ -31,7 +31,11 @@ namespace UmamusumeDeserializeDB5.Generator
                         }
                     }
                 };
+                // 翻译
+                if (i.card_chara_id > 0)
+                    story.TriggerName = TLGTranslate.queryText(6, i.card_chara_id, story.TriggerName);
                 var similarEvent = stories.FirstOrDefault(x => x.Name == i.Name);
+                Console.WriteLine(i.Name);
                 if (i.Name == "お大事に！")
                 {
                     story.Choices = new List<List<Choice>>
@@ -91,13 +95,19 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (charaId == 1000)
                         story.TriggerName = "系统";
                     else
+                    {
                         story.TriggerName = Data.NameToId.First(x => x.Value == charaId).Key;
-                    story.IsSupportCard = true;
+                        // 翻译
+                        story.TriggerName = TLGTranslate.queryText(6, charaId, story.TriggerName);
+                        story.IsSupportCard = true;
+                    }
                 }
                 else if (i.Name == "想いの継承" && i.story_id.ToString()[0] != '4')
                 {
                     var charaId = int.Parse(i.story_id.ToString()[2..6]);
                     story.TriggerName = Data.NameToId.First(x => x.Value == charaId).Key;
+                    // 翻译
+                    story.TriggerName = TLGTranslate.queryText(6, charaId, story.TriggerName);
                     story.IsSupportCard = false;
                 }
                 if (i.gallery_main_scenario != 0)

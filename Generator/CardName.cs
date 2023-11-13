@@ -31,7 +31,10 @@ namespace UmamusumeDeserializeDB5.Generator
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    list.Add(new((long)reader["index"], (string)reader["text"]));
+                    long index = (long)reader["index"];
+                    string name = TLGTranslate.queryText(170, index, (string)reader["text"]);
+                    //  list.Add(new((long)reader["index"], (string)reader["text"]));
+                    list.Add(new(index, name));
                 }
             }
             using (var cmd = conn.CreateCommand())
@@ -56,13 +59,16 @@ namespace UmamusumeDeserializeDB5.Generator
                         _ => ""
                     });
                     sb.Append(list.First(x => x.Id == chara_id).Name);
-                    list.Add(new SupportCardName(id, Data.TextData.First(x => x.category == 76 && x.index == id).text, command_id, chara_id));
+                    string cardName = Data.TextData.First(x => x.category == 76 && x.index == id).text;
+                    cardName = TLGTranslate.queryText(76, id, cardName);
+                    list.Add(new SupportCardName(id, cardName, command_id, chara_id));
                 }
             }
             // 马名
             foreach (var i in Data.TextData.Where(x => x.id == 5).ToDictionary(x => x.index, x => x.text))
             {
-                list.Add(new UmaName(i.Key, i.Value));
+                string umaName = TLGTranslate.queryText(5, i.Key, i.Value);
+                list.Add(new UmaName(i.Key, umaName));
             }
 
             Save("names", list, true);

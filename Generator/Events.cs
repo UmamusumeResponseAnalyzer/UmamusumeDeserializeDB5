@@ -67,7 +67,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         support_card_id = (long)reader["support_card_id"],
                         support_chara_id = (long)reader["support_chara_id"],
                     };
-                    data.Name = StoryTextData.ContainsKey(data.story_id) ? StoryTextData[data.story_id].text : "成長のヒント";
+                    data.Name = StoryTextData.ContainsKey(data.story_id) ? StoryTextData[data.story_id].text : "成长的灵感";
                     SingleModeStoryData.Add(data);
                     if (data.short_story_id != 0)
                     {
@@ -96,7 +96,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             support_card_id = (long)reader["support_card_id"],
                             support_chara_id = (long)reader["support_chara_id"],
                         };
-                        shorted.Name = StoryTextData.ContainsKey(shorted.short_story_id) ? StoryTextData[shorted.short_story_id].text : "成長のヒント";
+                        shorted.Name = StoryTextData.ContainsKey(shorted.short_story_id) ? StoryTextData[shorted.short_story_id].text : "成长的灵感";
                         SingleModeStoryData.Add(shorted);
                     }
                 }
@@ -177,6 +177,8 @@ namespace UmamusumeDeserializeDB5.Generator
                 if (string.IsNullOrEmpty(eventName) || string.IsNullOrEmpty(item[2]!.ToString())) continue;
                 var eventCategory = item[1]!.ToString();
                 var triggerName = Data.NameToId.FirstOrDefault(x => x.Key == item[2]!.ToString()).Key;
+                if (eventCategory == "メインシナリオ")
+                    triggerName = "未知剧本";
                 if (triggerName == default && !correctedTriggerNames.TryGetValue(item[2]!.ToString(), out triggerName))
                 {
                     var corrected = CorrectTriggerName(item[2]!.ToString(), eventCategory == "サポートカード");
@@ -206,8 +208,8 @@ namespace UmamusumeDeserializeDB5.Generator
                     choices.Add(new Choice
                     {
                         Option = options[j],
-                        SuccessEffect = successEffect,
-                        FailedEffect = failureEffect
+                        SuccessEffect = TLGTranslate.staticReplace(successEffect),
+                        FailedEffect = TLGTranslate.staticReplace(failureEffect)
                     });
                 }
                 if (eventCategory == "サポートカード")
@@ -215,7 +217,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     triggerName = GetSupportCardNameByEventName(eventName);
                     if (string.IsNullOrEmpty(triggerName))
                     {
-                        var correctedEventName = CorrectEventName(eventName, 0, 0);
+                        var correctedEventName = CorrectEventName(eventName, 0, 0).Name;
                         correctedEventNames.Add(eventName, correctedEventName);
                         Console.WriteLine($"纠正 {eventName} 为 {correctedEventName}");
                         eventName = correctedEventName;
@@ -231,17 +233,24 @@ namespace UmamusumeDeserializeDB5.Generator
                     charaId = 0;
                 }
                 var storyData = SingleModeStoryData.Where(x => x.Name == eventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
+                // kamigame数据里可能有一些是剧本事件，或者马娘ID搞错了的（例如数码（老码啊！！），需要进行纠正
                 if (!storyData.Any())
                 {
                     if (correctedEventNames.ContainsKey(eventName)) continue;
-                    var correctedEventName = CorrectEventName(eventName, charaId, id);
-                    if (eventName == correctedEventName)
+                    var correctedEventData = CorrectEventName(eventName, charaId, id);
+                    if (correctedEventData == null)
                     {
-                        failed.Add($"Can't Find {eventName}||{correctedEventName} For {id}||{charaId}||{triggerName} In Cy's Database!");
+                        failed.Add($"Can't Find {eventName} For {id}||{charaId}||{triggerName} In Cy's Database!");
                         continue;
                     }
+                    if (eventCategory == "メインシナリオ")
+                    {
+                        correctedEventData.card_chara_id = 0;
+                    }
+                    string correctedEventName = correctedEventData.Name;
                     correctedEventNames.Add(eventName, correctedEventName);
-                    Console.WriteLine($"纠正 {eventName} 为 {correctedEventName}");
+                    Console.WriteLine($"纠正 {eventName} charaId={charaId} 为 {correctedEventName} charaId={correctedEventData.card_chara_id}");
+                    charaId = correctedEventData.card_chara_id;
                     storyData = SingleModeStoryData.Where(x => x.Name == correctedEventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
                     if (storyData.Any())
                         eventName = correctedEventName;
@@ -268,7 +277,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         {
                             return;
                         }
-                        if (j.card_id != 0)
+                        if (j.support_chara_id != 0)
                         {
                             triggerName = Data.NameToId.First(x => x.Value == j.card_id).Key;
                         }
@@ -280,10 +289,9 @@ namespace UmamusumeDeserializeDB5.Generator
                         {
                             triggerName = Data.NameToId.First(x => x.Value == j.support_card_id).Key;
                         }
-                        else if (j.support_chara_id != 0)
-                        {
-                            triggerName = Data.NameToId.First(x => x.Value == j.support_chara_id).Key;
-                        }
+                        // 翻译
+                        triggerName = TLGTranslate.queryTriggerName(j, triggerName);
+
                         if (j.gallery_main_scenario != 0)
                         {
                             triggerName = j.gallery_main_scenario switch
@@ -299,7 +307,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         events.Add(new Story
                         {
                             Id = j.story_id,
-                            Name = eventName,
+                            Name = TLGTranslate.queryEventName(j.story_id, eventName),
                             TriggerName = triggerName,
                             IsSupportCard = eventCategory == "サポートカード",
                             Choices = choices.Select(x => new List<Choice> { x }).ToList()
@@ -308,15 +316,19 @@ namespace UmamusumeDeserializeDB5.Generator
                 }
                 else
                 {
+                    if (storyData.Count() == 0)
+                        return;
+
                     var j = storyData.First();
                     if (events.Where(x => x.Id == j.story_id).Any())
                     {
                         return;
                     }
-                    if (((j.card_chara_id != 0 && j.card_id == 0) || j.support_chara_id != 0) && triggerName.Contains(']'))
-                    {
-                        triggerName = triggerName[(triggerName.IndexOf(']') + 1)..];
-                    }
+                    // 过滤[]
+                    // if (triggerName.Contains(']'))
+                    //     triggerName = triggerName[(triggerName.IndexOf(']') + 1)..];
+                    // 翻译
+                    triggerName = TLGTranslate.queryTriggerName(j, triggerName);
                     if (SpecialCardEvents.Any(x => x.Value.Contains(j)) && !triggerName.Contains(']'))
                     {
                         triggerName = Data.NameToId.First(x => x.Value == j.card_id).Key;
@@ -324,7 +336,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     events.Add(new Story
                     {
                         Id = j.story_id,
-                        Name = eventName,
+                        Name = TLGTranslate.queryEventName(j.story_id, eventName),
                         TriggerName = triggerName,
                         IsSupportCard = eventCategory == "サポートカード",
                         Choices = choices.Select(x => new List<Choice> { x }).ToList()
@@ -347,36 +359,29 @@ namespace UmamusumeDeserializeDB5.Generator
                 var actualId = Math.Max(data.support_chara_id, data.support_card_id); //这两个必定有一个是0
                 return Data.NameToId.First(x => x.Value == actualId).Key;
             }
-            string CorrectEventName(string eventName, long charaId, long id)
+            SingleModeStoryData? CorrectEventName(string eventName, long charaId, long id)
             {
-                var prompt = "NONE";
+                SingleModeStoryData? prompt = null;
                 var offset = 1;
                 do
                 {
                     var fragment = eventName.Length - offset;
-                    var possibleNames = (charaId == 0 && id == 0) ?
-                        SingleModeStoryData
-                        .Where(x => (
-                            x.Name.StartsWith(eventName[..fragment]) ||
-                            x.Name.EndsWith(eventName[fragment..]) ||
-                            x.Name.Contains(eventName[..fragment][fragment..])) &&
-                            (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId))
-                        .Select(x => x.Name)
-                        .ToList() :
+                    //   var possibleNames = (charaId == 0 && id == 0) ?
+                    var possibleNames = 
                         SingleModeStoryData
                         .Where(x => (
                             x.Name.StartsWith(eventName[..fragment]) ||
                             x.Name.EndsWith(eventName[fragment..]) ||
                             x.Name.Contains(eventName[..fragment][fragment..])))
-                        .Select(x => x.Name)
                         .ToList();
                     offset++;
                     if (possibleNames.Count == 1) return possibleNames[0];
                     if (!possibleNames.Any()) continue;
-                    if (offset == eventName.Length + 1) return eventName;
+                    if (offset == eventName.Length + 1) return null;
+                    /*
                     prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title($"Select correct event name for {eventName.EscapeMarkup()}({Data.NameToId.FirstOrDefault(x => x.Value == charaId).Key})")
-                        .PageSize(10)
+                        .PageSize(20)
                         .AddChoices(possibleNames
                             .Distinct()
                             .Where(x => x.Intersect(eventName).Count() > 2)
@@ -386,8 +391,17 @@ namespace UmamusumeDeserializeDB5.Generator
                             .Select(x => x.EscapeMarkup()))
                         );
                     if (prompt == "NONE") return eventName;
-                } while (prompt == "SHOW MORE");
-                return prompt.Replace("[[", "[").Replace("]]", "]");
+                    */
+                    var candidates = possibleNames
+                            .Distinct()
+                            .Where(x => x.Name.Intersect(eventName).Count() > 2)
+                            .OrderByDescending(x => x.Name.Intersect(eventName).Count());
+                    if (candidates.Count() == 0)
+                        continue;
+                    else
+                        prompt = candidates.First();
+                } while (prompt == null);
+                return prompt;
             }
             string CorrectTriggerName(string triggerName, bool isSupportCard)
             {
@@ -407,9 +421,10 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (possibleNames.Count == 1) return possibleNames[0];
                     if (!possibleNames.Any()) continue;
                     if (offset == triggerName.Length + 1) return triggerName;
+                    /*
                     prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title($"Select correct trigger name for {triggerName} ({isSupportCard})")
-                        .PageSize(10)
+                        .PageSize(20)
                         .AddChoices(possibleNames
                             .Distinct()
                             .Where(x => x.Intersect(triggerName).Count() > 2)
@@ -419,6 +434,16 @@ namespace UmamusumeDeserializeDB5.Generator
                             .Select(x => x.EscapeMarkup()))
                         );
                     if (prompt == "KEEP CURRENT") return triggerName;
+                    */
+                    var candidates = possibleNames
+                        .Distinct()
+                        .Where(x => x.Intersect(triggerName).Count() > 2)
+                        .OrderByDescending(x => x.Intersect(triggerName).Count())
+                        .Select(x => x.EscapeMarkup());
+                    if (candidates.Count() == 0)
+                        continue;
+                    else
+                        prompt = candidates.First();
                 } while (prompt == "SHOW MORE");
                 return prompt.Replace("[[", "[").Replace("]]", "]"); // un-EscapeMarkup
             }
