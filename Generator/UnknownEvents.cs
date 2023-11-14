@@ -24,9 +24,9 @@ namespace UmamusumeDeserializeDB5.Generator
                         {
                             new Choice
                             {
-                                Option = "未知选项",
-                                SuccessEffect = "未知效果",
-                                FailedEffect = "未知效果"
+                                Option = "无选项",
+                                SuccessEffect = "通用事件",
+                                FailedEffect = "通用事件"
                             }
                         }
                     }
@@ -35,7 +35,6 @@ namespace UmamusumeDeserializeDB5.Generator
                 if (i.card_chara_id > 0)
                     story.TriggerName = TLGTranslate.queryText(6, i.card_chara_id, story.TriggerName);
                 var similarEvent = stories.FirstOrDefault(x => x.Name == i.Name);
-                Console.WriteLine(i.Name);
                 if (i.Name == "お大事に！")
                 {
                     story.Choices = new List<List<Choice>>
@@ -88,7 +87,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     stories.Add(story);
                     continue;
                 }
-                if (i.Name == "成長のヒント")
+                if (i.Name == "成長のヒント" || i.Name == "成长的灵感")
                 {
                     if (i.story_id.ToString()[0] == '4') continue;
                     var charaId = int.Parse(i.story_id.ToString()[2..6]);
@@ -119,6 +118,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         3 => "GrandLive",
                         4 => "巅峰杯",
                         5 => "GrandMasters",
+                        6 => "LArc",
                         _ => "未知剧本"
                     };
                 }
@@ -133,6 +133,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         story.TriggerName = "青春杯";
                     }
                 }
+                Console.WriteLine($"{i.Name} -> {story.TriggerName}");
                 stories.Add(story);
             }
             return stories;

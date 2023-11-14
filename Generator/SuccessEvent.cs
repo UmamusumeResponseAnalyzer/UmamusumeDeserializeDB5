@@ -892,7 +892,57 @@ namespace UmamusumeDeserializeDB5.Generator
                     successEvent.Add(successStory);
             }
             #endregion
-            #region #3
+            #region 神鹰
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830161001,
+                Choices = new List<List<SuccessChoice>>
+                {
+                     new() {
+                        new SuccessChoice   // 第1个选项
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="速度+15、「テンポアップ」的Hint Lv+3、神鹰的羁绊+15"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2, // 返回状态
+                             State=0,   // 失败
+                             Scenario=0,
+                             Effect="速度+5、「テンポアップ」的Hint Lv+1、神鹰的羁绊+5"
+                        }
+                    },
+                    new()
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830161003,
+                Choices = CreateChoices(new List<SuccessChoice>
+                    {
+                        new SuccessChoice   // 第1个选项
+                        {
+                            SelectIndex=1, // 返回状态
+                            State=1,   // 成功
+                            Scenario=0,
+                            Effect="速度+20、耐力+20、「王手」的Hint Lv+3、神鹰的羁绊+5"
+                        },
+                    }, new List<SuccessChoice>
+                    {
+                        new SuccessChoice   // 第2个选项
+                        {
+                            SelectIndex=3, // 返回状态
+                            State=1,   // 成功
+                            Scenario=0,
+                            Effect="体力+10、速度+10、耐力+10、技能Pt+10、「弧線的プロフェッサー」的Hint Lv+3、神鹰的羁绊+5"
+                        }
+                    }
+                )
+            });
+            #endregion
+            #region wildcard
             foreach (var i in stories)
             {
                 var choice = i.Choices.FirstOrDefault(x => x.Any(y => y.SuccessEffect.Contains("ヒントLv") || y.SuccessEffect.Contains("Hint Lv")));
@@ -986,71 +1036,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 }
             });
             #endregion
-            #region 神鹰
-            successEvent.Add(new SuccessStory
-            {
-                Id = 830161001,
-                Choices = new List<List<SuccessChoice>>
-                {
-                     new() {
-                        new SuccessChoice   // 第1个选项
-                        {
-                             SelectIndex=1, // 返回状态
-                             State=1,   // 成功
-                             Scenario=0,
-                             Effect="速度+15、「テンポアップ」的Hint Lv+3、神鹰的羁绊+15"
-                        },
-                        new SuccessChoice
-                        {
-                             SelectIndex=2, // 返回状态
-                             State=0,   // 失败
-                             Scenario=0,
-                             Effect="速度+5、「テンポアップ」的Hint Lv+1、神鹰的羁绊+5"
-                        }
-                    },
-                    new()
-                }
-            });
-            successEvent.Add(new SuccessStory
-            {
-                Id = 830161003,
-                Choices = new List<List<SuccessChoice>>
-                {
-                     new() {
-                        new SuccessChoice   // 第1个选项
-                        {
-                             SelectIndex=1, // 返回状态
-                             State=1,   // 成功
-                             Scenario=0,
-                             Effect="速度+20、耐力+20、「王手」的Hint Lv+3、神鹰的羁绊+5"
-                        },
-                        new SuccessChoice
-                        {
-                             SelectIndex=2, // 返回状态
-                             State=0,   // 失败
-                             Scenario=0,
-                             Effect="速度+10、耐力+5、「王手」的Hint Lv+1、神鹰的羁绊+5"
-                        }
-                    },
-                    new() {
-                        new SuccessChoice   // 第2个选项
-                        {
-                                SelectIndex=3, // 返回状态
-                                State=1,   // 成功
-                                Scenario=0,
-                                Effect="体力+10、速度+10、耐力+10、技能Pt+10、「弧線的プロフェッサー」的Hint Lv+3、神鹰的羁绊+5"
-                        },
-                        new SuccessChoice
-                        {
-                                SelectIndex=4, // 返回状态
-                                State=0,   // 失败
-                                Scenario=0,
-                                Effect="体力+5、速度+5、耐力+5、「弧線的プロフェッサー」的Hint Lv+1、神鹰的羁绊+5"
-                        }
-                    },
-                }
-            });
-            #endregion
+            
             Save("success_events", successEvent.DistinctBy(x => x.Id));
 
             List<List<SuccessChoice>> CreateChoices(params List<SuccessChoice>[] choices)
