@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace UmamusumeDeserializeDB5.Generator
@@ -13,6 +15,15 @@ namespace UmamusumeDeserializeDB5.Generator
         List<AvailableSkillSetTable> AvailableSkillSetTableList = new();
         List<SkillUpgradeConditionTable> SkillUpgradeConditionTables = new();
         List<SkillUpgradeDescriptionTable> SkillUpgradeDescriptionTable = new();
+        Dictionary<long, string> ConditionText = new();
+
+        Regex Proper = new Regex("＜(.*?)＞のスキルを(.*?)個以上所持する");
+        Regex Specific = new Regex("「(.*?)」");
+        Regex Speed = new Regex("速度が上がるスキルを(.*?)個以上所持する");
+        Regex Recovery = new Regex("持久力が回復するスキルを(.*?)個以上所持する");
+        Regex Acceleration = new Regex("加速力が上がるスキルを(.*?)個以上所持する");
+        Regex Lane = new Regex("コース取りがうまくなるスキルを(.*?)個以上所持する");
+        Regex Stat = new Regex("能力を引き出すスキルを(.*?)個以上所持する");
         void PrepareDB()
         {
             using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
@@ -63,6 +74,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     });
                 }
             }
+            ConditionText = Data.TextData.Where(x => x.category == 290).ToDictionary(x => x.index, x => x.text);
         }
         public void Generate()
         {
@@ -78,13 +90,114 @@ namespace UmamusumeDeserializeDB5.Generator
                 var upgraded = SkillUpgradeDescriptionTable.Where(x => x.card_id == i.Key);
                 foreach (var j in upgraded)
                 {
+                    var upgradeSkills = conditions[j.skill_id].Select(conditionId =>
+                    {
+                        var detail = new TalentSkill.UpgradeDetail
+                        {
+                            UpgradedSkillId = j.skill_id
+                        };
+                        var conditions = new List<TalentSkill.UpgradeDetail.UpgradeCondition>();
+                        var conditionText = ConditionText[conditionId];
+                        if (conditionText.Contains('＜') && conditionText.Contains('＞'))
+                        {
+                            var regex = Proper.Match(conditionText);
+                            conditions.Add(new TalentSkill.UpgradeDetail.UpgradeCondition
+                            {
+                                ConditionId = conditionId,
+                                Type = TalentSkill.UpgradeDetail.UpgradeCondition.ConditionType.Proper,
+                                Requirement = regex.Groups[1].Value switch
+                                {
+                                    "逃げ" => 1,
+                                    "先行" => 2,
+                                    "差し" => 3,
+                                    "追込" => 4,
+                                    "短距離" => 5,
+                                    "マイル" => 6,
+                                    "中距離" => 7,
+                                    "長距離" => 8,
+                                    "ダート" => 9
+                                },
+                                AdditionalRequirement = long.Parse(regex.Groups[2].Value)
+                            });
+                        }
+                        else if (conditionText.Contains("を所持する"))
+                        {
+                            var regex = Specific.Match(conditionText).Groups[1].Value;
+                            var skillId = Data.TextData.First(x => x.category == 47 && x.text == regex).index;
+                            conditions.Add(new TalentSkill.UpgradeDetail.UpgradeCondition
+                            {
+                                ConditionId = conditionId,
+                                Type = TalentSkill.UpgradeDetail.UpgradeCondition.ConditionType.Specific,
+                                Requirement = skillId
+                            });
+                        }
+                        else if (conditionText.Contains("速度が上がるスキル"))
+                        {
+                            var regex = Speed.Match(conditionText).Groups[1].Value;
+                            conditions.Add(new TalentSkill.UpgradeDetail.UpgradeCondition
+                            {
+                                ConditionId = conditionId,
+                                Type = TalentSkill.UpgradeDetail.UpgradeCondition.ConditionType.Speed,
+                                Requirement = long.Parse(regex)
+                            });
+                        }
+                        else if (conditionText.Contains("持久力が回復する"))
+                        {
+                            var regex = Recovery.Match(conditionText).Groups[1].Value;
+                            conditions.Add(new TalentSkill.UpgradeDetail.UpgradeCondition
+                            {
+                                ConditionId = conditionId,
+                                Type = TalentSkill.UpgradeDetail.UpgradeCondition.ConditionType.Recovery,
+                                Requirement = long.Parse(regex)
+                            });
+                        }
+                        else if (conditionText.Contains("加速力が上がるスキル"))
+                        {
+                            var regex = Acceleration.Match(conditionText).Groups[1].Value;
+                            conditions.Add(new TalentSkill.UpgradeDetail.UpgradeCondition
+                            {
+                                ConditionId = conditionId,
+                                Type = TalentSkill.UpgradeDetail.UpgradeCondition.ConditionType.Acceleration,
+                                Requirement = long.Parse(regex)
+                            });
+                        }
+                        else if (conditionText.Contains("コース取りがうまくなる"))
+                        {
+                            var regex = Lane.Match(conditionText).Groups[1].Value;
+                            conditions.Add(new TalentSkill.UpgradeDetail.UpgradeCondition
+                            {
+                                ConditionId = conditionId,
+                                Type = TalentSkill.UpgradeDetail.UpgradeCondition.ConditionType.Lane,
+                                Requirement = long.Parse(regex)
+                            });
+                        }
+                        else if (conditionText.Contains("能力を引き出すスキル"))
+                        {
+                            var regex = Stat.Match(conditionText).Groups[1].Value;
+                            conditions.Add(new TalentSkill.UpgradeDetail.UpgradeCondition
+                            {
+                                ConditionId = conditionId,
+                                Type = TalentSkill.UpgradeDetail.UpgradeCondition.ConditionType.Stat,
+                                Requirement = long.Parse(regex)
+                            });
+                        }
+                        else
+                        {
+                            conditions.Add(new TalentSkill.UpgradeDetail.UpgradeCondition
+                            {
+                                ConditionId = conditionId,
+                            });
+                        }
+                        detail.Conditions = conditions.ToArray();
+                        return detail;
+                    });
                     switch (j.rank)
                     {
                         case 3:
-                            i.Value[i.Value.IndexOf(i.Value.First(x => x.Rank == 3))].UpgradeSkills.Add(j.skill_id, conditions[j.skill_id].ToArray());
+                            i.Value[i.Value.IndexOf(i.Value.First(x => x.Rank == 3))].UpgradeSkills.Add(j.skill_id, upgradeSkills.Where(x => x != null).ToArray());
                             break;
                         case 5:
-                            i.Value[i.Value.IndexOf(i.Value.First(x => x.Rank == 5))].UpgradeSkills.Add(j.skill_id, conditions[j.skill_id].ToArray());
+                            i.Value[i.Value.IndexOf(i.Value.First(x => x.Rank == 5))].UpgradeSkills.Add(j.skill_id, upgradeSkills.Where(x => x != null).ToArray());
                             break;
                         default:
                             throw new Exception("出现了白技能的进化技能？");
@@ -98,7 +211,33 @@ namespace UmamusumeDeserializeDB5.Generator
     {
         public long SkillId;
         public long Rank;
-        public Dictionary<long, long[]> UpgradeSkills = new();
+        public Dictionary<long, UpgradeDetail[]> UpgradeSkills = new();
+
+        public class UpgradeDetail
+        {
+            public long UpgradedSkillId;
+            public UpgradeCondition[] Conditions;
+
+            public class UpgradeCondition
+            {
+                public long ConditionId;
+                public ConditionType Type;
+                public long Requirement;
+                public long AdditionalRequirement;
+
+                public enum ConditionType
+                {
+                    None,
+                    Proper,
+                    Specific,
+                    Speed,
+                    Acceleration,
+                    Recovery,
+                    Lane,
+                    Stat
+                }
+            }
+        }
     }
     public class AvailableSkillSetTable
     {

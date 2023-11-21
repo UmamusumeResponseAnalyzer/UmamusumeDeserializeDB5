@@ -36,7 +36,8 @@ namespace UmamusumeDeserializeDB5.Generator
                         condition_1 = (string)reader["condition_1"],
                         precondition_2 = (string)reader["precondition_2"],
                         condition_2 = (string)reader["condition_2"],
-                        disp_order = (long)reader["disp_order"]
+                        disp_order = (long)reader["disp_order"],
+                        icon_id = (long)reader["icon_id"]
                     });
                 }
             }
@@ -73,7 +74,35 @@ namespace UmamusumeDeserializeDB5.Generator
                     Grade = (int)i.grade_value,
                     Name = IdToName[i.id],
                     Cost = SkillNeedPointTable.ContainsKey(i.id) ? (int)SkillNeedPointTable[i.id] : 0,
-                    DisplayOrder = (int)i.disp_order
+                    DisplayOrder = (int)i.disp_order,
+                    Category = i.icon_id switch
+                    {
+                        // 10011 or 10012 or 10014 or 10016 白 金 紫 进化
+                        > 10000 and < 20000 => SkillData.SkillCategory.Stat,
+                        > 20010 and < 20020 => SkillData.SkillCategory.Speed,
+                        > 20020 and < 20030 => SkillData.SkillCategory.Recovery,
+                        > 20040 and < 20050 => SkillData.SkillCategory.Acceleration,
+                        > 20050 and < 20060 => SkillData.SkillCategory.Lane,
+                        > 20060 and < 20070 => SkillData.SkillCategory.Reaction,
+                        > 20090 and < 20100 => SkillData.SkillCategory.Observation,
+                        20101 or 20102 => SkillData.SkillCategory.Speed, //点火速
+                        20111 or 20112 => SkillData.SkillCategory.Recovery, //点火体
+                        20121 or 20122 => SkillData.SkillCategory.Acceleration, //点火力
+                        20131 or 20132 => SkillData.SkillCategory.Lane, //点火智
+                        20141 or 20142 => SkillData.SkillCategory.Speed, //綺羅星
+                        20151 or 20152 => SkillData.SkillCategory.Speed, //夢の途中
+                        20161 or 20162 => SkillData.SkillCategory.Speed, //限界の先へ
+                        20171 => SkillData.SkillCategory.Acceleration, //レースの真髄・根
+                        20181 => SkillData.SkillCategory.Stat, //レースの真髄・心
+                        20191 or 20192 => SkillData.SkillCategory.Speed, //陽の加護
+                        20201 or 20202 => SkillData.SkillCategory.Acceleration, //海の加護
+                        20211 or 20212 => SkillData.SkillCategory.Speed, //想いを背負って
+                        > 30000 and < 40000 => SkillData.SkillCategory.Debuff,
+                        > 40000 and < 50000 => SkillData.SkillCategory.Special, //40012大逃
+                        > 1000000 and < 2000000 => SkillData.SkillCategory.Special, //嘉年华bonus LoH技能
+                        2010010 or 2010016 => SkillData.SkillCategory.Speed, //日本一のウマ娘
+                        _ => throw new Exception("出现了未知的icon_id: " + i.icon_id)
+                    }
                 };
 
                 var propers = new List<SkillData.SkillProper>();
@@ -179,6 +208,7 @@ namespace UmamusumeDeserializeDB5.Generator
         public string precondition_2 { get; set; }
         public string condition_2 { get; set; }
         public long disp_order { get; set; }
+        public long icon_id { get; set; }
     }
     public class SkillNeedPointTable
     {
@@ -197,6 +227,7 @@ namespace UmamusumeDeserializeDB5.Generator
         public int DisplayOrder;
         public UpgradedSkillData[] Upgraded;
         public SkillProper[] Propers;
+        public SkillCategory Category;
 
         public class SkillProper
         {
@@ -226,6 +257,45 @@ namespace UmamusumeDeserializeDB5.Generator
                 Sashi,
                 Oikomi
             }
+        }
+        public enum SkillCategory
+        {
+            /// <summary>
+            /// 绿
+            /// </summary>
+            Stat,
+            /// <summary>
+            /// 蓝
+            /// </summary>
+            Recovery,
+            /// <summary>
+            /// 速度
+            /// </summary>
+            Speed,
+            /// <summary>
+            /// 加速度
+            /// </summary>
+            Acceleration,
+            /// <summary>
+            /// 跑道
+            /// </summary>
+            Lane,
+            /// <summary>
+            /// 出闸
+            /// </summary>
+            Reaction,
+            /// <summary>
+            /// 视野
+            /// </summary>
+            Observation,
+            /// <summary>
+            /// 红
+            /// </summary>
+            Debuff,
+            /// <summary>
+            /// 特殊(大逃)
+            /// </summary>
+            Special
         }
     }
     public class UpgradedSkillData : SkillData
