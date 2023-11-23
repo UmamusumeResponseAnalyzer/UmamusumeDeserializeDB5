@@ -178,7 +178,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 var eventCategory = item[1]!.ToString();
                 var triggerName = Data.NameToId.FirstOrDefault(x => x.Key == item[2]!.ToString()).Key;
                 if (eventCategory == "メインシナリオ")
-                    triggerName = "未知剧本";
+                    triggerName = "系统事件";
                 if (triggerName == default && !correctedTriggerNames.TryGetValue(item[2]!.ToString(), out triggerName))
                 {
                     var corrected = CorrectTriggerName(item[2]!.ToString(), eventCategory == "サポートカード");
@@ -301,6 +301,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 3 => "GrandLive",
                                 4 => "巅峰杯",
                                 5 => "GrandMasters",
+                                6 => "LArc",
                                 _ => "未知剧本"
                             };
                         }
@@ -421,7 +422,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (possibleNames.Count == 1) return possibleNames[0];
                     if (!possibleNames.Any()) continue;
                     if (offset == triggerName.Length + 1) return triggerName;
-                    /*
+                    
                     prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title($"Select correct trigger name for {triggerName} ({isSupportCard})")
                         .PageSize(20)
@@ -434,7 +435,8 @@ namespace UmamusumeDeserializeDB5.Generator
                             .Select(x => x.EscapeMarkup()))
                         );
                     if (prompt == "KEEP CURRENT") return triggerName;
-                    */
+                    
+                    /*
                     var candidates = possibleNames
                         .Distinct()
                         .Where(x => x.Intersect(triggerName).Count() > 2)
@@ -444,6 +446,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         continue;
                     else
                         prompt = candidates.First();
+                    */
                 } while (prompt == "SHOW MORE");
                 return prompt.Replace("[[", "[").Replace("]]", "]"); // un-EscapeMarkup
             }

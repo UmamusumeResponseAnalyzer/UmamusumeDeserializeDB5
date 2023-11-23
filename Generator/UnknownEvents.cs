@@ -26,7 +26,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             {
                                 Option = "无选项",
                                 SuccessEffect = "通用事件",
-                                FailedEffect = "通用事件"
+                                FailedEffect = ""
                             }
                         }
                     }
