@@ -17,11 +17,12 @@ namespace UmamusumeDeserializeDB5
         public static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             TLGTranslate.load();
+            new CardName().Generate();
             var stories = new Events().Generate();
             new SuccessEvent().Generate(stories);
             new SkillDataMgr().Generate();
-            new CardName().Generate();
             new ClimaxItems().Generate();
             new TalentSkillSet().Generate();
             new FactorIds().Generate();
