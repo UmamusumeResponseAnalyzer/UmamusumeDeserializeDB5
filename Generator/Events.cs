@@ -379,20 +379,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (possibleNames.Count == 1) return possibleNames[0];
                     if (!possibleNames.Any()) continue;
                     if (offset == eventName.Length + 1) return null;
-                    /*
-                    prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                        .Title($"Select correct event name for {eventName.EscapeMarkup()}({Data.NameToId.FirstOrDefault(x => x.Value == charaId).Key})")
-                        .PageSize(20)
-                        .AddChoices(possibleNames
-                            .Distinct()
-                            .Where(x => x.Intersect(eventName).Count() > 2)
-                            .OrderByDescending(x => x.Intersect(eventName).Count())
-                            .Append("SHOW MORE")
-                            .Append("NONE")
-                            .Select(x => x.EscapeMarkup()))
-                        );
-                    if (prompt == "NONE") return eventName;
-                    */
+
                     var candidates = possibleNames
                             .Distinct()
                             .Where(x => x.Name.Intersect(eventName).Count() > 2)
