@@ -23,27 +23,16 @@ namespace UmamusumeDeserializeDB5.Generator
                         ).Select(x => new SuccessStory
             {
                 Id = x.Id,
-                Choices = new List<List<SuccessChoice>>
-                {
-                    new(),
-                    new()
-                    {
-                        new SuccessChoice
-                        {
-                            SelectIndex = 1,
-                            State=1,
-                            Scenario=0,
-                            Effect = "体力+30、技能点+10"
-                        },
-                        new SuccessChoice
-                        {
-                            SelectIndex = 2,
-                            State=0,
-                            Scenario=0,
-                            Effect = "体力+30、技能点+10、速度-5、力量-5、获得『变胖』"
-                        }
-                    }
-                }
+                // 返回值，剧本，对应颜色（0红1蓝2黄），提示文字
+                Choices = LoadChoicesJson("""
+                    [
+                      [],
+                      [
+                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "体力+30、技能点+10" },
+                        { "SelectIndex": 2, "Scenario": 0, "State": 0, "Effect": "体力+30、技能点+10、速度-5、力量-5、获得『变胖』" }
+                      ]
+                    ]
+                    """)
             }))
             {
                 if (!successEvent.Any(x => x.Id == i.Id))
@@ -54,44 +43,19 @@ namespace UmamusumeDeserializeDB5.Generator
             successEvent.Add(new SuccessStory
             {
                 Id = 501001524,
-                Choices = new List<List<SuccessChoice>>
-                    {
-                        new List<SuccessChoice>
-                        {
-                            new SuccessChoice
-                            {
-                                SelectIndex=1,
-                                Scenario=0,
-                                State=1,
-                                Effect="体力+30、パワー+10、スキルPt+10"
-                            },
-                            new SuccessChoice
-                            {
-                                SelectIndex=2,
-                                Scenario=0,
-                                State=0,
-                                Effect="体力+30、スピード−5、パワー+15、スキルPt+10、「太り気味」獲得"
-                            }
-                        },
-                        new List<SuccessChoice>(),
-                        new List<SuccessChoice>
-                        {
-                            new SuccessChoice
-                            {
-                                SelectIndex=1,
-                                Scenario=0,
-                                State=1,
-                                Effect="体力が全回復する"
-                            },
-                            new SuccessChoice
-                            {
-                                SelectIndex=2,
-                                Scenario=0,
-                                State=0,
-                                Effect="体力が全回復する、スピード−5、「太り気味」獲得"
-                            }
-                        }
-                    }
+                Choices = LoadChoicesJson("""
+                    [
+                      [
+                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "体力+30、力量+10、技能Pt+10" },
+                        { "SelectIndex": 2, "Scenario": 0, "State": 0, "Effect": "体力+30、速度−5、力量+15、技能Pt+10、获得「变胖」" }
+                      ],
+                      [],
+                      [
+                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "体力全回復" },
+                        { "SelectIndex": 2, "Scenario": 0, "State": 0, "Effect": "体力全回復、速度−5、获得「变胖」" }
+                      ]
+                    ]
+                    """)
             });//特别周，修正kamigame
             //三选项特殊吃饭通用匹配，选项1、3有失败率，selectIndex为1时成功
             foreach (var i in stories.Where(x => x.Choices.Count == 3 && x.Choices[0].Any(x => x.FailedEffect.Contains("体力+30")) && x.Choices[0].Any(x => x.FailedEffect.Contains("「太り気味」獲得"))).Select(x => new SuccessStory
@@ -896,56 +860,64 @@ namespace UmamusumeDeserializeDB5.Generator
             successEvent.Add(new SuccessStory
             {
                 Id = 830161001,
-                Choices = new List<List<SuccessChoice>>
-                {
-                     new() {
-                        new SuccessChoice   // 第1个选项
-                        {
-                             SelectIndex=1, // 返回状态
-                             State=1,   // 成功
-                             Scenario=0,
-                             Effect="速度+15、「テンポアップ」的Hint Lv+3、神鹰的羁绊+15"
-                        },
-                        new SuccessChoice
-                        {
-                             SelectIndex=2, // 返回状态
-                             State=0,   // 失败
-                             Scenario=0,
-                             Effect="速度+5、「テンポアップ」的Hint Lv+1、神鹰的羁绊+5"
-                        }
-                    },
-                    new()
-                }
+                Choices = LoadChoicesJson("""
+                    [
+                      [
+                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "速度+15、「テンポアップ」的Hint Lv+3、神鹰的羁绊+15" },
+                        { "SelectIndex": 2, "Scenario": 0, "State": 0, "Effect": "速度+5、「テンポアップ」的Hint Lv+1、神鹰的羁绊+5" }
+                      ],
+                      []
+                    ]
+                    """)
             });
             successEvent.Add(new SuccessStory
             {
                 Id = 830161003,
-                Choices = CreateChoices(new List<SuccessChoice>
-                    {
-                        new SuccessChoice   // 第1个选项
-                        {
-                            SelectIndex=1, // 返回状态
-                            State=1,   // 成功
-                            Scenario=0,
-                            Effect="速度+20、耐力+20、「王手」的Hint Lv+3、神鹰的羁绊+5"
-                        },
-                    }, new List<SuccessChoice>
-                    {
-                        new SuccessChoice   // 第2个选项
-                        {
-                            SelectIndex=3, // 返回状态
-                            State=1,   // 成功
-                            Scenario=0,
-                            Effect="体力+10、速度+10、耐力+10、技能Pt+10、「弧線的プロフェッサー」的Hint Lv+3、神鹰的羁绊+5"
-                        }
-                    }
-                )
+                Choices = LoadChoicesJson("""
+                    [
+                      [
+                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "速度+20、耐力+20、「王手」的Hint Lv+3、神鹰的羁绊+5" }
+                      ],
+                      [
+                        { "SelectIndex": 3, "Scenario": 0, "State": 1, "Effect": "体力+10、速度+10、耐力+10、技能Pt+10、「弧線的プロフェッサー」的Hint Lv+3、神鹰的羁绊+5" }
+                      ]
+                    ]
+                    """)
+            });
+            #endregion
+            #region 佐岳
+            successEvent.Add(new SuccessStory
+            {
+                Id = 809043003,
+                Choices = LoadChoicesJson("""
+                    [  
+                      [
+                        { "SelectIndex": 1, "Scenario": 0, "State": 2, "Effect": "干劲+1、明星量表+1或适性PT+50、根性+3、技能Pt+3、佐岳メイ的羁绊+5" },
+                        { "SelectIndex": 2, "Scenario": 0, "State": 1, "Effect": "明星量表+1或适性PT+50、根性+3、技能Pt+3、佐岳メイ的羁绊+5" }
+                      ]
+                    ]
+                    """)
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 809043004,
+                Choices = LoadChoicesJson("""
+                    [
+                      [],
+                      [
+                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "体力+63、干劲+1、「幸運体質」獲得、佐岳メイ的羁绊+10、可以和佐岳メイ外出" },
+                        { "SelectIndex": 2, "Scenario": 0, "State": 0, "Effect": "体力-10、干劲+1、**不能外出**" }
+                      ],
+                      []
+                    ]
+                    """)
             });
             #endregion
             #region wildcard
             foreach (var i in stories)
             {
-                var choice = i.Choices.FirstOrDefault(x => x.Any(y => y.SuccessEffect.Contains("ヒントLv") || y.SuccessEffect.Contains("Hint Lv")));
+                var choice = i.Choices.FirstOrDefault(x => x.Any(y => y.SuccessEffect.Contains("ヒントLv") || y.SuccessEffect.Contains("Hint Lv")
+                  || y.SuccessEffect.Contains("羁绊")));
                 if (choice != default && !string.IsNullOrEmpty(choice[0].FailedEffect))
                 {
                     var index = i.Choices.IndexOf(choice);
@@ -988,54 +960,6 @@ namespace UmamusumeDeserializeDB5.Generator
                  }
                 }));
             #endregion
-            #region 佐岳
-            successEvent.Add(new SuccessStory
-            {
-                Id = 809043003,
-                Choices = CreateChoices(new List<SuccessChoice>
-                {
-                    new SuccessChoice
-                    {
-                        SelectIndex=1, // 返回状态
-                        State=2,   // 大成功
-                        Scenario=0,
-                        Effect="干劲+1、明星量表+1或适性PT+50、根性+3、技能Pt+3、佐岳メイ的羁绊+5"
-                    },
-                    new SuccessChoice
-                    {
-                        SelectIndex=2, // 返回状态
-                        State=1,   // 成功
-                        Scenario=0,
-                        Effect="明星量表+1或适性PT+50、根性+3、技能Pt+3、佐岳メイ的羁绊+5"
-                    }
-                })
-            });
-            successEvent.Add(new SuccessStory
-            {
-                Id = 809043004,
-                Choices = new List<List<SuccessChoice>>
-                {
-                    new(),  // 第一个选项不用roll
-                    new() {
-                        new SuccessChoice   // 第二个选项
-                        {
-                             SelectIndex=1, // 返回状态
-                             State=1,   // 成功
-                             Scenario=0,
-                             Effect="体力+63、干劲+1、「幸運体質」獲得、佐岳メイ的羁绊+10、佐岳メイ可以出门了"
-                        },
-                        new SuccessChoice
-                        {
-                             SelectIndex=2, // 返回状态
-                             State=0,   // 失败
-                             Scenario=0,
-                             Effect="体力-10、干劲+1、**不能外出**"
-                        },
-                    },
-                    new()
-                }
-            });
-            #endregion
             
             Save("success_events", successEvent.DistinctBy(x => x.Id));
 
@@ -1048,6 +972,13 @@ namespace UmamusumeDeserializeDB5.Generator
             IEnumerable<Story> GetStoriesByName(string name)
             {
                 return stories.Where(x => x.Name == name);
+            }
+            List<List<SuccessChoice>> LoadChoicesJson(string json)
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings {
+                    NullValueHandling = NullValueHandling.Ignore
+                };
+                return JsonConvert.DeserializeObject<List<List<SuccessChoice>>>(json);
             }
         }
     }

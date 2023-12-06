@@ -13,7 +13,7 @@ namespace UmamusumeDeserializeDB5
         {
             using var source = new MemoryStream(input);
             using var dest = new MemoryStream();
-            using (var brotli = new BrotliStream(dest, (CompressionLevel)11))
+            using (var brotli = new BrotliStream(dest, CompressionLevel.Fastest))
                 source.CopyTo(brotli);
             return dest.ToArray();
         }
