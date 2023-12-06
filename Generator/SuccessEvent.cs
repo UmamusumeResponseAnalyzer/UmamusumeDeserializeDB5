@@ -29,7 +29,7 @@ namespace UmamusumeDeserializeDB5.Generator
                       [],
                       [
                         { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "体力+30、技能点+10" },
-                        { "SelectIndex": 2, "Scenario": 0, "State": 0, "Effect": "体力+30、技能点+10、速度-5、力量-5、获得『变胖』" }
+                        { "SelectIndex": 2, "Scenario": 0, "State": 0, "Effect": "体力+30、技能点+10、速度-5、力量-5、『变胖』" }
                       ]
                     ]
                     """)
@@ -413,7 +413,7 @@ namespace UmamusumeDeserializeDB5.Generator
                          SelectIndex=2,
                          State=0,
                          Scenario=0,
-                         Effect="智+4，事件中断"
+                         Effect="智+4，告辞"
                     }
                 })
             });
@@ -434,7 +434,7 @@ namespace UmamusumeDeserializeDB5.Generator
                          SelectIndex=2,
                          State=0,
                          Scenario=0,
-                         Effect="智+4，事件中断"
+                         Effect="智+4，告辞"
                     }
                 })
             });
@@ -489,7 +489,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             SelectIndex = 3,
                             State = 1,
                             Scenario = 0,
-                            Effect = "直接习得コーナー回復◯、直線回復"
+                            Effect = "直接习得弯道回复◯、直线回复"
                         }
                     }, new List<SuccessChoice>
                     {
@@ -546,7 +546,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             SelectIndex = 1,
                             State=1,
                             Scenario=0,
-                            Effect = "体力+30、干劲↑、全属性+10、URA優勝で温泉旅行"
+                            Effect = "体力+30、干劲↑、全属性+10、URA優勝后温泉旅行"
                         },
                         new SuccessChoice
                         {
@@ -840,7 +840,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     var isA = choice.FirstOrDefault(x => x.SuccessEffect.Contains("愛嬌◯") || x.SuccessEffect.Contains("惹人怜爱"));
                     var isB = choice.FirstOrDefault(x => x.SuccessEffect.Contains("切れ者") || x.SuccessEffect.Contains("能人"));
                     var isC = choice.FirstOrDefault(x => x.SuccessEffect.Contains("練習上手◯") || x.SuccessEffect.Contains("擅长练习"));
-                    var isD = choice.FirstOrDefault(x => x.SuccessEffect.Contains("注目株"));
+                    var isD = choice.FirstOrDefault(x => x.SuccessEffect.Contains("注目株") || x.SuccessEffect.Contains("潜力股"));
                     var realChoice = new[] { isA, isB, isC, isD }.FirstOrDefault(x => x != default);
                     if (realChoice == default) continue;
                     var successChoice = new SuccessChoice
@@ -863,8 +863,8 @@ namespace UmamusumeDeserializeDB5.Generator
                 Choices = LoadChoicesJson("""
                     [
                       [
-                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "速度+15、「テンポアップ」的Hint Lv+3、神鹰的羁绊+15" },
-                        { "SelectIndex": 2, "Scenario": 0, "State": 0, "Effect": "速度+5、「テンポアップ」的Hint Lv+1、神鹰的羁绊+5" }
+                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "速度+15、「テンポアップ/加快节奏」的Hint Lv+3、神鹰的羁绊+15" },
+                        { "SelectIndex": 2, "Scenario": 0, "State": 0, "Effect": "速度+5、「テンポアップ/加快节奏」的Hint Lv+1、神鹰的羁绊+5" }
                       ],
                       []
                     ]
@@ -876,10 +876,10 @@ namespace UmamusumeDeserializeDB5.Generator
                 Choices = LoadChoicesJson("""
                     [
                       [
-                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "速度+20、耐力+20、「王手」的Hint Lv+3、神鹰的羁绊+5" }
+                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "速度+20、耐力+20、「王手/将军」的Hint Lv+3、神鹰的羁绊+5" }
                       ],
                       [
-                        { "SelectIndex": 3, "Scenario": 0, "State": 1, "Effect": "体力+10、速度+10、耐力+10、技能Pt+10、「弧線的プロフェッサー」的Hint Lv+3、神鹰的羁绊+5" }
+                        { "SelectIndex": 3, "Scenario": 0, "State": 1, "Effect": "体力+10、速度+10、耐力+10、技能Pt+10、「弧線的プロフェッサー/弧线大师」的Hint Lv+3、神鹰的羁绊+5" }
                       ]
                     ]
                     """)
@@ -892,8 +892,8 @@ namespace UmamusumeDeserializeDB5.Generator
                 Choices = LoadChoicesJson("""
                     [  
                       [
-                        { "SelectIndex": 1, "Scenario": 0, "State": 2, "Effect": "干劲+1、明星量表+1或适性PT+50、根性+3、技能Pt+3、佐岳メイ的羁绊+5" },
-                        { "SelectIndex": 2, "Scenario": 0, "State": 1, "Effect": "明星量表+1或适性PT+50、根性+3、技能Pt+3、佐岳メイ的羁绊+5" }
+                        { "SelectIndex": 1, "Scenario": 0, "State": 2, "Effect": "干劲+1、明星量表+1、根性+3、技能Pt+3、佐岳的羁绊+5" },
+                        { "SelectIndex": 2, "Scenario": 0, "State": 1, "Effect": "明星量表+1、根性+3、技能Pt+3、佐岳的羁绊+5" }
                       ]
                     ]
                     """)
@@ -905,7 +905,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     [
                       [],
                       [
-                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "体力+63、干劲+1、「幸運体質」獲得、佐岳メイ的羁绊+10、可以和佐岳メイ外出" },
+                        { "SelectIndex": 1, "Scenario": 0, "State": 1, "Effect": "体力+63、干劲+1、获得「幸运体质」、佐岳的羁绊+10、可以和佐岳外出" },
                         { "SelectIndex": 2, "Scenario": 0, "State": 0, "Effect": "体力-10、干劲+1、**不能外出**" }
                       ],
                       []

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -44,6 +45,48 @@ namespace UmamusumeDeserializeDB5
                 ret.Replace(key, StaticDict[key]);
             }
             return ret.ToString();
+        }
+
+        public static string umaNameReplace(string s)
+        {
+            StringBuilder ret = new StringBuilder(s);
+            foreach (var key in Data.NameToId.Keys)
+            {
+                if (s.Contains(key) && TextData["6"].ContainsKey(Data.NameToId[key].ToString()))
+                {
+                    string trans = TextData["6"][Data.NameToId[key].ToString()];
+                    ret.Replace(key + "の", trans + "的");
+                    ret.Replace(key, trans);
+                    break;
+                }
+            }
+            return ret.ToString();
+        }
+
+        public static string skillNameReplace(string s)
+        {
+            // get skill name
+            Match m = Regex.Match(s, @"「(.*?)」");
+            if (m.Success)
+            {
+                string skillName = m.Groups[1].Value;
+                if (Data.SkillNameToId.ContainsKey(skillName))
+                {
+                    long id = Data.SkillNameToId[skillName];
+                    if (TextData["47"].ContainsKey(id.ToString()))
+                    {
+                        StringBuilder ret = new StringBuilder(s);
+                        ret.Replace(skillName, skillName + "/" + TextData["47"][id.ToString()]);
+                        return ret.ToString();
+                    }
+                }
+            }
+            return s;
+        }
+
+        public static string replaceAll(string s)
+        {
+            return staticReplace(skillNameReplace(umaNameReplace(s)));
         }
 
         // 查询对应译文，如果不存在则返回backupText

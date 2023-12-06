@@ -208,8 +208,8 @@ namespace UmamusumeDeserializeDB5.Generator
                     choices.Add(new Choice
                     {
                         Option = options[j],
-                        SuccessEffect = TLGTranslate.staticReplace(successEffect),
-                        FailedEffect = TLGTranslate.staticReplace(failureEffect)
+                        SuccessEffect = TLGTranslate.replaceAll(successEffect),
+                        FailedEffect = TLGTranslate.replaceAll(failureEffect)
                     });
                 }
                 if (eventCategory == "サポートカード")
