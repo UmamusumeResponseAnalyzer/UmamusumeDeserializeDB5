@@ -177,6 +177,8 @@ namespace UmamusumeDeserializeDB5.Generator
                 if (string.IsNullOrEmpty(eventName) || string.IsNullOrEmpty(item[2]!.ToString())) continue;
                 var eventCategory = item[1]!.ToString();
                 var triggerName = Data.NameToId.FirstOrDefault(x => x.Key == item[2]!.ToString()).Key;
+                if (eventCategory == "メインシナリオ")
+                    triggerName = "剧本事件";
                 if (triggerName == default && !correctedTriggerNames.TryGetValue(item[2]!.ToString(), out triggerName))
                 {
                     var corrected = CorrectTriggerName(item[2]!.ToString(), eventCategory == "サポートカード");
@@ -293,6 +295,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 3 => "GrandLive",
                                 4 => "巅峰杯",
                                 5 => "GrandMasters",
+                                6 => "LArc",
                                 _ => "未知剧本"
                             };
                         }
@@ -376,7 +379,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (offset == eventName.Length + 1) return eventName;
                     prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title($"Select correct event name for {eventName.EscapeMarkup()}({Data.NameToId.FirstOrDefault(x => x.Value == charaId).Key})")
-                        .PageSize(10)
+                        .PageSize(20)
                         .AddChoices(possibleNames
                             .Distinct()
                             .Where(x => x.Intersect(eventName).Count() > 2)
@@ -409,7 +412,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (offset == triggerName.Length + 1) return triggerName;
                     prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title($"Select correct trigger name for {triggerName} ({isSupportCard})")
-                        .PageSize(10)
+                        .PageSize(20)
                         .AddChoices(possibleNames
                             .Distinct()
                             .Where(x => x.Intersect(triggerName).Count() > 2)

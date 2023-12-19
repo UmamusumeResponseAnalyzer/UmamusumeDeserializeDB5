@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static UmamusumeDeserializeDB5.Generator.SupportData;
 
 namespace UmamusumeDeserializeDB5.Generator
 {
@@ -180,6 +181,13 @@ namespace UmamusumeDeserializeDB5.Generator
                                 Scenario=5,
                                 State=int.MaxValue,
                                 Effect="体力-15"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=6,
+                                State=int.MaxValue,
+                                Effect="体力-15"
                             }
                         },
                         new List<SuccessChoice>
@@ -230,6 +238,13 @@ namespace UmamusumeDeserializeDB5.Generator
                             {
                                 SelectIndex=1,
                                 Scenario=5,
+                                State=1,
+                                Effect="体力-5"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=6,
                                 State=1,
                                 Effect="体力-5"
                             }
@@ -302,6 +317,13 @@ namespace UmamusumeDeserializeDB5.Generator
                             {
                                 SelectIndex=1,
                                 Scenario=5,
+                                State=1,
+                                Effect="体力-10"
+                            },
+                            new SuccessChoice
+                            {
+                                SelectIndex=1,
+                                Scenario=6,
                                 State=1,
                                 Effect="体力-10"
                             }
@@ -854,6 +876,479 @@ namespace UmamusumeDeserializeDB5.Generator
                     }
                 })
             });//SSR大树快车 事件二，修正kamigame
+            #region 神鹰
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830161001,
+                Choices = new List<List<SuccessChoice>>
+                {
+                     new() {
+                        new SuccessChoice   // 第1个选项
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スピード+15、「テンポアップ」のヒントLv+3、エルコンドルパサーの絆ゲージ+15"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2, // 返回状态
+                             State=0,   // 失败
+                             Scenario=0,
+                             Effect="スピード+5、「テンポアップ」のヒントLv+1、エルコンドルパサーの絆ゲージ+5"
+                        }
+                    },
+                    new()
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830161003,
+                Choices = CreateChoices(new List<SuccessChoice>
+                    {
+                        new SuccessChoice   // 第1个选项
+                        {
+                            SelectIndex=1, // 返回状态
+                            State=1,   // 成功
+                            Scenario=0,
+                            Effect="スピード+20、スタミナ+20、「王手」のヒントLv+3、エルコンドルパサーの絆ゲージ+5"
+                        },
+                    }, new List<SuccessChoice>
+                    {
+                        new SuccessChoice   // 第2个选项
+                        {
+                            SelectIndex=3, // 返回状态
+                            State=1,   // 成功
+                            Scenario=0,
+                            Effect="体力+10、スピード+10、スタミナ+10、スキルPt+10、「弧線のプロフェッサー」のヒントLv+3、エルコンドルパサーの絆ゲージ+5"
+                        }
+                    }
+                )
+            });
+            #endregion
+            #region 佐岳
+            successEvent.Add(new SuccessStory
+            {
+                Id = 809043003,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex=1, // 返回状态
+                        State=2,   // 大成功
+                        Scenario=0,
+                        Effect="各ウマ娘のスターゲージ+1、やる気+1、根性+3、スキルPt+3、佐岳メイの絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                        SelectIndex=2, // 返回状态
+                        State=1,   // 成功
+                        Scenario=0,
+                        Effect="各ウマ娘のスターゲージ+1、根性+3、スキルPt+3、佐岳メイの絆ゲージ+5"
+                    }
+                })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 809043004,
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new(),  // 第一个选项不用roll
+                    new() {
+                        new SuccessChoice   // 第二个选项
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="体力+63、やる気+1、「幸運体質」獲得、佐岳メイの絆ゲージ+10、佐岳メイとお出かけできるようになる"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2, // 返回状态
+                             State=0,   // 失败
+                             Scenario=0,
+                             Effect="体力-10、やる気+1、**お出かけ不可になる**"
+                        },
+                    },
+                    new()
+                }
+            });
+            #endregion
+            #region 北黑，春钻，速子，高峰，水司机
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830028002, // 北黑2
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new(),  
+                    new() {
+                        new SuccessChoice   // 第二个选项
+                        {
+                             SelectIndex=1, 
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スピード+10、「直線巧者」のヒントLv+3、キタサンブラックの絆ゲージ+5"
+                        }
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 501067800, // 春钻年底
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new() {
+                        new SuccessChoice 
+                        {
+                             SelectIndex=1, 
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スタミナ+30、「静かな呼吸」のヒントLv+3"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2, 
+                             State=0,   // 失败
+                             Scenario=0,
+                             Effect="スタミナ+10、「静かな呼吸」のヒントLv+1"
+                        },
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830101001, // 速子1
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new(), 
+                    new() {  // 第二个选项
+                        new SuccessChoice 
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スピード+5、スタミナ+5、賢さ+5、「先行直線◯」のヒントLv+3、「ささやき」のヒントLv+1、アグネスタキオンの絆ゲージ+5"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2, // 返回状态
+                             State=0,   // 失败
+                             Scenario=0,
+                             Effect="スピード+5、賢さ+5、「先行直線◯」のヒントLv+1、アグネスタキオンの絆ゲージ+5"
+                        }
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830134001, // 高峰1
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new(),  // 第一个选项不用roll
+                    new(),
+                    new() {
+                        new SuccessChoice   // 第3个选项
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="賢さ+15、メジロラモーヌの絆ゲージ+15"
+                        }
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830107001, // 水司机1
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スピード+15、賢さ+5、マルゼンスキーの絆ゲージ+15"
+                        },
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830107002, // 水司机2
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スピード+15、パワー+5、「集中力」のヒントLv+1、マルゼンスキーの絆ゲージ+15"
+                        },
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830107001, // 水司机1
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スピード+15、賢さ+5、マルゼンスキーの絆ゲージ+15"
+                        },
+                    }
+                }
+            });
+            #endregion
+            #region 宝穴，麦昆
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830147001, // 宝穴1
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スピード+20、ジャングルポケットの絆ゲージ+15"
+                        },
+                        new()
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830147002, // 宝穴2
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スピード+10、スタミナ+10、「ありったけ」のヒントLv+3、ジャングルポケットの絆ゲージ+10"
+                        }
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830147003, // 宝穴3
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=2,   // 大成功
+                             Scenario=0,
+                             Effect="スピード+15、スタミナ+15、「昂ぶる鼓動」のヒントLv+3、ジャングルポケットの絆ゲージ+5"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スピード+10、スタミナ+10、「昂ぶる鼓動」のヒントLv+2、ジャングルポケットの絆ゲージ+5"
+                        }
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830172001, // 麦昆1
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="体力+15、やる気+1、メジロマックイーンの絆ゲージ+15"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2, // 返回状态
+                             State=0,   // 失败
+                             Scenario=0,
+                             Effect="体力+10、やる気+1、メジロマックイーンの絆ゲージ+5"
+                        },
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830172003,
+                Choices = CreateChoices(
+                    new List<SuccessChoice>
+                    {
+                        new SuccessChoice   // 第1个选项
+                        {
+                            SelectIndex=1, // 返回状态
+                            State=1,   // 成功
+                            Scenario=0,
+                            Effect="賢さ+30、スキルPt+15、「かっとばせ！」のヒントLv+3、メジロマックイーンの絆ゲージ+5"
+                        },
+                    },
+                    new List<SuccessChoice>
+                    {
+                        new SuccessChoice   // 第2个选项
+                        {
+                            SelectIndex=3, // 返回状态
+                            State=1,   // 成功
+                            Scenario=0,
+                            Effect="体力+15、スピード+30、スキルPt+30、メジロマックイーンの絆ゲージ+5"
+                        },
+                        new SuccessChoice
+                        {
+                            SelectIndex=4, // 返回状态
+                            State=0,   // 成功
+                            Scenario=0,
+                            Effect="体力+5、スピード+15、スキルPt+10、メジロマックイーンの絆ゲージ+5"
+                        }
+                    })
+            });
+            #endregion
+            #region 记者结算（测试）
+            successEvent.Add(new SuccessStory
+            {
+                Id = 400000091,
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=2,   // 成功
+                             Scenario=0,
+                             Effect="5種ステータス+5，スキルPt+20"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2, // 返回状态
+                             State=1,   // 失败
+                             Scenario=0,
+                             Effect="5種ステータス+3，スキルPt+10"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=3, // 返回状态
+                             State=0,   // 失败
+                             Scenario=0,
+                             Effect="スキルPt+5"
+                        }
+                    }
+                }
+            });
+            #endregion
+            #region 万籁，内恰（事件效果由之前的选项决定）
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830173001, // 万籁1
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new List<SuccessChoice>() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="スタミナ+10，「直線巧者』のヒントLv+2，サウンズオブアースの絆ゲージ+10，连续事件3获得技能为「ハヤテ一文字」"
+                        }
+                    },
+                    new List<SuccessChoice>() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1,
+                             State=1,   
+                             Scenario=0,
+                             Effect="根性+10，「直線回復』のヒントLv+2，サウンズオブアースの絆ゲージ+10，连续事件3获得技能为「好転一息」"
+                        },
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830173003, // 万籁3
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new List<SuccessChoice>() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="体力+15、根性+30、「ハヤテ一文字」のヒントLv+2、サウンズオブアースの絆ゲージ+5"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2, // 第二选项羁绊加多少还待确认
+                             State=1,   
+                             Scenario=0,
+                             Effect="体力+15、スキルPt+30、「好転一息」のヒントLv+2、サウンズオブアースの絆ゲージ+5"
+                        }
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830138001, // 内恰1
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new List<SuccessChoice>() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="体力+10、やる気+1、ナイスネイチャの絆ゲージ+5，下一事件体力+30"
+                        }
+                    },
+                    new List<SuccessChoice>() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1,
+                             State=1,
+                             Scenario=0,
+                             Effect="スタミナ+7、パワー+7、「尻尾上がり」のヒントLv+1、ナイスネイチャの絆ゲージ+5，下一事件获得「垂れウマ回避」"
+                        }
+                    }
+                }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830138002, // 内恰2
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new List<SuccessChoice>() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="体力+30、ナイスネイチャの絆ゲージ+5"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2,
+                             State=1,
+                             Scenario=0,
+                             Effect="スタミナ+10、パワー+10、「垂れウマ回避」のヒントLv+1、ナイスネイチャの絆ゲージ+5"
+                        }
+                    }
+                }
+            });
+            #endregion
             #region 爱娇、切者、练习上手、注目株
             for (int i = 0; i < stories.Count; i++)
             {
