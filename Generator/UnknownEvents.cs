@@ -24,9 +24,9 @@ namespace UmamusumeDeserializeDB5.Generator
                         {
                             new Choice
                             {
-                                Option = "未知选项",
-                                SuccessEffect = "未知效果",
-                                FailedEffect = "未知效果"
+                                Option = "系统事件",
+                                SuccessEffect = "固定效果",
+                                FailedEffect = ""
                             }
                         }
                     }
@@ -109,6 +109,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         3 => "GrandLive",
                         4 => "巅峰杯",
                         5 => "GrandMasters",
+                        6 => "LArc",
                         _ => "未知剧本"
                     };
                 }
