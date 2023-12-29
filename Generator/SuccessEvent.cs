@@ -1106,7 +1106,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 }
             });
             #endregion
-            #region 宝穴，麦昆
+            #region 宝穴，麦昆，大锤
             successEvent.Add(new SuccessStory
             {
                 Id = 830147001, // 宝穴1
@@ -1217,6 +1217,23 @@ namespace UmamusumeDeserializeDB5.Generator
                             Effect="体力+5、スピード+15、スキルPt+10、メジロマックイーンの絆ゲージ+5"
                         }
                     })
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 830178003, // 大锤3
+                Choices = new List<List<SuccessChoice>>
+                {
+                    new() {
+                        new SuccessChoice
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="体力+15、スピード+20、パワー+20、「ネバーギブアップ」のヒントLv+3、ドゥラメンテの絆ゲージ+5"
+                        },
+                        new()
+                    }
+                }
             });
             #endregion
             #region 记者结算（测试）
