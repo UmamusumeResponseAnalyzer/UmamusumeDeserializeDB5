@@ -209,7 +209,9 @@ namespace UmamusumeDeserializeDB5.Generator
                     {
                         Option = options[j],
                         SuccessEffect = successEffect,
-                        FailedEffect = failureEffect
+                        FailedEffect = failureEffect,
+                        SuccessEffectValue = Choice.ParseEffectValue(successEffect),
+                        FailedEffectValue = Choice.ParseEffectValue(failureEffect)
                     });
                 }
                 if (eventCategory == "サポートカード")
