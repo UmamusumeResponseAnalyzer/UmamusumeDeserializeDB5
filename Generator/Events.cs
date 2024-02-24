@@ -264,6 +264,8 @@ namespace UmamusumeDeserializeDB5.Generator
 
             void AddStory(string triggerName, string eventName, string eventCategory, IEnumerable<SingleModeStoryData> storyData, List<Choice> choices)
             {
+                if (storyData.Count() == 0) return;
+
                 if (!Data.NameToId.ContainsKey(triggerName))
                 {
                     foreach (var j in storyData)
@@ -298,6 +300,7 @@ namespace UmamusumeDeserializeDB5.Generator
                                 4 => "巅峰杯",
                                 5 => "GrandMasters",
                                 6 => "LArc",
+                                7 => "UAF",
                                 _ => "未知剧本"
                             };
                         }
