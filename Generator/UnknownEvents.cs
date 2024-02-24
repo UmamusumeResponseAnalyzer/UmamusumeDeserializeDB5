@@ -110,6 +110,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         4 => "巅峰杯",
                         5 => "GrandMasters",
                         6 => "LArc",
+                        7 => "UAF",
                         _ => "未知剧本"
                     };
                 }

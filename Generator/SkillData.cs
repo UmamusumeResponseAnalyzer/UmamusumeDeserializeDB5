@@ -97,6 +97,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         20191 or 20192 => SkillData.SkillCategory.Speed, //陽の加護
                         20201 or 20202 => SkillData.SkillCategory.Acceleration, //海の加護
                         20211 or 20212 => SkillData.SkillCategory.Speed, //想いを背負って
+                        20221 or 20222 or 20231 or 20226 => SkillData.SkillCategory.Speed, // 一堆UAF进化速度技能
                         > 30000 and < 40000 => SkillData.SkillCategory.Debuff,
                         > 40000 and < 50000 => SkillData.SkillCategory.Special, //40012大逃
                         > 1000000 and < 2000000 => SkillData.SkillCategory.Special, //嘉年华bonus LoH技能
