@@ -16,12 +16,12 @@ namespace UmamusumeDeserializeDB5.Generator
         public void Generate()
         {
             var list = new List<BaseName>();
-            list.Add(new(101, "骏川手纲"));
-            list.Add(new(102, "理事长"));
-            list.Add(new(103, "乙名史记者"));
+            list.Add(new(101, "駿川たづな"));
+            list.Add(new(102, "秋川理事長"));
+            list.Add(new(103, "乙名史記者"));
             list.Add(new(104, "桐生院葵"));
-            list.Add(new(106, "代理理事长"));
-            list.Add(new(108, "轻柔致意"));
+            list.Add(new(106, "樫本理子"));
+            list.Add(new(108, "ライトハロー"));
 
             using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
             conn.Open();
