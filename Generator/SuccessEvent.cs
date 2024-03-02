@@ -145,7 +145,7 @@ namespace UmamusumeDeserializeDB5.Generator
             }
             #endregion
             #region 赛后
-            foreach (var i in stories.Where(x => x.Name.Contains("レース勝利") && x.Choices[0].Any(x => x.SuccessEffect.Contains("体力-"))))
+            foreach (var i in stories.Where(x => x.Name.Contains("レース勝利") && x.Choices[0].Any(x => x.SuccessEffect.Replace("体力−", "体力-").Contains("体力-"))))
             {
                 successEvent.Add(new SuccessStory
                 {
@@ -922,6 +922,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     new()
                 }
             });
+            /*
             successEvent.Add(new SuccessStory
             {
                 Id = 830161003,
@@ -946,8 +947,9 @@ namespace UmamusumeDeserializeDB5.Generator
                     }
                 )
             });
+            */
             #endregion
-            #region 佐岳
+            #region 佐岳，凉花
             successEvent.Add(new SuccessStory
             {
                 Id = 809043003,
@@ -993,6 +995,27 @@ namespace UmamusumeDeserializeDB5.Generator
                     },
                     new()
                 }
+            });
+            successEvent.Add(new SuccessStory
+            {
+                Id = 809044003,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex=1, // 返回状态
+                        State=2,   // 大成功
+                        Scenario=0,
+                        Effect="都留岐涼花の絆ゲージ+5、体力+11、やる気+1"
+                    },
+                    new SuccessChoice
+                    {
+                        SelectIndex=2, // 返回状态
+                        State=1,   // 成功
+                        Scenario=0,
+                        Effect="都留岐涼花の絆ゲージ+5、体力+11"
+                    }
+                })
             });
             #endregion
             #region 北黑，春钻，速子，高峰，水司机
