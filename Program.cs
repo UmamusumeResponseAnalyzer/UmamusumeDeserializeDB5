@@ -156,48 +156,55 @@ namespace UmamusumeDeserializeDB5
                             if (n.Success)
                                 ret.SkillNames.Add(n.Groups[1].Value);
                         }
-                    }
-                    else if (effectId == 10 || effectId == 14)    // 全属性
-                    {
-                        for (int i = 0; i < 5; ++i)
-                            ret.Values[i] = effectValue;
-                    }
-                    else if (effectId == 11) // 获得状态
-                    {
-                        Match n = Regex.Match(t, "「(.+?)」");
-                        if (n.Success)
-                            ret.BuffName = n.Groups[1].Value;
-                    }
-                    else if (effectId == 12) // 随机，转为全属性
-                    {
-                        Match n = Regex.Match(t, "ランダム.(\\d+)");
-                        if (n.Success)
+                        else if (effectId == 7 && t.Contains("全回復"))
                         {
-                            try
-                            {
-                                effectValue *= Int32.Parse(n.Groups[1].Value);
-                            }
-                            catch (FormatException e)
-                            {
-                                AnsiConsole.WriteLine($"非法数字：{m.Value}");
-                            }
-                            if (effectValue > 0) effectValue = Math.Max(5, effectValue);
-                            if (effectValue < 0) effectValue = Math.Min(-5, effectValue);
-                            for (int i = 0; i < 5; ++i)
-                                ret.Values[i] += effectValue / 5;
+                            ret.Values[7] = 120;
                         }
-                    }
-                    else if (effectId == 13) // 上次训练的，转为全属性
-                    {
-                        if (effectValue > 0) effectValue = Math.Max(5, effectValue);
-                        if (effectValue < 0) effectValue = Math.Min(-5, effectValue);
-                        for (int i = 0; i < 5; ++i)
-                            ret.Values[i] += effectValue / 5;
                     }
                     else
                     {
-                        // 已知但不处理的词条放在Extras里
-                        ret.Extras.Add(t);
+                        Match match;
+                        switch (effectId)
+                        {
+                            case 10:
+                            case 14: // 全属性
+                                for (int i = 0; i < 5; ++i)
+                                    ret.Values[i] = effectValue;
+                                break;
+                            case 11:  // 获得状态 
+                                match = Regex.Match(t, "「(.+?)」");
+                                if (match.Success)
+                                    ret.BuffName = match.Groups[1].Value;
+                                break;
+                            case 12: // 随机，转为全属性
+                                match = Regex.Match(t, "ランダム.(\\d+)");
+                                if (match.Success)
+                                {
+                                    try
+                                    {
+                                        effectValue *= Int32.Parse(match.Groups[1].Value);
+                                    }
+                                    catch (FormatException e)
+                                    {
+                                        AnsiConsole.WriteLine($"非法数字：{m.Value}");
+                                    }
+                                    if (effectValue > 0) effectValue = Math.Max(5, effectValue);
+                                    if (effectValue < 0) effectValue = Math.Min(-5, effectValue);
+                                    for (int i = 0; i < 5; ++i)
+                                        ret.Values[i] += effectValue / 5;
+                                }
+                                break;
+                            case 13: // 上次训练的，转为全属性
+                                if (effectValue > 0) effectValue = Math.Max(5, effectValue);
+                                if (effectValue < 0) effectValue = Math.Min(-5, effectValue);
+                                for (int i = 0; i < 5; ++i)
+                                    ret.Values[i] += effectValue / 5;
+                                break;
+                            default:
+                                // 已知但不处理的词条放在Extras里
+                                ret.Extras.Add(t);
+                                break;
+                        }
                     }
                 }
             }
