@@ -102,6 +102,9 @@ namespace UmamusumeDeserializeDB5.Generator
                         > 40000 and < 50000 => SkillData.SkillCategory.Special, //40012大逃
                         > 1000000 and < 2000000 => SkillData.SkillCategory.Special, //嘉年华bonus LoH技能
                         2010010 or 2010016 => SkillData.SkillCategory.Speed, //日本一のウマ娘
+                        20241 or 20242 => SkillData.SkillCategory.Speed, // 私たちの走る道程
+                        20251 or 20252 or 20246 => SkillData.SkillCategory.Speed, // 食の極意，和其他进化粉
+                        20256 => SkillData.SkillCategory.Acceleration, // 曲線のグランシェフ, お待ちどおさま！,耕せ！開墾スプリント
                         _ => throw new Exception("出现了未知的icon_id: " + i.icon_id)
                     }
                 };
