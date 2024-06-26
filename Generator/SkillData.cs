@@ -299,7 +299,8 @@ namespace UmamusumeDeserializeDB5.Generator
             /// <summary>
             /// 特殊(大逃)
             /// </summary>
-            Special
+            Special,
+            Unknown = int.MaxValue
         }
     }
     public class UpgradedSkillData : SkillData
