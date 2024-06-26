@@ -98,19 +98,16 @@ namespace UmamusumeDeserializeDB5.Generator
                         20201 or 20202 => SkillData.SkillCategory.Acceleration, //海の加護
                         20211 or 20212 => SkillData.SkillCategory.Speed, //想いを背負って
                         20221 or 20222 or 20231 or 20226 => SkillData.SkillCategory.Speed, // 一堆UAF进化速度技能
-                        20242 or 20241 => SkillData.SkillCategory.Speed, // Cook金
                         > 30000 and < 40000 => SkillData.SkillCategory.Debuff,
                         > 40000 and < 50000 => SkillData.SkillCategory.Special, //40012大逃
                         > 1000000 and < 2000000 => SkillData.SkillCategory.Special, //嘉年华bonus LoH技能
                         2010010 or 2010016 => SkillData.SkillCategory.Speed, //日本一のウマ娘
-                        _ => SkillData.SkillCategory.Unknown
+                        20241 or 20242 => SkillData.SkillCategory.Speed, // 私たちの走る道程
+                        20251 or 20252 or 20246 => SkillData.SkillCategory.Speed, // 食の極意，和其他进化粉
+                        20256 => SkillData.SkillCategory.Acceleration, // 曲線のグランシェフ, お待ちどおさま！,耕せ！開墾スプリント
+                        _ => throw new Exception("出现了未知的icon_id: " + i.icon_id)
                     }
                 };
-                if (skill.Category == SkillData.SkillCategory.Unknown)
-                {
-                    Console.WriteLine("出现了未知的icon_id: " + i.icon_id);
-                    skill.Category = SkillData.SkillCategory.Speed;
-                }
 
                 var propers = new List<SkillData.SkillProper>();
                 propers.AddRange(i.precondition_1.Split("@").Select(x => ProcessCondition(x)));
