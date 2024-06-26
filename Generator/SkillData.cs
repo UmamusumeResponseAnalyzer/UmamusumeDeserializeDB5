@@ -98,13 +98,19 @@ namespace UmamusumeDeserializeDB5.Generator
                         20201 or 20202 => SkillData.SkillCategory.Acceleration, //海の加護
                         20211 or 20212 => SkillData.SkillCategory.Speed, //想いを背負って
                         20221 or 20222 or 20231 or 20226 => SkillData.SkillCategory.Speed, // 一堆UAF进化速度技能
+                        20242 or 20241 => SkillData.SkillCategory.Speed, // Cook金
                         > 30000 and < 40000 => SkillData.SkillCategory.Debuff,
                         > 40000 and < 50000 => SkillData.SkillCategory.Special, //40012大逃
                         > 1000000 and < 2000000 => SkillData.SkillCategory.Special, //嘉年华bonus LoH技能
                         2010010 or 2010016 => SkillData.SkillCategory.Speed, //日本一のウマ娘
-                        _ => throw new Exception("出现了未知的icon_id: " + i.icon_id)
+                        _ => SkillData.SkillCategory.Unknown
                     }
                 };
+                if (skill.Category == SkillData.SkillCategory.Unknown)
+                {
+                    Console.WriteLine("出现了未知的icon_id: " + i.icon_id);
+                    skill.Category = SkillData.SkillCategory.Speed;
+                }
 
                 var propers = new List<SkillData.SkillProper>();
                 propers.AddRange(i.precondition_1.Split("@").Select(x => ProcessCondition(x)));
@@ -296,7 +302,8 @@ namespace UmamusumeDeserializeDB5.Generator
             /// <summary>
             /// 特殊(大逃)
             /// </summary>
-            Special
+            Special,
+            Unknown = int.MaxValue
         }
     }
     public class UpgradedSkillData : SkillData
