@@ -949,7 +949,7 @@ namespace UmamusumeDeserializeDB5.Generator
             });
             */
             #endregion
-            #region 佐岳，凉花
+            #region 佐岳，凉花，理事长
             successEvent.Add(new SuccessStory
             {
                 Id = 809043003,
@@ -1015,6 +1015,56 @@ namespace UmamusumeDeserializeDB5.Generator
                         Scenario=0,
                         Effect="都留岐涼花の絆ゲージ+5、体力+11"
                     }
+                })
+            });
+            // 理事长： 135大成功，246成功
+            successEvent.Add(new SuccessStory
+            {
+                Id = 809002003,
+                Choices = CreateChoices(new List<SuccessChoice>
+                {
+                    new SuccessChoice
+                    {
+                        SelectIndex=1, // 返回状态
+                        State=2,   // 大成功
+                        Scenario=0,
+                        Effect="やる気+1、絆が一番低いサポートカードの絆ゲージ+3、秋川理事長の絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                        SelectIndex=2, // 返回状态
+                        State=1,   // 成功
+                        Scenario=0,
+                        Effect="絆が一番低いサポートカードの絆ゲージ+3、秋川理事長の絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                        SelectIndex=3, // 返回状态
+                        State=2,   // 大成功
+                        Scenario=0,
+                        Effect="スピード+15、やる気+1、秋川理事長の絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                        SelectIndex=4, // 返回状态
+                        State=1,   // 成功
+                        Scenario=0,
+                        Effect="スピード+15、秋川理事長の絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                        SelectIndex=5, // 返回状态
+                        State=2,   // 大成功
+                        Scenario=0,
+                        Effect="根性+15、やる気+1、秋川理事長の絆ゲージ+5"
+                    },
+                    new SuccessChoice
+                    {
+                        SelectIndex=6, // 返回状态
+                        State=1,   // 成功
+                        Scenario=0,
+                        Effect="根性+15、秋川理事長の絆ゲージ+5"
+                    },
                 })
             });
             #endregion
