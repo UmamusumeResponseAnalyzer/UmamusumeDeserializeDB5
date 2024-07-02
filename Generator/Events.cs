@@ -204,6 +204,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         }
                     }
                     successEffect = successEffect.Replace("体力−", "体力-");
+                    successEffect = successEffect.Replace("全ての野菜+3", "全ての野菜+40");   // 上修特判                    
                     failureEffect = failureEffect.Replace("体力−", "体力-");
                     choices.Add(new Choice
                     {
@@ -296,11 +297,12 @@ namespace UmamusumeDeserializeDB5.Generator
                             {
                                 1 => "URA",
                                 2 => "青春杯",
-                                3 => "GrandLive",
+                                3 => "偶像杯",
                                 4 => "巅峰杯",
-                                5 => "GrandMasters",
+                                5 => "女神杯",
                                 6 => "LArc",
                                 7 => "UAF",
+                                8 => "田园杯",
                                 _ => "未知剧本"
                             };
                         }
