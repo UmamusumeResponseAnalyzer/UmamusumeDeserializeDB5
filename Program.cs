@@ -92,7 +92,7 @@ namespace UmamusumeDeserializeDB5
 
         public EffectValue? SuccessEffectValue { get; set; }
         public EffectValue? FailedEffectValue { get; set; }
-        
+
         public static List<string> EffectTextToId = new List<string>
         {
             "スピード",
@@ -105,14 +105,27 @@ namespace UmamusumeDeserializeDB5
             "体力",
             "絆",
             "やる気",  // 以上对应EffectValue.Values
-            "全ステータス",
+            "全ステータス",   // 10
             "獲得",
             "ランダムな",
             "直前のトレーニング",
             "全能力",
+            "ランダムで",    // 15
+            "全パフォーマンス",
             "解消", // 以下词条不处理，作为其他说明放在Extras里面
-            "進行イベント打ち切り",   
+            "進行イベント打ち切り",
+            "イベント進行打ち切り",
             "トレーニングに現れるようになる",
+            "トレーニングが制限",
+            "トレーニング制限",
+            "レース制限",
+            "すべての競技",
+            "固有スキル",
+            "ファン数",
+            "適性Pt",
+            "新メンバー加入",
+            "目標",
+            "チームメンバー",
             "-"
         };
 
@@ -167,7 +180,7 @@ namespace UmamusumeDeserializeDB5
                         switch (effectId)
                         {
                             case 10:
-                            case 14: // 全属性
+                            case 14 or 16: // 全属性
                                 for (int i = 0; i < 5; ++i)
                                     ret.Values[i] = effectValue;
                                 break;
@@ -176,7 +189,7 @@ namespace UmamusumeDeserializeDB5
                                 if (match.Success)
                                     ret.BuffName = match.Groups[1].Value;
                                 break;
-                            case 12: // 随机，转为全属性
+                            case 12 or 15: // 随机，转为全属性
                                 match = Regex.Match(t, "ランダム.(\\d+)");
                                 if (match.Success)
                                 {
