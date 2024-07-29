@@ -203,9 +203,30 @@ namespace UmamusumeDeserializeDB5.Generator
                             failureEffect = Regex.Split(failureEffect, "【.+?】、").Where(x => !string.IsNullOrEmpty(x)).First();
                         }
                     }
-                    successEffect = successEffect.Replace("体力−", "体力-");
-                    successEffect = successEffect.Replace("全ての野菜+3", "全ての野菜+40");   // 上修特判                    
-                    failureEffect = failureEffect.Replace("体力−", "体力-");
+
+                    // July 29: 统一用语
+                    // 参见Program.cs EffectTextToId
+                    var replacedTerms = new Dictionary<string, string>()
+                    {
+                        { "体力−", "体力-" },
+                        { "全ての野菜+3", "全ての野菜+40" },
+                        { "切れ物", "切れ者" },
+                        { "のスキルLv", "のヒントLv" },
+                        { "パワ+", "パワー+" },
+                        { "スキル+", "スキルPt+" },
+                        { "スイルPt", "スキルPt" },
+                        { "スキルpt", "スキルPt" },
+                        { "進行イベント終了", "進行イベント打ち切り"},
+                    };
+                    foreach (var key in replacedTerms.Keys)
+                    {
+                        if (successEffect.Contains(key) && key != "体力−")
+                        {
+                            AnsiConsole.MarkupLine($"[yellow]纠正 {key} -> {replacedTerms[key]}[/]");                            
+                        }
+                        successEffect = successEffect.Replace(key, replacedTerms[key]);
+                        failureEffect = failureEffect.Replace(key, replacedTerms[key]);
+                    }
                     choices.Add(new Choice
                     {
                         Option = options[j],
