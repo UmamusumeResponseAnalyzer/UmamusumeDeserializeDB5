@@ -1492,6 +1492,31 @@ namespace UmamusumeDeserializeDB5.Generator
                     successEvent.Add(successStory);
             }
             #endregion
+            #region 休息心得
+            successEvent.Add(new SuccessStory
+            {
+                Id = 800001002,
+                Choices = new List<List<SuccessChoice>>
+                {
+                     new() {
+                        new SuccessChoice   // 第1个选项
+                        {
+                             SelectIndex=1, // 返回状态
+                             State=1,   // 成功
+                             Scenario=0,
+                             Effect="体力+5"
+                        },
+                        new SuccessChoice
+                        {
+                             SelectIndex=2, // 返回状态
+                             State=0,   // 失败
+                             Scenario=0,
+                             Effect="体力+5，「リフレッシュの心得」解消"
+                        }
+                    }
+                }
+            });
+            #endregion
             #region #3
             foreach (var i in stories)
             {
