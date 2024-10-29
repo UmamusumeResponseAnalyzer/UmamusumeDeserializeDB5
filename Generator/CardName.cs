@@ -193,6 +193,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     1110 => "西沙",
                     1111 => "救主",   // 空中救主G
                     1112 => "勇敢",   // 勇敢的心
+                    1113 => "火神",
                     1114 => "景致",   // 迷人景致
                     1115 => "巨匠",
                     1116 => "贵妇",
@@ -200,6 +201,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     1119 => "梦旅",
                     1120 => "金镇",
                     1121 => "多旺",
+                    1124 => "吹波",
                     2001 => "米可",
                     2002 => "糖衣",
                     2003 => "蚕茧",
@@ -207,6 +209,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     2005 => "卓芙",
                     2006 => "里格",
                     2007 => "索诺",
+                    2008 => "ST2",
                     101 or 9001 => "绿帽",
                     102 or 9002 => "理事",
                     103 or 9003 => "记者",
@@ -220,6 +223,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     9042 => "黄神",
                     9043 => "佐岳",
                     9044 => "凉花",
+                    9045 => "砂糖",
                     _ => throw new Exception($"有新的id{id}需要手动添加简写")
                 };
             }
