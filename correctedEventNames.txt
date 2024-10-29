@@ -629,3 +629,6 @@ Power！Power！Power！【分隔符】Power! Power! Power!
 心もお腹もいっぱいです♩【分隔符】心もお腹いっぱいです♪
 ”鍋【エリクシール】”【分隔符】“鍋【エリクシール】”
 Have a good ”Knight”！【分隔符】Have a good “knight”!
+Feature：”Me”【分隔符】Feature:“Me”
+Beta：”Me”【分隔符】Beta:“Me”
+Release：”Me”【分隔符】Release:“Me”

@@ -209,6 +209,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     2005 => "卓芙",
                     2006 => "里格",
                     2007 => "索诺",
+                    2008 => "ST2",
                     101 or 9001 => "绿帽",
                     102 or 9002 => "理事",
                     103 or 9003 => "记者",
@@ -222,6 +223,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     9042 => "黄神",
                     9043 => "佐岳",
                     9044 => "凉花",
+                    9045 => "砂糖",
                     _ => throw new Exception($"有新的id{id}需要手动添加简写")
                 };
             }
