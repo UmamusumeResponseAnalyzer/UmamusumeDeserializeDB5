@@ -105,7 +105,12 @@ namespace UmamusumeDeserializeDB5.Generator
                         20241 or 20242 => SkillData.SkillCategory.Speed, // 私たちの走る道程
                         20251 or 20252 or 20246 => SkillData.SkillCategory.Speed, // 食の極意，和其他进化粉
                         20256 => SkillData.SkillCategory.Acceleration, // 曲線のグランシェフ, お待ちどおさま！,耕せ！開墾スプリント
+                        20261 or 20262 => SkillData.SkillCategory.Speed, // もう少しだけ、いい景色
+                        20276 => SkillData.SkillCategory.Acceleration, // モンスターマシン
+                        20286 => SkillData.SkillCategory.Recovery, // リカバリーシーケンス
+                        20266 => SkillData.SkillCategory.Speed, // システムオールグリーン
                         _ => throw new Exception("出现了未知的icon_id: " + i.icon_id)
+                        // select (select id from skill_data where icon_id=20266) as a,text from text_data where "index"=a and category=47;
                     }
                 };
 
