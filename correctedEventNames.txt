@@ -632,3 +632,4 @@ Have a good ”Knight”！【分隔符】Have a good “knight”!
 Feature：”Me”【分隔符】Feature:“Me”
 Beta：”Me”【分隔符】Beta:“Me”
 Release：”Me”【分隔符】Release:“Me”
+4.1研究レポートの配布【分隔符】4.1 研究レポートの配布
