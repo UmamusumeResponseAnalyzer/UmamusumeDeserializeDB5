@@ -109,6 +109,8 @@ namespace UmamusumeDeserializeDB5.Generator
                         20276 => SkillData.SkillCategory.Acceleration, // モンスターマシン
                         20286 => SkillData.SkillCategory.Recovery, // リカバリーシーケンス
                         20266 => SkillData.SkillCategory.Speed, // システムオールグリーン
+                        20291 or 20292 or 20296 => SkillData.SkillCategory.Speed, // 時代を変える者, 疾風より先へ, 革命の岐路, 雲上飛翔
+                        20306 => SkillData.SkillCategory.Acceleration,  // 幾星霜が導く一手
                         _ => throw new Exception("出现了未知的icon_id: " + i.icon_id)
                         // select (select id from skill_data where icon_id=20266) as a,text from text_data where "index"=a and category=47;
                     }
