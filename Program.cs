@@ -14,8 +14,8 @@ namespace UmamusumeDeserializeDB5
 {
     public static class UmamusumeDeserializeDB5
     {
-        public static readonly string UmamusumeDatabaseFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "../LocalLow", "Cygames", "umamusume", "master", "master.mdb");
-        
+        //public static readonly string UmamusumeDatabaseFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "../LocalLow", "Cygames", "umamusume", "master", "master.mdb");
+        public static readonly string UmamusumeDatabaseFilePath = "F:/umaAI/master.mdb";
         public static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
