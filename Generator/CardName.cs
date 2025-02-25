@@ -232,8 +232,8 @@ namespace UmamusumeDeserializeDB5.Generator
                     9043 => "佐岳",
                     9044 => "凉花",
                     9045 => "砂糖",
-                    9046 => "老登",
-                    9047 => "绿登",
+                    9046 => "蓝登",
+                    9047 => "老登",
                     9048 => "红登",
                     _ => throw new Exception($"有新的id{id}需要手动添加简写")
                 };
