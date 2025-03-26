@@ -113,7 +113,9 @@ namespace UmamusumeDeserializeDB5.Generator
                         6 => "LArc",
                         7 => "UAF",
                         8 => "田园杯",
-                        _ => "未知剧本"
+                        9 => "机甲杯",
+                        10 => "传奇杯",
+                        _ => "新剧本"
                     };
                 }
                 else
