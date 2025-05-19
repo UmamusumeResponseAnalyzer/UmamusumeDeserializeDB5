@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -136,23 +135,6 @@ namespace UmamusumeDeserializeDB5.Generator
                    x.Ground != SkillData.SkillProper.GroundType.None
                 || x.Style != SkillData.SkillProper.StyleType.None
                 || x.Distance != SkillData.SkillProper.DistanceType.None).ToArray();
-                }
-                // 计算限制词条系数，不包括场地适性
-                var styleFactor = 1.0;
-                var distFactor = 1.0;
-                foreach (var prop in skill.Propers)
-                {
-                    if (prop.Style != SkillData.SkillProper.StyleType.None)
-                        styleFactor = 1.1;
-                    if (prop.Distance != SkillData.SkillProper.DistanceType.None)
-                        distFactor = 1.1;
-                }
-                var fact = styleFactor * distFactor;
-                if (fact > 1.0)
-                {
-                    var newGrade = (int)Math.Round(skill.Grade * fact);
-                    AnsiConsole.MarkupLine($"[yellow]{skill.Name}[/] {skill.Grade}x{fact:0.##}={newGrade}");
-                    skill.Grade = newGrade;
                 }
                 list.Add(skill);
             }
