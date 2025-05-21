@@ -154,6 +154,9 @@ namespace UmamusumeDeserializeDB5
         /// 条件类型
         /// </summary>
         public ConditionType Type;
+        /// 组别，即数据库中的num，游戏中的二选一
+        /// </summary>
+        public long Group;
         /// <summary>
         /// 条件所需内容，Type为Specific时为指定技能ID，为Proper时为指定技能适性类型，否则为所需技能数量
         /// </summary>
