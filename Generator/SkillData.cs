@@ -135,73 +135,66 @@ namespace UmamusumeDeserializeDB5.Generator
                     skill.Propers = propers.Where(x =>
                    x.Ground != SkillData.SkillProper.GroundType.None
                 || x.Style != SkillData.SkillProper.StyleType.None
-                || x.Distance != SkillData.SkillProper.DistanceType.None).ToArray();
+                || x.Distance != SkillData.SkillProper.DistanceType.None)
+                        .Distinct()
+                        .ToArray();
                 }
                 list.Add(skill);
             }
 
             Save("skill_data", list);
 
-            SkillData.SkillProper ProcessCondition(string cond)
+            SkillData.SkillProper ProcessCondition(string conds)
             {
                 var skill = new SkillData.SkillProper();
 
-                // 场地适性
-                if (cond.Contains("ground_type==1"))
+                foreach (var cond in conds.Split('&'))
                 {
-                    skill.Ground = SkillData.SkillProper.GroundType.Turf;
-                }
-                else if (cond.Contains("ground_type==2"))
-                {
-                    skill.Ground = SkillData.SkillProper.GroundType.Dirt;
-                }
-                else
-                {
-                    skill.Ground = SkillData.SkillProper.GroundType.None;
-                }
+                    // 场地适性
+                    if (cond == "ground_type==1")
+                    {
+                        skill.Ground = SkillData.SkillProper.GroundType.Turf;
+                    }
+                    else if (cond == "ground_type==2")
+                    {
+                        skill.Ground = SkillData.SkillProper.GroundType.Dirt;
+                    }
 
-                // 跑法适性
-                if (cond.Contains("running_style==1"))
-                {
-                    skill.Style = SkillData.SkillProper.StyleType.Nige;
-                }
-                else if (cond.Contains("running_style==2"))
-                {
-                    skill.Style = SkillData.SkillProper.StyleType.Senko;
-                }
-                else if (cond.Contains("running_style==3"))
-                {
-                    skill.Style = SkillData.SkillProper.StyleType.Sashi;
-                }
-                else if (cond.Contains("running_style==4"))
-                {
-                    skill.Style = SkillData.SkillProper.StyleType.Oikomi;
-                }
-                else
-                {
-                    skill.Style = SkillData.SkillProper.StyleType.None;
-                }
+                    // 跑法适性
+                    if (cond == "running_style==1")
+                    {
+                        skill.Style = SkillData.SkillProper.StyleType.Nige;
+                    }
+                    else if (cond == "running_style==2")
+                    {
+                        skill.Style = SkillData.SkillProper.StyleType.Senko;
+                    }
+                    else if (cond == "running_style==3")
+                    {
+                        skill.Style = SkillData.SkillProper.StyleType.Sashi;
+                    }
+                    else if (cond == "running_style==4")
+                    {
+                        skill.Style = SkillData.SkillProper.StyleType.Oikomi;
+                    }
 
-                // 距离适性
-                if (cond.Contains("distance_type==1"))
-                {
-                    skill.Distance = SkillData.SkillProper.DistanceType.Short;
-                }
-                else if (cond.Contains("distance_type==2"))
-                {
-                    skill.Distance = SkillData.SkillProper.DistanceType.Mile;
-                }
-                else if (cond.Contains("distance_type==3"))
-                {
-                    skill.Distance = SkillData.SkillProper.DistanceType.Middle;
-                }
-                else if (cond.Contains("distance_type==4"))
-                {
-                    skill.Distance = SkillData.SkillProper.DistanceType.Long;
-                }
-                else
-                {
-                    skill.Distance = SkillData.SkillProper.DistanceType.None;
+                    // 距离适性
+                    if (cond == "distance_type==1")
+                    {
+                        skill.Distance = SkillData.SkillProper.DistanceType.Short;
+                    }
+                    else if (cond == "distance_type==2")
+                    {
+                        skill.Distance = SkillData.SkillProper.DistanceType.Mile;
+                    }
+                    else if (cond == "distance_type==3")
+                    {
+                        skill.Distance = SkillData.SkillProper.DistanceType.Middle;
+                    }
+                    else if (cond == "distance_type==4")
+                    {
+                        skill.Distance = SkillData.SkillProper.DistanceType.Long;
+                    }
                 }
 
                 return skill;
@@ -243,9 +236,19 @@ namespace UmamusumeDeserializeDB5.Generator
 
         public class SkillProper
         {
-            public GroundType Ground;
-            public DistanceType Distance;
-            public StyleType Style;
+            public GroundType Ground = GroundType.None;
+            public DistanceType Distance = DistanceType.None;
+            public StyleType Style = StyleType.None;
+
+            public override bool Equals(object? obj)
+            {
+                if (obj is null || obj is not SkillProper proper) return false;
+                return Ground == proper.Ground && Distance == proper.Distance && Style == proper.Style;
+            }
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(Ground, Distance, Style);
+            }
 
             public enum GroundType
             {

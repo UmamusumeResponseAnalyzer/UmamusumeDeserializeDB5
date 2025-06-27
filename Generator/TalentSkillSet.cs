@@ -5,6 +5,13 @@ namespace UmamusumeDeserializeDB5.Generator
 {
     internal class TalentSkillSet : GeneratorBase
     {
+        /// <summary>
+        /// upgrade_type 1角色2剧本
+        /// num 疑似分组 1是第一个条件 2是第二个
+        /// sub_num 分组内顺序
+        /// timing_type
+        /// count_type 1属性 2剧本/事件之类的?
+        /// </summary>
         Dictionary<long, string> ConditionText = Data.TextData.Where(x => x.category == 290).ToDictionary(x => x.index, x => x.text);
 
         Regex Proper = new Regex("＜(.*?)＞のスキルを(.*?)個以上所持する");
@@ -36,6 +43,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             return new UpgradeCondition
                             {
                                 ConditionId = conditionId,
+                                Group = Data.SkillUpgradeConditionTables.First(x => x.id == conditionId).num,
                                 Type = UpgradeCondition.ConditionType.Proper,
                                 Requirement = regex.Groups[1].Value switch
                                 {
