@@ -22,6 +22,7 @@ namespace UmamusumeDeserializeDB5.Generator
             list.Add(new(104, "桐生院葵"));
             list.Add(new(106, "樫本理子"));
             list.Add(new(108, "ライトハロー"));
+            list.Add(new(111, "都留岐涼花"));
 
             using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
             conn.Open();
@@ -230,11 +231,12 @@ namespace UmamusumeDeserializeDB5.Generator
                     9041 => "蓝神",
                     9042 => "黄神",
                     9043 => "佐岳",
-                    9044 => "凉花",
+                    111 or 9044 => "凉花",
                     9045 => "砂糖",
                     9046 => "蓝登",
                     9047 => "老登",
                     9048 => "红登",
+                    9049 => "监督",
                     _ => throw new Exception($"有新的id{id}需要手动添加简写")
                 };
             }
