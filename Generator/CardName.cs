@@ -236,7 +236,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     9046 => "蓝登",
                     9047 => "老登",
                     9048 => "红登",
-                    9049 => "监督",
+                    9049 => "塔克",
                     _ => throw new Exception($"有新的id{id}需要手动添加简写")
                 };
             }
