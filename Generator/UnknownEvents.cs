@@ -116,6 +116,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         9 => "机甲杯",
                         10 => "传奇杯",
                         11 => "野人杯",
+                        12 => "温泉杯",
                         _ => "新剧本"
                     };
                 }
