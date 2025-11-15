@@ -1474,7 +1474,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (successStory.Choices.Count <= j) successStory.Choices.Add(new List<SuccessChoice>());
                     if (choice.Any(x => string.IsNullOrEmpty(x.FailedEffect)) || successEvent.Any(x => x.Id == stories[i].Id) != default) continue;
                     var isA = choice.FirstOrDefault(x => x.SuccessEffect.Contains("愛嬌◯"));
-                    var isB = choice.FirstOrDefault(x => x.SuccessEffect.Contains("切れ者"));
+                    var isB = choice.FirstOrDefault(x => x.SuccessEffect.Contains("切れ者")); // 切れ者
                     var isC = choice.FirstOrDefault(x => x.SuccessEffect.Contains("練習上手◯"));
                     var isD = choice.FirstOrDefault(x => x.SuccessEffect.Contains("注目株"));
                     var realChoice = new[] { isA, isB, isC, isD }.FirstOrDefault(x => x != default);

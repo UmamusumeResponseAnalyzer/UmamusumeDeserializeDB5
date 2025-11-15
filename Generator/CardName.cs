@@ -204,6 +204,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     1120 => "金镇",
                     1121 => "多旺",
                     1124 => "吹波",
+                    1126 => "千岁",
                     1127 => "超常",   // 超常骏骥
                     1128 => "防爆",   // 防爆装束
                     1129 => "杏目",
@@ -239,6 +240,8 @@ namespace UmamusumeDeserializeDB5.Generator
                     9047 => "老登",
                     9048 => "红登",
                     9049 => "塔克",
+                    9050 => "健子",
+                    9051 => "潭泉", // 潭泉芳华
                     _ => throw new Exception($"有新的id{id}需要手动添加简写")
                 };
             }
