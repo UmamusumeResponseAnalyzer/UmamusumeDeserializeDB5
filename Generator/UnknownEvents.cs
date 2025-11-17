@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UmamusumeDeserializeDB5.Generator
+﻿namespace UmamusumeDeserializeDB5.Generator
 {
     internal class UnknownEvents : GeneratorBase
     {
-        public List<Story> Generate(List<SingleModeStoryData> dbStories, List<Story> stories, List<TextData> textData)
+        public List<Story> Generate(List<Story> stories)
         {
-            var unknownEvents = dbStories.Where(x => stories.FirstOrDefault(y => x.story_id == y.Id) == default);
+            var unknownEvents = Data.JP.SingleModeStoryData.Where(x => stories.FirstOrDefault(y => x.story_id == y.Id) == default);
             foreach (var i in unknownEvents)
             {
                 var story = new Story
                 {
                     Name = i.Name,
                     Id = i.story_id,
-                    TriggerName = i.card_chara_id == 0 ? "系统" : textData.First(x => x.id == 6 && x.category == 6 && x.index == i.card_chara_id).text,
+                    TriggerName = i.card_chara_id == 0 ? "系统" : Data.JP.TextData.First(x => x.id == 6 && x.category == 6 && x.index == i.card_chara_id).text,
                     Choices = new List<List<Choice>>
                     {
                         new()
@@ -91,13 +85,13 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (charaId == 1000)
                         story.TriggerName = "系统";
                     else
-                        story.TriggerName = Data.NameToId.First(x => x.Value == charaId).Key;
+                        story.TriggerName = Data.JP.NameToId.First(x => x.Value == charaId).Key;
                     story.IsSupportCard = true;
                 }
                 else if (i.Name == "想いの継承" && i.story_id.ToString()[0] != '4')
                 {
                     var charaId = int.Parse(i.story_id.ToString()[2..6]);
-                    story.TriggerName = Data.NameToId.First(x => x.Value == charaId).Key;
+                    story.TriggerName = Data.JP.NameToId.First(x => x.Value == charaId).Key;
                     story.IsSupportCard = false;
                 }
                 if (i.gallery_main_scenario != 0)

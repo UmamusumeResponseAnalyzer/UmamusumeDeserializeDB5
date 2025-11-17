@@ -1,47 +1,61 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Spectre.Console;
-using System.Data.Entity.Infrastructure;
-using System.Data.SQLite;
 using System.IO.Compression;
-using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 using UmamusumeDeserializeDB5.Generator;
 
 namespace UmamusumeDeserializeDB5
 {
     public static class UmamusumeDeserializeDB5
     {
-        public static readonly string UmamusumeDatabaseFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "../LocalLow", "Cygames", "umamusume", "master", "master.mdb");
-        //public static readonly string UmamusumeDatabaseFilePath = "F:/umaAI/master.mdb";
         public static void Main()
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.OutputEncoding = Encoding.UTF8;
+
+            Directory.CreateDirectory("./output/jp/");
+            Directory.SetCurrentDirectory("./output/jp/");
             new CardName().Generate();
             var stories = new Events().Generate();
-            new SuccessEvent().Generate(stories);
+            var jpNewEvents = new NewEvents().Generate(stories);
             new SkillDataMgr().Generate();
             new ClimaxItems().Generate();
             new TalentSkillSet().Generate();
             new FactorIds().Generate();
             new SkillUpgradeSpecialityGenerator().Generate();
-            //new SupportDataGenerator().Generate();
-
-            Story.SerializeIsSupportCard = true;
-            new Generator.UmamusumeEventEditor.Events().Generate(stories, new Events().GenerateSingleModeStoryData());
-            new Generator.UmamusumeEventEditor.Cards().Generate();
-
-            using var ms = new MemoryStream();
-            using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+            using (var ms = new MemoryStream())
             {
-                foreach (var i in Directory.EnumerateFiles("./output", "*.br", SearchOption.TopDirectoryOnly))
+                using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
                 {
-                    zip.CreateEntryFromFile(i, Path.GetFileName(i));
+                    foreach (var i in Directory.EnumerateFiles("./", "*.br", SearchOption.TopDirectoryOnly))
+                    {
+                        zip.CreateEntryFromFile(i, Path.GetFileName(i));
+                    }
                 }
+                File.WriteAllBytes(@$"./数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
             }
-            File.WriteAllBytes(@$"./output/数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
+
+            Directory.CreateDirectory("../../output/tw/");
+            Directory.SetCurrentDirectory("../../output/tw/");
+            Data.UseTw();
+            new CardName().Generate();
+            new NewEvents().Generate(stories, jpNewEvents);
+            new SkillDataMgr().Generate();
+            new ClimaxItems().Generate();
+            new TalentSkillSet().Generate();
+            new FactorIds().Generate();
+            new SkillUpgradeSpecialityGenerator().Generate();
+            using (var ms = new MemoryStream())
+            {
+                using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                {
+                    foreach (var i in Directory.EnumerateFiles("./", "*.br", SearchOption.TopDirectoryOnly))
+                    {
+                        zip.CreateEntryFromFile(i, Path.GetFileName(i));
+                    }
+                }
+                File.WriteAllBytes(@$"./数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
+            }
         }
     }
 
@@ -60,7 +74,7 @@ namespace UmamusumeDeserializeDB5
         public string Name { get; set; }
         public string TriggerName { get; set; }
         public bool IsSupportCard { get; set; }
-        public List<List<Choice>> Choices { get; set; }
+        public List<List<Choice>> Choices { get; set; } = [];
 
         [JsonIgnore]
         public static bool SerializeIsSupportCard { get; set; } = false;
@@ -87,9 +101,9 @@ namespace UmamusumeDeserializeDB5
 
     public class Choice
     {
-        public string Option { get; set; }
-        public string SuccessEffect { get; set; }
-        public string FailedEffect { get; set; }
+        public string Option { get; set; } = string.Empty;
+        public string SuccessEffect { get; set; } = string.Empty;
+        public string FailedEffect { get; set; } = string.Empty;
 
         public EffectValue? SuccessEffectValue { get; set; }
         public EffectValue? FailedEffectValue { get; set; }
@@ -222,8 +236,8 @@ namespace UmamusumeDeserializeDB5
                     }
                 }
             }
-           // AnsiConsole.WriteLine(effect);
-           // AnsiConsole.WriteLine(JsonConvert.SerializeObject(ret));
+            // AnsiConsole.WriteLine(effect);
+            // AnsiConsole.WriteLine(JsonConvert.SerializeObject(ret));
             return ret;
         }
     }

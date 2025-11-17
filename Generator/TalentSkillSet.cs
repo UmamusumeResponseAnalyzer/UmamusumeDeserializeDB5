@@ -1,5 +1,4 @@
-﻿using System.Data.SQLite;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace UmamusumeDeserializeDB5.Generator
 {
@@ -12,7 +11,7 @@ namespace UmamusumeDeserializeDB5.Generator
         /// timing_type
         /// count_type 1属性 2剧本/事件之类的?
         /// </summary>
-        Dictionary<long, string> ConditionText = Data.TextData.Where(x => x.category == 290).ToDictionary(x => x.index, x => x.text);
+        Dictionary<long, string> ConditionText = Data.JP.TextData.Where(x => x.category == 290).ToDictionary(x => x.index, x => x.text);
 
         Regex Proper = new Regex("＜(.*?)＞のスキルを(.*?)個以上所持する");
         Regex Specific = new Regex("「(.*?)」");
@@ -23,15 +22,15 @@ namespace UmamusumeDeserializeDB5.Generator
         Regex Stat = new Regex("能力を引き出すスキルを(.*?)個以上所持する");
         public void Generate()
         {
-            var conditions = Data.SkillUpgradeConditionTables.GroupBy(x => x.description_id).ToDictionary(x => x.Key, x => x.Select(y => y.id).ToArray());
-            var result = Data.AvailableSkillSetTableList.GroupBy(x => x.available_skill_set_id).ToDictionary(x => x.Key, x => x.ToArray().Select(y => new TalentSkill
+            var conditions = Data.JP.SkillUpgradeConditionTables.GroupBy(x => x.description_id).ToDictionary(x => x.Key, x => x.Select(y => y.id).ToArray());
+            var result = Data.JP.AvailableSkillSetTableList.GroupBy(x => x.available_skill_set_id).ToDictionary(x => x.Key, x => x.ToArray().Select(y => new TalentSkill
             {
                 SkillId = y.skill_id,
                 Rank = y.need_rank
             }).ToList());
             foreach (var i in result)
             {
-                var upgraded = Data.SkillUpgradeDescriptionTable.Where(x => x.card_id == i.Key);
+                var upgraded = Data.JP.SkillUpgradeDescriptionTable.Where(x => x.card_id == i.Key);
                 foreach (var j in upgraded)
                 {
                     var conds = conditions[j.skill_id].Select(conditionId =>
@@ -43,7 +42,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             return new UpgradeCondition
                             {
                                 ConditionId = conditionId,
-                                Group = Data.SkillUpgradeConditionTables.First(x => x.id == conditionId).num,
+                                Group = Data.JP.SkillUpgradeConditionTables.First(x => x.id == conditionId).num,
                                 Type = UpgradeCondition.ConditionType.Proper,
                                 Requirement = regex.Groups[1].Value switch
                                 {
@@ -63,7 +62,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         else if (conditionText.Contains("を所持する"))
                         {
                             var regex = Specific.Match(conditionText).Groups[1].Value;
-                            var skillId = Data.TextData.First(x => x.category == 47 && x.text == regex).index;
+                            var skillId = Data.JP.TextData.First(x => x.category == 47 && x.text == regex).index;
                             return new UpgradeCondition
                             {
                                 ConditionId = conditionId,

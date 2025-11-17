@@ -1,15 +1,6 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UmamusumeDeserializeDB5.Generator
+﻿namespace UmamusumeDeserializeDB5.Generator
 {
+    /*
     internal class SupportDataGenerator : GeneratorBase
     {
         public void Generate()
@@ -342,4 +333,5 @@ namespace UmamusumeDeserializeDB5.Generator
             public string Type; // 羁绊"evaluation" "友情训练次数" 合计羁绊"total_evaluation" 训练等级"training_level" "人头数" "体力最大值" "当前体力" "编成S卡种类" "粉丝数" "非得意训练" ""
         }
     }
+    */
 }

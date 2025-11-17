@@ -1,35 +1,13 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace UmamusumeDeserializeDB5.Generator
 {
     internal class ClimaxItems : GeneratorBase
     {
-        Dictionary<int, string> kv = new();
         public void Generate()
         {
-            var dic = new Dictionary<long, string>();
-
-            using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
-            conn.Open();
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from text_data where id=225";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    var jp = (string)reader["text"];
-                    dic.Add((long)reader["index"], CN(jp));
-                }
-            }
-            kv = new() { { 1001, "" }, { 1002, "" } };
             var sb = new StringBuilder();
-            foreach (var i in dic)
+            foreach (var i in Data.JP.TextData.Where(x => x.id == 225).ToDictionary(x => x.index, x => CN(x.text)))
             {
                 sb.Append($"{{ {i.Key}, \"{i.Value}\" }}, ");
             }

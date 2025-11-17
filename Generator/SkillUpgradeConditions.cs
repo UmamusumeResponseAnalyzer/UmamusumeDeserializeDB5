@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace UmamusumeDeserializeDB5.Generator
 {
@@ -12,7 +6,7 @@ namespace UmamusumeDeserializeDB5.Generator
     {
         public void Generate()
         {
-            var data = Data.TextData.Where(x => x.category == 290)
+            var data = Data.JP.TextData.Where(x => x.category == 290)
                 .Where(x => !x.text.Contains("育成イベント"))
                 .ToDictionary(x => x.index, x => x.text);
             var skill = data.Where(x => x.Value.Contains("スキル")); //需要

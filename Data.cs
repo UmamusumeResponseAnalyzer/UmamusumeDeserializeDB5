@@ -1,26 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.SQLite;
 using UmamusumeDeserializeDB5.Generator;
 
 namespace UmamusumeDeserializeDB5
 {
-    public static class Data
+    public class Data
     {
-        public static List<TextData> TextData;
-        public static Dictionary<string, long> NameToId;
-        public static List<SupportCardData> SupportCardData;
-        public static List<AvailableSkillSetTable> AvailableSkillSetTableList = new();
-        public static List<SkillUpgradeConditionTable> SkillUpgradeConditionTables = new();
-        public static List<SkillUpgradeDescriptionTable> SkillUpgradeDescriptionTable = new();
-        public static List<SkillUpgradeSpecialityTable> SkillUpgradeSpecialityTable = new();
-        static Data()
+        public static readonly string MDB_JP_FILEPATH = @"G:\DMM\Umamusume\umamusume_Data\Persistent\master\master.mdb";
+        public static readonly string MDB_TW_FILEPATH = @"G:\tw_files\files\master\master.mdb";
+        public static Data JP = new(MDB_JP_FILEPATH);
+        public static Data TW = new(MDB_TW_FILEPATH);
+
+        public List<TextData> TextData;
+        public Dictionary<long, string> IdToName = [];
+        public Dictionary<string, long> NameToId;
+        public List<SupportCardData> SupportCardData;
+        public List<AvailableSkillSetTable> AvailableSkillSetTableList = new();
+        public List<SkillUpgradeConditionTable> SkillUpgradeConditionTables = new();
+        public List<SkillUpgradeDescriptionTable> SkillUpgradeDescriptionTable = new();
+        public List<SkillUpgradeSpecialityTable> SkillUpgradeSpecialityTable = new();
+        public List<SkillDataTable> SkillDataTable = [];
+        public Dictionary<long, long> SkillNeedPointTable = [];
+        public List<SingleModeStoryData> SingleModeStoryData = new();
+        public Data(string mdbPath)
         {
             TextData = new List<TextData>();
-            using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
+            using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = mdbPath }.ToString());
             conn.Open();
             using (var cmd = conn.CreateCommand())
             {
@@ -35,6 +39,15 @@ namespace UmamusumeDeserializeDB5
                         index = (long)reader["index"],
                         text = (string)reader["text"]
                     });
+                }
+            }
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = $"select * from text_data where id=47";
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    IdToName.Add((long)reader["index"], (string)reader["text"]);
                 }
             }
             NameToId = TextData.Where(x => x.index != 9100101 && x.index != 9101101).Where(x => (x.id == 4 && x.category == 4) || (x.id == 6 && x.category == 6) || (x.id == 75 && x.category == 75)).ToDictionary(x => x.text, x => x.index);
@@ -124,6 +137,137 @@ namespace UmamusumeDeserializeDB5
                     });
                 }
             }
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = $"select * from skill_data where tag_id!='0'";
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    SkillDataTable.Add(new SkillDataTable
+                    {
+                        id = (long)reader["id"],
+                        rarity = (long)reader["rarity"],
+                        group_id = (long)reader["group_id"],
+                        group_rate = (long)reader["group_rate"],
+                        grade_value = (long)reader["grade_value"],
+                        precondition_1 = (string)reader["precondition_1"],
+                        condition_1 = (string)reader["condition_1"],
+                        precondition_2 = (string)reader["precondition_2"],
+                        condition_2 = (string)reader["condition_2"],
+                        disp_order = (long)reader["disp_order"],
+                        icon_id = (long)reader["icon_id"]
+                    });
+                }
+            }
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = $"select * from single_mode_skill_need_point";
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    SkillNeedPointTable.Add((long)reader["id"], (long)reader["need_skill_point"]);
+                }
+            }
+            using (var cmd = conn.CreateCommand())
+            {
+                var StoryTextData = TextData.Where(x => x.id == 181 && x.category == 181).ToDictionary(x => x.index, x => x);
+                cmd.CommandText = $"select * from single_mode_story_data";
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var data = new SingleModeStoryData
+                    {
+                        id = (long)reader["id"],
+                        card_chara_id = (long)reader["card_chara_id"],
+                        card_id = (long)reader["card_id"],
+                        ending_type = (long)reader["ending_type"],
+                        event_title_chara_icon = (long)reader["event_title_chara_icon"],
+                        event_title_dress_icon = (long)reader["event_title_dress_icon"],
+                        event_title_style = (long)reader["event_title_style"],
+                        gallery_flag = (long)reader["gallery_flag"],
+                        gallery_list_id = (long)reader["gallery_list_id"],
+                        gallery_main_scenario = (long)reader["gallery_main_scenario"],
+                        mini_game_result = (long)reader["mini_game_result"],
+                        past_race_id = (long)reader["past_race_id"],
+                        race_event_flag = (long)reader["race_event_flag"],
+                        se_change = (long)reader["se_change"],
+                        short_story_id = (long)reader["short_story_id"],
+                        show_clear = (long)reader["show_clear"],
+                        show_progress_1 = (long)reader["show_progress_1"],
+                        show_progress_2 = (long)reader["show_progress_2"],
+                        show_succession = (long)reader["show_succession"],
+                        story_id = (long)reader["story_id"],
+                        support_card_id = (long)reader["support_card_id"],
+                        support_chara_id = (long)reader["support_chara_id"],
+                    };
+                    data.Name = StoryTextData.ContainsKey(data.story_id) ? StoryTextData[data.story_id].text : "成長のヒント";
+                    SingleModeStoryData.Add(data);
+                    if (data.short_story_id != 0)
+                    {
+                        var shorted = new SingleModeStoryData
+                        {
+                            id = (long)reader["id"],
+                            card_chara_id = (long)reader["card_chara_id"],
+                            card_id = (long)reader["card_id"],
+                            ending_type = (long)reader["ending_type"],
+                            event_title_chara_icon = (long)reader["event_title_chara_icon"],
+                            event_title_dress_icon = (long)reader["event_title_dress_icon"],
+                            event_title_style = (long)reader["event_title_style"],
+                            gallery_flag = (long)reader["gallery_flag"],
+                            gallery_list_id = (long)reader["gallery_list_id"],
+                            gallery_main_scenario = (long)reader["gallery_main_scenario"],
+                            mini_game_result = (long)reader["mini_game_result"],
+                            past_race_id = (long)reader["past_race_id"],
+                            race_event_flag = (long)reader["race_event_flag"],
+                            se_change = (long)reader["se_change"],
+                            short_story_id = (long)reader["short_story_id"],
+                            show_clear = (long)reader["show_clear"],
+                            show_progress_1 = (long)reader["show_progress_1"],
+                            show_progress_2 = (long)reader["show_progress_2"],
+                            show_succession = (long)reader["show_succession"],
+                            story_id = (long)reader["story_id"],
+                            support_card_id = (long)reader["support_card_id"],
+                            support_chara_id = (long)reader["support_chara_id"],
+                        };
+                        SingleModeStoryData.Add(shorted);
+                    }
+                }
+            }
+        }
+        public static string TranslateScenarioId(int scenario_id) => scenario_id switch
+        {
+            0 => "通用",
+            1 => "U.R.A",
+            2 => "青春杯",
+            3 => "偶像杯",
+            4 => "巅峰杯",
+            5 => "女神杯",
+            6 => "L.Arc",
+            7 => "U.A.F",
+            8 => "田园杯",
+            9 => "机甲杯",
+            10 => "传奇杯",
+            11 => "野人杯",
+            12 => "温泉杯",
+            _ => "新剧本"
+        };
+        public static void UseTw()
+        {
+            foreach (var textData in TW.TextData.Where(x => x.category != 290 && x.category != 47)) // 不需要改技能进化的条件
+            {
+                var jp = JP.TextData.FirstOrDefault(x => x.index == textData.index && x.category == textData.category);
+                jp?.text = textData.text;
+            }
+
+            foreach (var idToName in TW.IdToName)
+            {
+                JP.IdToName[idToName.Key] = idToName.Value;
+            }
+
+            JP.NameToId = JP.TextData.Where(x => x.index != 9100101 && x.index != 9101101).Where(x => (x.id == 4 && x.category == 4) || (x.id == 6 && x.category == 6) || (x.id == 75 && x.category == 75)).ToDictionary(x => x.text, x => x.index);
+            JP.NameToId.Add("系统", 1000);
+
+            NewEvents.STORY_DATA_PATH = @"K:\repos\UmamusumeStoryDataExtractor\UmamusumeStoryDataExtractor\bin\Release\net8.0\Ext_Tw\story\data\";
         }
     }
     public struct SupportCardData

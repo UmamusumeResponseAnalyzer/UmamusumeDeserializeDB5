@@ -1,69 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UmamusumeDeserializeDB5.Generator
+﻿namespace UmamusumeDeserializeDB5.Generator
 {
     internal class SkillDataMgr : GeneratorBase
     {
-        List<SkillDataTable> SkillList = new();
-        Dictionary<long, long> SkillNeedPointTable = new();
-        Dictionary<long, string> IdToName = new();
         List<SkillData> list = new List<SkillData>();
 
-        private void PrepareDB()
-        {
-            using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
-            conn.Open();
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from skill_data where tag_id!='0'";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    SkillList.Add(new SkillDataTable
-                    {
-                        id = (long)reader["id"],
-                        rarity = (long)reader["rarity"],
-                        group_id = (long)reader["group_id"],
-                        group_rate = (long)reader["group_rate"],
-                        grade_value = (long)reader["grade_value"],
-                        precondition_1 = (string)reader["precondition_1"],
-                        condition_1 = (string)reader["condition_1"],
-                        precondition_2 = (string)reader["precondition_2"],
-                        condition_2 = (string)reader["condition_2"],
-                        disp_order = (long)reader["disp_order"],
-                        icon_id = (long)reader["icon_id"]
-                    });
-                }
-            }
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from single_mode_skill_need_point";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    SkillNeedPointTable.Add((long)reader["id"], (long)reader["need_skill_point"]);
-                }
-            }
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from text_data where id=47";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    IdToName.Add((long)reader["index"], (string)reader["text"]);
-                }
-            }
-        }
         public void Generate()
         {
-            PrepareDB();
-            foreach (var i in SkillList)
+            foreach (var i in Data.JP.SkillDataTable)
             {
                 var skill = new SkillData
                 {
@@ -72,8 +15,8 @@ namespace UmamusumeDeserializeDB5.Generator
                     Rarity = (int)i.rarity,
                     Rate = (int)i.group_rate,
                     Grade = (int)i.grade_value,
-                    Name = IdToName[i.id],
-                    Cost = SkillNeedPointTable.ContainsKey(i.id) ? (int)SkillNeedPointTable[i.id] : 0,
+                    Name = Data.JP.IdToName[i.id],
+                    Cost = Data.JP.SkillNeedPointTable.ContainsKey(i.id) ? (int)Data.JP.SkillNeedPointTable[i.id] : 0,
                     DisplayOrder = (int)i.disp_order,
                     Category = i.icon_id switch
                     {

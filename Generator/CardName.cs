@@ -1,13 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using UmamusumeResponseAnalyzer.Entities;
+﻿using UmamusumeResponseAnalyzer.Entities;
 
 namespace UmamusumeDeserializeDB5.Generator
 {
@@ -24,47 +15,9 @@ namespace UmamusumeDeserializeDB5.Generator
             list.Add(new(108, "ライトハロー"));
             list.Add(new(111, "都留岐涼花"));
 
-            using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
-            conn.Open();
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from text_data where id=170";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    list.Add(new((long)reader["index"], (string)reader["text"]));
-                }
-            }
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from support_card_data";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    var id = (long)reader["id"];
-                    var chara_id = (long)reader["chara_id"];
-                    var command_id = (long)reader["command_id"];
-
-                    var sb = new StringBuilder();
-                    sb.Append(command_id switch
-                    {
-                        101 => "[速]",
-                        102 => "[力]",
-                        103 => "[根]",
-                        105 => "[耐]",
-                        106 => "[智]",
-                        0 => "[友]",
-                        _ => ""
-                    });
-                    sb.Append(list.First(x => x.Id == chara_id).Name);
-                    list.Add(new SupportCardName(id, Data.TextData.First(x => x.category == 76 && x.index == id).text, command_id, chara_id));
-                }
-            }
-            // 马名
-            foreach (var i in Data.TextData.Where(x => x.id == 5).ToDictionary(x => x.index, x => x.text))
-            {
-                list.Add(new UmaName(i.Key, i.Value));
-            }
+            list.AddRange(Data.JP.TextData.Where(x => x.id == 170).Select(x => new BaseName(x.index, x.text)));
+            list.AddRange(Data.JP.SupportCardData.Select(x => new SupportCardName(x.id, Data.JP.TextData.First(y => y.category == 76 && y.index == x.id).text, x.command_id, x.chara_id)));
+            list.AddRange(Data.JP.TextData.Where(x => x.id == 5).Select(x => new UmaName(x.index, x.text)));
 
             foreach (var i in list)
             {
@@ -184,7 +137,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     1099 => "北港",
                     1100 => "奇锐",
                     1102 => "万籁",
-                    1103 => "莱斯", 
+                    1103 => "莱斯",
                     1104 => "葛城",
                     1105 => "新宇",
                     1106 => "奇宝",

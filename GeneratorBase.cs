@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace UmamusumeDeserializeDB5
 {
@@ -11,15 +7,14 @@ namespace UmamusumeDeserializeDB5
     {
         public void Save(string filename, object content, bool typename = false)
         {
-            Directory.CreateDirectory("./output");
-            Directory.CreateDirectory("./output/json/");
+            Directory.CreateDirectory("./json/");
             filename = filename.Replace("\\", "/");
             if (filename.Contains("/"))
             {
                 foreach (var i in filename.Split("/")[..1])
                 {
-                    Directory.CreateDirectory(@$"./output/{i}/");
-                    Directory.CreateDirectory(@$"./output/json/{i}/");
+                    Directory.CreateDirectory(@$"./{i}/");
+                    Directory.CreateDirectory(@$"./json/{i}/");
                 }
             }
             string text;
@@ -32,8 +27,8 @@ namespace UmamusumeDeserializeDB5
             {
                 text = JsonConvert.SerializeObject(content);
             }
-            File.WriteAllBytes(@$"./output/{filename}.br", Brotli.Compress(Encoding.UTF8.GetBytes(text)));
-            File.WriteAllText(@$"./output/json/{filename}.json", JsonConvert.SerializeObject(JsonConvert.DeserializeObject(text), Formatting.Indented));
+            File.WriteAllBytes(@$"./{filename}.br", Brotli.Compress(Encoding.UTF8.GetBytes(text)));
+            File.WriteAllText(@$"./json/{filename}.json", JsonConvert.SerializeObject(JsonConvert.DeserializeObject(text), Formatting.Indented));
         }
     }
 }

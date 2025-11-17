@@ -1,11 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace UmamusumeDeserializeDB5.Generator
 {
@@ -24,12 +17,12 @@ namespace UmamusumeDeserializeDB5.Generator
         public void Generate()
         {
             var list = new List<SkillUpgradeSpeciality>();
-            var conditions = Data.SkillUpgradeConditionTables.GroupBy(x => x.description_id).ToDictionary(x => x.Key, x => x.Select(y => y.id).ToArray());
-            foreach (var i in Data.SkillUpgradeSpecialityTable)
+            var conditions = Data.JP.SkillUpgradeConditionTables.GroupBy(x => x.description_id).ToDictionary(x => x.Key, x => x.Select(y => y.id).ToArray());
+            foreach (var i in Data.JP.SkillUpgradeSpecialityTable)
             {
                 var conds = conditions[i.skill_id].Select(conditionId =>
                 {
-                    var conditionText = Data.TextData.First(x => x.category == 290 && x.index == conditionId).text.Replace("\t", string.Empty);
+                    var conditionText = Data.JP.TextData.First(x => x.category == 290 && x.index == conditionId).text.Replace("\t", string.Empty);
                     if (conditionText.Contains('＜') && conditionText.Contains('＞'))
                     {
                         var regex = Proper.Match(conditionText);
@@ -55,7 +48,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     else if (conditionText.Contains("を所持する"))
                     {
                         var regex = Specific.Match(conditionText).Groups[1].Value;
-                        var skillId = Data.TextData.First(x => x.category == 47 && x.text == regex).index;
+                        var skillId = Data.JP.TextData.First(x => x.category == 47 && x.text == regex).index;
                         return new UpgradeCondition
                         {
                             ConditionId = conditionId,

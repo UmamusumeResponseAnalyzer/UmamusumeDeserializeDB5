@@ -1,141 +1,17 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace UmamusumeDeserializeDB5.Generator
 {
     internal class Events : GeneratorBase
     {
-        public List<SingleModeStoryData> GenerateSingleModeStoryData()
-        {
-            var SingleModeStoryData = new List<SingleModeStoryData>();
-            var TextData = new List<TextData>();
-            using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
-            conn.Open();
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from text_data";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    TextData.Add(new TextData
-                    {
-                        category = (long)reader["category"],
-                        id = (long)reader["id"],
-                        index = (long)reader["index"],
-                        text = (string)reader["text"]
-                    });
-                }
-            }
-            var StoryTextData = TextData.Where(x => x.id == 181 && x.category == 181).ToDictionary(x => x.index, x => x);
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from single_mode_story_data";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    var data = new SingleModeStoryData
-                    {
-                        id = (long)reader["id"],
-                        card_chara_id = (long)reader["card_chara_id"],
-                        card_id = (long)reader["card_id"],
-                        ending_type = (long)reader["ending_type"],
-                        event_title_chara_icon = (long)reader["event_title_chara_icon"],
-                        event_title_dress_icon = (long)reader["event_title_dress_icon"],
-                        event_title_style = (long)reader["event_title_style"],
-                        gallery_flag = (long)reader["gallery_flag"],
-                        gallery_list_id = (long)reader["gallery_list_id"],
-                        gallery_main_scenario = (long)reader["gallery_main_scenario"],
-                        mini_game_result = (long)reader["mini_game_result"],
-                        past_race_id = (long)reader["past_race_id"],
-                        race_event_flag = (long)reader["race_event_flag"],
-                        se_change = (long)reader["se_change"],
-                        short_story_id = (long)reader["short_story_id"],
-                        show_clear = (long)reader["show_clear"],
-                        show_progress_1 = (long)reader["show_progress_1"],
-                        show_progress_2 = (long)reader["show_progress_2"],
-                        show_succession = (long)reader["show_succession"],
-                        story_id = (long)reader["story_id"],
-                        support_card_id = (long)reader["support_card_id"],
-                        support_chara_id = (long)reader["support_chara_id"],
-                    };
-                    data.Name = StoryTextData.ContainsKey(data.story_id) ? StoryTextData[data.story_id].text : "成長のヒント";
-                    SingleModeStoryData.Add(data);
-                    if (data.short_story_id != 0)
-                    {
-                        var shorted = new SingleModeStoryData
-                        {
-                            id = (long)reader["id"],
-                            card_chara_id = (long)reader["card_chara_id"],
-                            card_id = (long)reader["card_id"],
-                            ending_type = (long)reader["ending_type"],
-                            event_title_chara_icon = (long)reader["event_title_chara_icon"],
-                            event_title_dress_icon = (long)reader["event_title_dress_icon"],
-                            event_title_style = (long)reader["event_title_style"],
-                            gallery_flag = (long)reader["gallery_flag"],
-                            gallery_list_id = (long)reader["gallery_list_id"],
-                            gallery_main_scenario = (long)reader["gallery_main_scenario"],
-                            mini_game_result = (long)reader["mini_game_result"],
-                            past_race_id = (long)reader["past_race_id"],
-                            race_event_flag = (long)reader["race_event_flag"],
-                            se_change = (long)reader["se_change"],
-                            short_story_id = (long)reader["short_story_id"],
-                            show_clear = (long)reader["show_clear"],
-                            show_progress_1 = (long)reader["show_progress_1"],
-                            show_progress_2 = (long)reader["show_progress_2"],
-                            show_succession = (long)reader["show_succession"],
-                            story_id = (long)reader["story_id"],
-                            support_card_id = (long)reader["support_card_id"],
-                            support_chara_id = (long)reader["support_chara_id"],
-                        };
-                        shorted.Name = StoryTextData.ContainsKey(shorted.short_story_id) ? StoryTextData[shorted.short_story_id].text : "成長のヒント";
-                        SingleModeStoryData.Add(shorted);
-                    }
-                }
-            }
-            return SingleModeStoryData;
-        }
         public List<Story> Generate()
         {
-            var SingleModeStoryData = GenerateSingleModeStoryData();
-            var TextData = new List<TextData>();
-            using var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder { DataSource = UmamusumeDeserializeDB5.UmamusumeDatabaseFilePath }.ToString());
-            conn.Open();
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from text_data";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    TextData.Add(new TextData
-                    {
-                        category = (long)reader["category"],
-                        id = (long)reader["id"],
-                        index = (long)reader["index"],
-                        text = (string)reader["text"]
-                    });
-                }
-            }
-            var StoryTextData = TextData.Where(x => x.id == 181 && x.category == 181).ToDictionary(x => x.index, x => x);
-            var SupportCardIdToCharaId = new Dictionary<long, long>();
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = $"select * from support_card_data";
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    SupportCardIdToCharaId.Add((long)reader["id"], (long)reader["chara_id"]);
-                }
-            }
-            var SpecialCardEvents = SingleModeStoryData.Where(x => x.card_id != 0).GroupBy(x => x.card_id).ToDictionary(x => x.Key, x => x.ToList()); //胜负服事件
+            var StoryTextData = Data.JP.TextData.Where(x => x.id == 181 && x.category == 181).ToDictionary(x => x.index, x => x);
+            var SupportCardIdToCharaId = Data.JP.SupportCardData.ToDictionary(x=>x.id,x=>x.chara_id);
+            var SpecialCardEvents = Data.JP.SingleModeStoryData.Where(x => x.card_id != 0).GroupBy(x => x.card_id).ToDictionary(x => x.Key, x => x.ToList()); //胜负服事件
 
             //源: https://kamigame.jp/umamusume/page/152540608660042049.html
             var kamigame = JArray.Parse(new WebClient().DownloadString("https://kamigame.jp/vls-kamigame-gametool/json/1JrYvw5XiwWeKR5c2BKVQykutI_Lj2_zauLvaWtnzvDo_411452117.json")
@@ -143,9 +19,9 @@ namespace UmamusumeDeserializeDB5.Generator
                 .Replace("<br>", ""));
             var correctedEventNames = new Dictionary<string, string>();
             var correctedTriggerNames = new Dictionary<string, string>();
-            if (File.Exists(@"correctedEventNames.txt"))
+            if (File.Exists(@"../../correctedEventNames.txt"))
             {
-                correctedEventNames = File.ReadAllLines(@"correctedEventNames.txt").Select(x => x.Split("【分隔符】")).ToDictionary(x => x[0], x => x[1]);
+                correctedEventNames = File.ReadAllLines(@"../../correctedEventNames.txt").Select(x => x.Split("【分隔符】")).ToDictionary(x => x[0], x => x[1]);
                 correctedEventNames.TryAdd("きんぐちゃんとがんばる！", "キングちゃんとがんばる！");
                 correctedEventNames.TryAdd("「いつもの」ください", "『いつもの』ください！");
                 for (var i = 0; i < kamigame.Count; i++)
@@ -156,9 +32,9 @@ namespace UmamusumeDeserializeDB5.Generator
                     }
                 }
             }
-            if (File.Exists(@"correctedTriggerNames.txt"))
+            if (File.Exists(@"../../correctedTriggerNames.txt"))
             {
-                correctedTriggerNames = File.ReadAllLines(@"correctedTriggerNames.txt").Select(x => x.Split("【分隔符】")).ToDictionary(x => x[0], x => x[1]);
+                correctedTriggerNames = File.ReadAllLines(@"../../correctedTriggerNames.txt").Select(x => x.Split("【分隔符】")).ToDictionary(x => x[0], x => x[1]);
                 for (var i = 0; i < kamigame.Count; i++)
                 {
                     if (correctedTriggerNames.TryGetValue(kamigame[i][2]!.ToString(), out var correctedTriggerName))
@@ -176,7 +52,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 var eventName = item[0]!.ToString();
                 if (string.IsNullOrEmpty(eventName) || string.IsNullOrEmpty(item[2]!.ToString())) continue;
                 var eventCategory = item[1]!.ToString();
-                var triggerName = Data.NameToId.FirstOrDefault(x => x.Key == item[2]!.ToString()).Key;
+                var triggerName = Data.JP.NameToId.FirstOrDefault(x => x.Key == item[2]!.ToString()).Key;
                 if (eventCategory == "メインシナリオ")
                     triggerName = "剧本事件";
                 if (triggerName == default && !correctedTriggerNames.TryGetValue(item[2]!.ToString(), out triggerName))
@@ -248,7 +124,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         triggerName = GetSupportCardNameByEventName(eventName);
                     }
                 }
-                var id = Data.NameToId.ContainsKey(triggerName) ? Data.NameToId[triggerName] : 0;
+                var id = Data.JP.NameToId.ContainsKey(triggerName) ? Data.JP.NameToId[triggerName] : 0;
                 //id长度大于4位即当前S卡专属的进度事件（比如北黑给金弯的那三个），否则为所有该角色S卡共有的事件（比如西野花的爱娇）
                 var charaId = eventCategory == "サポートカード" ? (id.ToString().Length > 4 ? SupportCardIdToCharaId[id] : id) : (id.ToString().Length > 4 ? int.Parse(id.ToString()[..4]) : id);
                 if (eventName == "あんし～ん笹針師、出☆没")
@@ -256,7 +132,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     id = 0;
                     charaId = 0;
                 }
-                var storyData = SingleModeStoryData.Where(x => x.Name == eventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
+                var storyData = Data.JP.SingleModeStoryData.Where(x => x.Name == eventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
                 if (!storyData.Any())
                 {
                     if (correctedEventNames.ContainsKey(eventName)) continue;
@@ -268,7 +144,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     }
                     correctedEventNames.Add(eventName, correctedEventName);
                     Console.WriteLine($"纠正 {eventName} 为 {correctedEventName}");
-                    storyData = SingleModeStoryData.Where(x => x.Name == correctedEventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
+                    storyData = Data.JP.SingleModeStoryData.Where(x => x.Name == correctedEventName && (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId));
                     if (storyData.Any())
                         eventName = correctedEventName;
                 }
@@ -276,10 +152,10 @@ namespace UmamusumeDeserializeDB5.Generator
             }
 
             foreach (var i in failed.Distinct()) Console.WriteLine(i);
-            File.WriteAllLines("failed.txt", failed.Distinct());
-            File.WriteAllLines("correctedEventNames.txt", correctedEventNames.Select(x => $"{x.Key}【分隔符】{x.Value}"));
-            File.WriteAllLines("correctedTriggerNames.txt", correctedTriggerNames.Select(x => $"{x.Key}【分隔符】{x.Value}"));
-            events = new UnknownEvents().Generate(SingleModeStoryData, events, TextData).DistinctBy(x => x.Id).ToList();
+            File.WriteAllLines("../../failed.txt", failed.Distinct());
+            File.WriteAllLines("../../correctedEventNames.txt", correctedEventNames.Select(x => $"{x.Key}【分隔符】{x.Value}"));
+            File.WriteAllLines("../../correctedTriggerNames.txt", correctedTriggerNames.Select(x => $"{x.Key}【分隔符】{x.Value}"));
+            events = new UnknownEvents().Generate(events).DistinctBy(x => x.Id).ToList();
             Console.WriteLine(events.Count);
             Save("events", events);
             return events;
@@ -288,7 +164,7 @@ namespace UmamusumeDeserializeDB5.Generator
             {
                 if (storyData.Count() == 0) return;
 
-                if (!Data.NameToId.ContainsKey(triggerName))
+                if (!Data.JP.NameToId.ContainsKey(triggerName))
                 {
                     foreach (var j in storyData)
                     {
@@ -298,19 +174,19 @@ namespace UmamusumeDeserializeDB5.Generator
                         }
                         if (j.card_id != 0)
                         {
-                            triggerName = Data.NameToId.First(x => x.Value == j.card_id).Key;
+                            triggerName = Data.JP.NameToId.First(x => x.Value == j.card_id).Key;
                         }
                         else if (j.card_chara_id != 0)
                         {
-                            triggerName = Data.NameToId.First(x => x.Value == j.card_chara_id).Key;
+                            triggerName = Data.JP.NameToId.First(x => x.Value == j.card_chara_id).Key;
                         }
                         else if (j.support_card_id != 0)
                         {
-                            triggerName = Data.NameToId.First(x => x.Value == j.support_card_id).Key;
+                            triggerName = Data.JP.NameToId.First(x => x.Value == j.support_card_id).Key;
                         }
                         else if (j.support_chara_id != 0)
                         {
-                            triggerName = Data.NameToId.First(x => x.Value == j.support_chara_id).Key;
+                            triggerName = Data.JP.NameToId.First(x => x.Value == j.support_chara_id).Key;
                         }
                         if (j.gallery_main_scenario != 0)
                         {
@@ -353,7 +229,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     }
                     if (SpecialCardEvents.Any(x => x.Value.Contains(j)) && !triggerName.Contains(']'))
                     {
-                        triggerName = Data.NameToId.First(x => x.Value == j.card_id).Key;
+                        triggerName = Data.JP.NameToId.First(x => x.Value == j.card_id).Key;
                     }
                     events.Add(new Story
                     {
@@ -373,13 +249,13 @@ namespace UmamusumeDeserializeDB5.Generator
                     case "あんし～ん笹針師、出☆没":
                         return "[ブスッといっとく？]安心沢刺々美";
                 }
-                var data = SingleModeStoryData.FirstOrDefault(x => x.Name == eventName);
+                var data = Data.JP.SingleModeStoryData.FirstOrDefault(x => x.Name == eventName);
                 if (data == default)
                 {
                     return string.Empty;
                 }
                 var actualId = Math.Max(data.support_chara_id, data.support_card_id); //这两个必定有一个是0
-                return Data.NameToId.First(x => x.Value == actualId).Key;
+                return Data.JP.NameToId.First(x => x.Value == actualId).Key;
             }
             string CorrectEventName(string eventName, long charaId, long id)
             {
@@ -389,7 +265,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 {
                     var fragment = eventName.Length - offset;
                     var possibleNames = (charaId == 0 && id == 0) ?
-                        SingleModeStoryData
+                        Data.JP.SingleModeStoryData
                         .Where(x => (
                             x.Name.StartsWith(eventName[..fragment]) ||
                             x.Name.EndsWith(eventName[fragment..]) ||
@@ -397,7 +273,7 @@ namespace UmamusumeDeserializeDB5.Generator
                             (x.card_chara_id == charaId || x.card_id == id || x.support_card_id == id || x.support_chara_id == charaId))
                         .Select(x => x.Name)
                         .ToList() :
-                        SingleModeStoryData
+                        Data.JP.SingleModeStoryData
                         .Where(x => (
                             x.Name.StartsWith(eventName[..fragment]) ||
                             x.Name.EndsWith(eventName[fragment..]) ||
@@ -409,7 +285,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     if (!possibleNames.Any()) continue;
                     if (offset == eventName.Length + 1) return eventName;
                     prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                        .Title($"Select correct event name for {eventName.EscapeMarkup()}({Data.NameToId.FirstOrDefault(x => x.Value == charaId).Key})")
+                        .Title($"Select correct event name for {eventName.EscapeMarkup()}({Data.JP.NameToId.FirstOrDefault(x => x.Value == charaId).Key})")
                         .PageSize(20)
                         .AddChoices(possibleNames
                             .Distinct()
@@ -430,7 +306,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 do
                 {
                     var fragment = triggerName.Length - offset;
-                    var possibleNames = TextData.Where(x => x.id == 6 || x.id == (isSupportCard ? 75 : 4))
+                    var possibleNames = Data.JP.TextData.Where(x => x.id == 6 || x.id == (isSupportCard ? 75 : 4))
                         .Where(x => (
                             x.text.StartsWith(triggerName[..fragment]) ||
                             x.text.EndsWith(triggerName[fragment..]) ||
