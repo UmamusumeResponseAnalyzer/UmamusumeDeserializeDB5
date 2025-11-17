@@ -143,7 +143,7 @@ namespace UmamusumeDeserializeDB5.Generator
                         st.Name = story.Title;
                         st.Id = storyId;
                         st.TriggerName = triggerName;
-                        var choices = textBlock.ChoiceDataList.DistinctBy(x => x.Text).ToArray();
+                        var choices = textBlock.ChoiceDataList.DistinctBy(x => x.NextBlock).ToArray();
                         for (var i = 0; i < choices.Length; i++)
                         {
                             var newChoice = new Choice();
@@ -203,6 +203,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 public string Text { get; set; } = string.Empty;
                 public int NextBlock { get; set; }
                 public int DifferenceFlag { get; set; }
+                public bool IsMale => DifferenceFlag == 2;
             }
         }
     }
