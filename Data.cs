@@ -7,6 +7,7 @@ namespace UmamusumeDeserializeDB5
     {
         public static readonly string MDB_JP_FILEPATH = @"G:\DMM\Umamusume\umamusume_Data\Persistent\master\master.mdb";
         public static readonly string MDB_TW_FILEPATH = @"G:\tw_files\files\master\master.mdb";
+        
         public static Data JP = new(MDB_JP_FILEPATH);
         public static Data TW = new(MDB_TW_FILEPATH);
 
