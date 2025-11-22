@@ -13,11 +13,13 @@ namespace UmamusumeDeserializeDB5
         {
             Console.OutputEncoding = Encoding.UTF8;
 
-            Directory.CreateDirectory("./output/jp/");
-            Directory.SetCurrentDirectory("./output/jp/");
+            Directory.CreateDirectory("./output/ja-JP/");
+            Directory.SetCurrentDirectory("./output/ja-JP/");
             new CardName().Generate();
             var stories = new Events().Generate();
             var jpNewEvents = new NewEvents().Generate(stories);
+            NewEvents.TrainerIsMale = !NewEvents.TrainerIsMale;
+            jpNewEvents = new NewEvents().Generate(stories);
             new SkillDataMgr().Generate();
             new ClimaxItems().Generate();
             new TalentSkillSet().Generate();
@@ -32,13 +34,15 @@ namespace UmamusumeDeserializeDB5
                         zip.CreateEntryFromFile(i, Path.GetFileName(i));
                     }
                 }
-                File.WriteAllBytes(@$"./数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
+                File.WriteAllBytes(@$"../日版数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
             }
 
-            Directory.CreateDirectory("../../output/tw/");
-            Directory.SetCurrentDirectory("../../output/tw/");
+            Directory.CreateDirectory("../../output/zh-TW/");
+            Directory.SetCurrentDirectory("../../output/zh-TW/");
             Data.UseTw();
             new CardName().Generate();
+            new NewEvents().Generate(stories, jpNewEvents);
+            NewEvents.TrainerIsMale = !NewEvents.TrainerIsMale;
             new NewEvents().Generate(stories, jpNewEvents);
             new SkillDataMgr().Generate();
             new ClimaxItems().Generate();
@@ -54,7 +58,7 @@ namespace UmamusumeDeserializeDB5
                         zip.CreateEntryFromFile(i, Path.GetFileName(i));
                     }
                 }
-                File.WriteAllBytes(@$"./数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
+                File.WriteAllBytes(@$"../台版数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
             }
         }
     }

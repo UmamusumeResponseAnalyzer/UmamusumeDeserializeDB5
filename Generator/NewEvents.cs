@@ -7,6 +7,7 @@ namespace UmamusumeDeserializeDB5.Generator
 {
     internal partial class NewEvents : GeneratorBase
     {
+        public static bool TrainerIsMale = true;
         public static string STORY_DATA_PATH = @"K:\repos\UmamusumeStoryDataExtractor\UmamusumeStoryDataExtractor\bin\Release\net8.0\Ext_Jp\story\data\";
         readonly string SCENARIO_EVENT_PATH = Path.Combine(STORY_DATA_PATH, "40");
         readonly string CHARACTER_EVENT_PATH = Path.Combine(STORY_DATA_PATH, "50");
@@ -26,7 +27,7 @@ namespace UmamusumeDeserializeDB5.Generator
             var d = qwq(SUPPORT_CARD_SR_EVENT_PATH);
             var e = qwq(SUPPORT_CARD_SSR_EVENT_PATH);
             var all = new List<Story>([.. a, .. b, .. c, .. d, .. e]);
-            Save("events", all);
+            Save($"events{(TrainerIsMale ? "_male" : "_female")}", all);
 
             if (jpNewEvents != null)
             {
@@ -35,7 +36,7 @@ namespace UmamusumeDeserializeDB5.Generator
                 {
                     jpNewEventsDictionary[story.Id] = story;
                 }
-                Save("events", jpNewEventsDictionary.Values.ToList().OrderBy(x => x.Id));
+                Save($"events{(TrainerIsMale ? "_male" : "_female")}", jpNewEventsDictionary.Values.ToList().OrderBy(x => x.Id));
             }
             return all;
         }
@@ -143,13 +144,31 @@ namespace UmamusumeDeserializeDB5.Generator
                         st.Name = story.Title;
                         st.Id = storyId;
                         st.TriggerName = triggerName;
-                        var choices = textBlock.ChoiceDataList.DistinctBy(x => x.NextBlock).ToArray();
-                        for (var i = 0; i < choices.Length; i++)
+                        var choices = textBlock.ChoiceDataList.GroupBy(x => x.NextBlock);
+                        for (var i = 0; i < choices.Count(); i++)
                         {
+                            var choiceGroup = choices.ElementAt(i);
                             var newChoice = new Choice();
+                            if (choiceGroup.Count() == 1)
+                            { // 没有性别差分
+                                newChoice.Option = choiceGroup.First().Text;
+                            }
+                            else
+                            {
+                                for (var j = 0; j < choiceGroup.Count(); j++)
+                                {
+                                    if (TrainerIsMale)
+                                    {
+                                        newChoice.Option = choiceGroup.First().Text;
+                                    }
+                                    else
+                                    {
+                                        newChoice.Option = choiceGroup.Skip(1).First().Text;
+                                    }
+                                }
+                            }
                             if (oldStory != default)
                             {
-                                newChoice.Option = choices[i].Text;
                                 try
                                 {
                                     newChoice.SuccessEffect = TranslateLine(oldStory.Choices[i][0].SuccessEffect);
