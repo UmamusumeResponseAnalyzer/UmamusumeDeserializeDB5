@@ -7,9 +7,11 @@ namespace UmamusumeDeserializeDB5
     {
         public static readonly string MDB_JP_FILEPATH = @"G:\DMM\Umamusume\umamusume_Data\Persistent\master\master.mdb";
         public static readonly string MDB_TW_FILEPATH = @"G:\tw_files\files\master\master.mdb";
-        
+
         public static Data JP = new(MDB_JP_FILEPATH);
         public static Data TW = new(MDB_TW_FILEPATH);
+
+        public static bool IsTw = false;
 
         public List<TextData> TextData;
         public Dictionary<long, string> IdToName = [];
@@ -22,6 +24,10 @@ namespace UmamusumeDeserializeDB5
         public List<SkillDataTable> SkillDataTable = [];
         public Dictionary<long, long> SkillNeedPointTable = [];
         public List<SingleModeStoryData> SingleModeStoryData = new();
+        public List<SuccessionRelationTable> SuccessionRelationTable = [];
+        public List<SuccessionRelationMemberTable> SuccessionRelationMemberTable = [];
+        public List<SingleModeWinsSaddleTable> SingleModeWinsSaddleTable = [];
+
         public Data(string mdbPath)
         {
             TextData = new List<TextData>();
@@ -234,6 +240,33 @@ namespace UmamusumeDeserializeDB5
                     }
                 }
             }
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = $"select * from succession_relation";
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    SuccessionRelationTable.Add(new SuccessionRelationTable { relation_type = (long)reader["relation_type"], relation_point = (long)reader["relation_point"] });
+                }
+            }
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = $"select * from succession_relation_member";
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    SuccessionRelationMemberTable.Add(new SuccessionRelationMemberTable { id = (long)reader["id"], relation_type = (long)reader["relation_type"], chara_id = (long)reader["chara_id"] });
+                }
+            }
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = $"select * from single_mode_wins_saddle";
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    SingleModeWinsSaddleTable.Add(new SingleModeWinsSaddleTable{ id = (long)reader["id"], win_saddle_type = (long)reader["win_saddle_type"] });
+                }
+            }
         }
         public static string TranslateScenarioId(int scenario_id) => scenario_id switch
         {
@@ -254,6 +287,7 @@ namespace UmamusumeDeserializeDB5
         };
         public static void UseTw()
         {
+            IsTw = true;
             foreach (var textData in TW.TextData.Where(x => x.category != 290 && x.category != 47)) // 不需要改技能进化的条件
             {
                 var jp = JP.TextData.FirstOrDefault(x => x.index == textData.index && x.category == textData.category);
@@ -372,5 +406,21 @@ namespace UmamusumeDeserializeDB5
         public long scenario_id;
         public long base_skill_id;
         public long skill_id;
+    }
+    public class SuccessionRelationTable
+    {
+        public long relation_type;
+        public long relation_point;
+    }
+    public class SuccessionRelationMemberTable
+    {
+        public long id;
+        public long relation_type;
+        public long chara_id;
+    }
+    public class SingleModeWinsSaddleTable
+    {
+        public long id;
+        public long win_saddle_type;
     }
 }

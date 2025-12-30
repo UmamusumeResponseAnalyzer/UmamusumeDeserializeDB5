@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Spectre.Console;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,22 +10,26 @@ namespace UmamusumeDeserializeDB5
 {
     public static class UmamusumeDeserializeDB5
     {
-        public static void Main()
+        public async static Task Main()
         {
+            var sw = new Stopwatch();
+            sw.Start();
             Console.OutputEncoding = Encoding.UTF8;
 
             Directory.CreateDirectory("./output/ja-JP/");
             Directory.SetCurrentDirectory("./output/ja-JP/");
             new CardName().Generate();
             var stories = new Events().Generate();
-            var jpNewEvents = new NewEvents().Generate(stories);
+            var jpNewEvents = await new NewEvents().Generate(stories);
             NewEvents.TrainerIsMale = !NewEvents.TrainerIsMale;
-            jpNewEvents = new NewEvents().Generate(stories);
+            jpNewEvents = await new NewEvents().Generate(stories);
             new SkillDataMgr().Generate();
             new ClimaxItems().Generate();
             new TalentSkillSet().Generate();
             new FactorIds().Generate();
             new SkillUpgradeSpecialityGenerator().Generate();
+            new SuccessionRelation().Generate();
+            new WinSaddle().Generate();
             using (var ms = new MemoryStream())
             {
                 using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
@@ -41,14 +46,16 @@ namespace UmamusumeDeserializeDB5
             Directory.SetCurrentDirectory("../../output/zh-TW/");
             Data.UseTw();
             new CardName().Generate();
-            new NewEvents().Generate(stories, jpNewEvents);
+            await new NewEvents().Generate(stories, jpNewEvents);
             NewEvents.TrainerIsMale = !NewEvents.TrainerIsMale;
-            new NewEvents().Generate(stories, jpNewEvents);
+            await new NewEvents().Generate(stories, jpNewEvents);
             new SkillDataMgr().Generate();
             new ClimaxItems().Generate();
             new TalentSkillSet().Generate();
             new FactorIds().Generate();
             new SkillUpgradeSpecialityGenerator().Generate();
+            new SuccessionRelation().Generate();
+            new WinSaddle().Generate();
             using (var ms = new MemoryStream())
             {
                 using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
@@ -60,6 +67,8 @@ namespace UmamusumeDeserializeDB5
                 }
                 File.WriteAllBytes(@$"../台版数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
             }
+            sw.Stop();
+            AnsiConsole.WriteLine($"总用时: {sw.Elapsed.TotalSeconds} 秒");
         }
     }
 

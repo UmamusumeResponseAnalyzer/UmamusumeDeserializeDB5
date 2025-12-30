@@ -11,6 +11,7 @@
                 dic.Add(i.index, $"{i.text}{string.Join(string.Empty, Enumerable.Repeat("★", stars))}");
             }
             Save("factor_ids", dic);
+            Save("factor_effects", Data.JP.TextData.Where(x => x.id == 172 && x.category == 172).Select(x => new { x.index, x.text }));
         }
     }
 }
