@@ -56,6 +56,9 @@
                         20306 => SkillData.SkillCategory.Acceleration,  // 幾星霜が導く一手
                         20311 or 20312 or 20316 => SkillData.SkillCategory.Speed, // 本能の懸け橋
                         20321 or 20322 or 20326 or 20336 => SkillData.SkillCategory.Speed, // 保養が導く奇跡
+                        20351 => SkillData.SkillCategory.Special, // もう一踏ん張り
+#warning 未知的
+                        20331 or 20332 or 20346 => SkillData.SkillCategory.Special, // 情熱と挑戦の先の栄光 スターダムを目指して！
                         _ => throw new Exception("出现了未知的icon_id: " + i.icon_id)
                         // select (select id from skill_data where icon_id=20266) as a,text from text_data where "index"=a and category=47;
                     }

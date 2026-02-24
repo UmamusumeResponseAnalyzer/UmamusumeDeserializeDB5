@@ -24,6 +24,21 @@ namespace UmamusumeDeserializeDB5.Generator
 
         public async Task<List<Story>> Generate(List<Story> oldStories, List<Story> jpNewEvents = null!)
         {
+            if (localizedSkillNames == null || localizedUmaNames == null)
+            {
+                localizedUmaNames = [];
+                localizedSkillNames = [];
+                var jp = new Data(Data.MDB_JP_FILEPATH);
+                var tw = new Data(Data.MDB_TW_FILEPATH);
+                foreach (var i in jp.TextData.Where(x => x.category == 75))
+                {
+                    localizedUmaNames.Add(i.text, tw.TextData.FirstOrDefault(x => x.category == 75 && x.index == i.index)?.text ?? i.text);
+                }
+                foreach (var i in jp.TextData.Where(x => x.category == 47))
+                {
+                    localizedSkillNames.TryAdd(i.text, tw.TextData.FirstOrDefault(x => x.category == 47 && x.index == i.index)?.text ?? i.text);
+                }
+            }
             this.oldStories = oldStories;
             var a = Task.Run(() => qwq(SCENARIO_EVENT_PATH));
             var b = Task.Run(() => qwq(CHARACTER_EVENT_PATH));
@@ -179,21 +194,6 @@ namespace UmamusumeDeserializeDB5.Generator
         }
         string TranslateLine(string s)
         {
-            if (localizedSkillNames == null || localizedUmaNames == null)
-            {
-                localizedUmaNames = [];
-                localizedSkillNames = [];
-                var jp = new Data(Data.MDB_JP_FILEPATH);
-                var tw = new Data(Data.MDB_TW_FILEPATH);
-                foreach (var i in jp.TextData.Where(x => x.category == 75))
-                {
-                    localizedUmaNames.Add(i.text, tw.TextData.FirstOrDefault(x => x.category == 75 && x.index == i.index)?.text ?? i.text);
-                }
-                foreach (var i in jp.TextData.Where(x => x.category == 47))
-                {
-                    localizedSkillNames.TryAdd(i.text, tw.TextData.FirstOrDefault(x => x.category == 47 && x.index == i.index)?.text ?? i.text);
-                }
-            }
             s = s.Replace("◯", "○");
             if (!Data.IsTw) return s;
             s = DictionaryReplace(s, localizedUmaNames); // 替换马娘名字
