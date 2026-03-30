@@ -136,8 +136,11 @@ namespace UmamusumeDeserializeDB5.Generator
                         case 5:
                             i.Value[i.Value.IndexOf(i.Value.First(x => x.Rank == 5))].UpgradeSkills.Add(j.skill_id, conds.ToArray());
                             break;
+                        case 7:
+                            i.Value[i.Value.IndexOf(i.Value.First(x => x.Rank == 7))].UpgradeSkills.Add(j.skill_id, conds.ToArray());
+                            break;
                         default:
-                            throw new Exception("出现了白技能的进化技能？");
+                            throw new Exception($"出现了白技能的进化技能？{j.skill_id} {j.rank}");
                     }
                 }
             }

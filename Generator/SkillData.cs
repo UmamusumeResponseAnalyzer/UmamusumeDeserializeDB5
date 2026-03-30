@@ -59,6 +59,8 @@
                         20351 => SkillData.SkillCategory.Special, // もう一踏ん張り
 #warning 未知的
                         20331 or 20332 or 20346 => SkillData.SkillCategory.Special, // 情熱と挑戦の先の栄光 スターダムを目指して！
+                        0 => SkillData.SkillCategory.Unknown,
+                        2010011 => SkillData.SkillCategory.Unknown, // 星の煌き
                         _ => throw new Exception("出现了未知的icon_id: " + i.icon_id)
                         // select (select id from skill_data where icon_id=20266) as a,text from text_data where "index"=a and category=47;
                     }
