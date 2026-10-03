@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Spectre.Console;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -15,6 +15,16 @@ namespace UmamusumeDeserializeDB5
             var sw = new Stopwatch();
             sw.Start();
             Console.OutputEncoding = Encoding.UTF8;
+
+            try
+            {
+                Data.Initialize();
+            }
+            catch (Exception e)
+            {
+                AnsiConsole.MarkupLine($"[red]{e.Message}[/]");
+                return;
+            }
 
             Directory.CreateDirectory("./output/ja-JP/");
             Directory.SetCurrentDirectory("./output/ja-JP/");
@@ -42,30 +52,37 @@ namespace UmamusumeDeserializeDB5
                 File.WriteAllBytes(@$"../日版数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
             }
 
-            Directory.CreateDirectory("../../output/zh-TW/");
-            Directory.SetCurrentDirectory("../../output/zh-TW/");
-            Data.UseTw();
-            new CardName().Generate();
-            await new NewEvents().Generate(stories, jpNewEvents);
-            NewEvents.TrainerIsMale = !NewEvents.TrainerIsMale;
-            await new NewEvents().Generate(stories, jpNewEvents);
-            new SkillDataMgr().Generate();
-            new ClimaxItems().Generate();
-            new TalentSkillSet().Generate();
-            new FactorIds().Generate();
-            new SkillUpgradeSpecialityGenerator().Generate();
-            new SuccessionRelation().Generate();
-            new WinSaddle().Generate();
-            using (var ms = new MemoryStream())
+            if (Data.IsTw)
             {
-                using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                Directory.CreateDirectory("../../output/zh-TW/");
+                Directory.SetCurrentDirectory("../../output/zh-TW/");
+                Data.UseTw();
+                new CardName().Generate();
+                await new NewEvents().Generate(stories, jpNewEvents);
+                NewEvents.TrainerIsMale = !NewEvents.TrainerIsMale;
+                await new NewEvents().Generate(stories, jpNewEvents);
+                new SkillDataMgr().Generate();
+                new ClimaxItems().Generate();
+                new TalentSkillSet().Generate();
+                new FactorIds().Generate();
+                new SkillUpgradeSpecialityGenerator().Generate();
+                new SuccessionRelation().Generate();
+                new WinSaddle().Generate();
+                using (var ms = new MemoryStream())
                 {
-                    foreach (var i in Directory.EnumerateFiles("./", "*.br", SearchOption.TopDirectoryOnly))
+                    using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
                     {
-                        zip.CreateEntryFromFile(i, Path.GetFileName(i));
+                        foreach (var i in Directory.EnumerateFiles("./", "*.br", SearchOption.TopDirectoryOnly))
+                        {
+                            zip.CreateEntryFromFile(i, Path.GetFileName(i));
+                        }
                     }
+                    File.WriteAllBytes(@$"../台版数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
                 }
-                File.WriteAllBytes(@$"../台版数据v{DateTime.Now:yyMMddHHmmss}.zip", ms.ToArray());
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[yellow]已跳过台版数据生成 (appsettings.json -> UseTw = false)[/]");
             }
             sw.Stop();
             AnsiConsole.WriteLine($"总用时: {sw.Elapsed.TotalSeconds} 秒");

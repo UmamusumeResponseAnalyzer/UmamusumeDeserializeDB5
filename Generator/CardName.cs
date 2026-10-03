@@ -15,6 +15,18 @@ namespace UmamusumeDeserializeDB5.Generator
             list.Add(new(108, "ライトハロー"));
             list.Add(new(111, "都留岐涼花"));
 
+            try
+            {
+                if (Data.JP == null)
+                {
+                    throw new NullReferenceException("Data.JP is null");
+                }
+            }
+            catch (Exception e)
+            {
+                throw new NullReferenceException("Data.JP is null");
+            }
+
             list.AddRange(Data.JP.TextData.Where(x => x.id == 170).Select(x => new BaseName(x.index, x.text)));
             list.AddRange(Data.JP.SupportCardData.Select(x => new SupportCardName(x.id, Data.JP.TextData.First(y => y.category == 76 && y.index == x.id).text, x.command_id, x.chara_id)));
             list.AddRange(Data.JP.TextData.Where(x => x.id == 5).Select(x => new UmaName(x.index, x.text)));
@@ -136,6 +148,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     1098 => "小林",
                     1099 => "北港",
                     1100 => "奇锐",
+                    1101 => "大森",
                     1102 => "万籁",
                     1103 => "莱斯",
                     1104 => "葛城",
@@ -177,6 +190,9 @@ namespace UmamusumeDeserializeDB5.Generator
                     1143 => "比萨", // 比萨胜驹
                     1144 => "玫瑰", // 玫瑰帝国
                     1145 => "统治", // 统治地位
+                    1146 => "乐透",
+                    1148 => "领衔",
+                    1149 => "蝴蝶",
                     2001 => "米可",
                     2002 => "糖衣",
                     2003 => "蚕茧",
