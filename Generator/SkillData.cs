@@ -64,6 +64,7 @@
                         20362 or 20361 => SkillData.SkillCategory.Speed,
                         20366 => SkillData.SkillCategory.Speed,
                         20376 => SkillData.SkillCategory.Recovery,
+                        20381 or 20382 or 20386 => SkillData.SkillCategory.Speed,
                         _ => throw new Exception("出现了未知的icon_id: " + i.icon_id)
                         // select (select id from skill_data where icon_id=20266) as a,text from text_data where "index"=a and category=47;
                     }

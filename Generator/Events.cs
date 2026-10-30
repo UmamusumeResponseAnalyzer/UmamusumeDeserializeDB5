@@ -52,7 +52,15 @@ namespace UmamusumeDeserializeDB5.Generator
                 var eventName = item[0]!.ToString();
                 if (string.IsNullOrEmpty(eventName) || string.IsNullOrEmpty(item[2]!.ToString())) continue;
                 var eventCategory = item[1]!.ToString();
+                // Kamigame 将这三个シーザリオ SSR 事件误标为育成事件。
+                if (eventCategory == "育成ウマ娘" && item[2]!.ToString() == "シーザリオ" &&
+                    eventName is "真夜中の来訪者" or "シーザリオのお弁当" or "導く者たちの休日")
+                    eventCategory = "サポートカード";
                 var triggerName = Data.JP.NameToId.FirstOrDefault(x => x.Key == item[2]!.ToString()).Key;
+                // Kamigame 将这三个新衣装ウインディ事件归到了フェノーメノ。
+                if (triggerName == "[剛毅なる紫焔]フェノーメノ" &&
+                    eventName is "オオカミっ子は構われたい" or "親分と、子分と" or "悪の親玉と、“女帝”と切り込み隊長")
+                    triggerName = "[ガブガブ☆スキャンプ]シンコウウインディ";
                 if (eventCategory == "メインシナリオ")
                     triggerName = "剧本事件";
                 if (triggerName == default && !correctedTriggerNames.TryGetValue(item[2]!.ToString(), out triggerName))

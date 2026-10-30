@@ -136,6 +136,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     1098 => "小林",
                     1099 => "北港",
                     1100 => "奇锐",
+                    1101 => "参孙",
                     1102 => "万籁",
                     1103 => "莱斯",
                     1104 => "葛城",
@@ -177,6 +178,9 @@ namespace UmamusumeDeserializeDB5.Generator
                     1143 => "比萨", // 比萨胜驹
                     1144 => "玫瑰", // 玫瑰帝国
                     1145 => "统治", // 统治地位
+                    1146 => "乐透",
+                    1148 => "领衔",
+                    1149 => "蝴蝶",
                     2001 => "米可",
                     2002 => "糖衣",
                     2003 => "蚕茧",
@@ -205,6 +209,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     9049 => "塔克",
                     9050 => "健子",
                     9051 => "潭泉", // 潭泉芳华
+                    9052 => "吾妻",
                     _ => throw new Exception($"有新的id{id}需要手动添加简写")
                 };
             }
