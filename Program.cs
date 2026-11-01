@@ -10,8 +10,13 @@ namespace UmamusumeDeserializeDB5
 {
     public static class UmamusumeDeserializeDB5
     {
-        public async static Task Main()
+        public async static Task Main(string[] args)
         {
+            if (args.Length == 3 && args[0] == "--skill-planning")
+            {
+                SkillPlanningDataGenerator.Generate(args[1], args[2]);
+                return;
+            }
             var sw = new Stopwatch();
             sw.Start();
             Console.OutputEncoding = Encoding.UTF8;
@@ -24,6 +29,7 @@ namespace UmamusumeDeserializeDB5
             NewEvents.TrainerIsMale = !NewEvents.TrainerIsMale;
             jpNewEvents = await new NewEvents().Generate(stories);
             new SkillDataMgr().Generate();
+            SkillPlanningDataGenerator.Generate(Data.MDB_JP_FILEPATH, Directory.GetCurrentDirectory());
             new ClimaxItems().Generate();
             new TalentSkillSet().Generate();
             new FactorIds().Generate();
@@ -50,6 +56,7 @@ namespace UmamusumeDeserializeDB5
             NewEvents.TrainerIsMale = !NewEvents.TrainerIsMale;
             await new NewEvents().Generate(stories, jpNewEvents);
             new SkillDataMgr().Generate();
+            SkillPlanningDataGenerator.Generate(Data.MDB_TW_FILEPATH, Directory.GetCurrentDirectory());
             new ClimaxItems().Generate();
             new TalentSkillSet().Generate();
             new FactorIds().Generate();
