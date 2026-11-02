@@ -221,6 +221,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     9049 => "塔克",
                     9050 => "健子",
                     9051 => "潭泉", // 潭泉芳华
+                    9052 => "吾妻",
                     _ => throw new Exception($"有新的id{id}需要手动添加简写")
                 };
             }
