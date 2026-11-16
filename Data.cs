@@ -12,6 +12,7 @@ namespace UmamusumeDeserializeDB5
 
         public string JpDbPath { get; set; } = string.Empty;
         public string TwDbPath { get; set; } = string.Empty;
+        // 是否适用台服数据的开关，有台服数据时需要设为true
         public bool UseTw { get; set; } = false;
         public string StoryDataPath { get; set; } = string.Empty;
 
@@ -352,7 +353,7 @@ namespace UmamusumeDeserializeDB5
                 }
             }
         }
-        public static string TranslateScenarioId(int scenario_id) => scenario_id switch
+        public static string TranslateScenarioId(long scenario_id) => scenario_id switch
         {
             0 => "通用",
             1 => "U.R.A",
@@ -367,9 +368,9 @@ namespace UmamusumeDeserializeDB5
             10 => "传奇杯",
             11 => "野人杯",
             12 => "温泉杯",
-            13 => "美国杯",
+            13 => "梦想杯",
             14 => "拉面杯",
-            15 => "祭典杯",
+            15 => "骏大祭",
             _ => "新剧本"
         };
         public static void UseTw()

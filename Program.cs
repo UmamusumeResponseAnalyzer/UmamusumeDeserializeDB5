@@ -35,9 +35,9 @@ namespace UmamusumeDeserializeDB5
             Directory.SetCurrentDirectory("./output/ja-JP/");
             new CardName().Generate();
             var stories = new Events().Generate();
-            var jpNewEvents = await new NewEvents().Generate(stories);
+            var jpMaleEvents = await new NewEvents().Generate(stories);
             NewEvents.TrainerIsMale = !NewEvents.TrainerIsMale;
-            jpNewEvents = await new NewEvents().Generate(stories);
+            var jpFemaleEvents = await new NewEvents().Generate(stories);
             new SkillDataMgr().Generate();
             SkillPlanningDataGenerator.Generate(Data.MDB_JP_FILEPATH, Directory.GetCurrentDirectory());
             new ClimaxItems().Generate();
@@ -64,9 +64,9 @@ namespace UmamusumeDeserializeDB5
                 Directory.SetCurrentDirectory("../../output/zh-TW/");
                 Data.UseTw();
                 new CardName().Generate();
-                await new NewEvents().Generate(stories, jpNewEvents);
+                await new NewEvents().Generate(stories, jpMaleEvents);
                 NewEvents.TrainerIsMale = !NewEvents.TrainerIsMale;
-                await new NewEvents().Generate(stories, jpNewEvents);
+                await new NewEvents().Generate(stories, jpFemaleEvents);
                 new SkillDataMgr().Generate();
                 new ClimaxItems().Generate();
                 new TalentSkillSet().Generate();
@@ -188,6 +188,11 @@ namespace UmamusumeDeserializeDB5
             foreach (string s in effect.Split("、"))
             {
                 string t = s.Replace("−", "-"); // 替换减号
+                if (t.Contains("上限") || t.StartsWith("体力最大値") || t.StartsWith("体力の最大値"))
+                {
+                    ret.Extras.Add(t);
+                    continue;
+                }
                 int effectId = EffectTextToId.FindIndex(x => t.Contains(x));
                 int effectValue = 0;
                 Match m = Regex.Match(t, "[+-]\\d+");
