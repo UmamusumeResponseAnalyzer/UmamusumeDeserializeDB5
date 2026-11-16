@@ -268,7 +268,7 @@ namespace UmamusumeDeserializeDB5
                 }
             }
         }
-        public static string TranslateScenarioId(int scenario_id) => scenario_id switch
+        public static string TranslateScenarioId(long scenario_id) => scenario_id switch
         {
             0 => "通用",
             1 => "U.R.A",
@@ -283,6 +283,9 @@ namespace UmamusumeDeserializeDB5
             10 => "传奇杯",
             11 => "野人杯",
             12 => "温泉杯",
+            13 => "梦想杯",
+            14 => "拉面杯",
+            15 => "骏大祭",
             _ => "新剧本"
         };
         public static void UseTw()

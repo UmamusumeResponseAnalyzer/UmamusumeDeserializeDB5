@@ -71,7 +71,16 @@ namespace UmamusumeDeserializeDB5.Generator
                     correctedTriggerNames.Add(item[2]!.ToString(), corrected);
                 }
                 var options = item[4]!.ToString().Split("[Linebreak]");
-                var successEffects = item[5]!.ToString().Split("[Linebreak]");
+                // 吾妻的结算截图：https://silvervine0822.hatenablog.com/entry/2026/10/29/003000
+                var successText = item[5]!.ToString();
+                successText = (eventName, successText) switch
+                {
+                    ("妙なる巫女、吾妻", _) => successText.Replace("スタミナ6、", "スタミナ+6、"),
+                    ("まばゆき二人三脚", "") => "根性+5、スキルPt+5、絆ゲージ+5",
+                    ("ひとり、幸を祈る", "") => "スピード上限+7、根性上限+7、賢さ上限+7、スキルPt+52",
+                    _ => successText
+                };
+                var successEffects = successText.Split("[Linebreak]");
                 var failureEffects = item[6]!.ToString().Split("[Linebreak]");
                 var choices = new List<Choice>();
                 for (var j = 0; j < options.Length; j++)
@@ -93,6 +102,7 @@ namespace UmamusumeDeserializeDB5.Generator
                     var replacedTerms = new Dictionary<string, string>()
                     {
                         { "体力−", "体力-" },
+                        { "体力の最大値+4.体力+10", "体力の最大値+4、体力+10" },
                         { "全ての野菜+3", "全ての野菜+40" },
                         { "切れ物", "切れ者" }, // 切れ者
                         { "のスキルLv", "のヒントLv" },
@@ -201,17 +211,9 @@ namespace UmamusumeDeserializeDB5.Generator
                             triggerName = j.gallery_main_scenario switch
                             {
                                 1 => "URA",
-                                2 => "青春杯",
-                                3 => "偶像杯",
-                                4 => "巅峰杯",
-                                5 => "女神杯",
                                 6 => "LArc",
                                 7 => "UAF",
-                                8 => "田园杯",
-                                9 => "机甲杯",
-                                10 => "传奇杯",
-                                11 => "野人杯",
-                                _ => "未知剧本"
+                                _ => Data.TranslateScenarioId(j.gallery_main_scenario)
                             };
                         }
                         events.Add(new Story

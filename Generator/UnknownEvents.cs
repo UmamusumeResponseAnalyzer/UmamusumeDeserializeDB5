@@ -94,24 +94,39 @@
                     story.TriggerName = Data.JP.NameToId.First(x => x.Value == charaId).Key;
                     story.IsSupportCard = false;
                 }
+                else if (i.story_id is 820102001 or 820102002)
+                {
+                    // SR ステイゴールド连续事件：https://gamewith.jp/uma-musume/article/show/587274
+                    var choices = i.story_id == 820102001
+                        ? new (string Option, string Effect)[]
+                        {
+                            ("触らぬ神になんとやらだね……", "パワー+15、絆ゲージ+5"),
+                            ("藪、つついてみる？", "体力+10、やる気+1、絆ゲージ+5")
+                        }
+                        : [
+                            ("あまのじゃく的な……？", "体力+10、パワー+10、「間隙を突いて」のヒントLv+1、絆ゲージ+5"),
+                            ("一生懸命さが響いたのかも", "体力+20、スキルPt+15、絆ゲージ+5")
+                        ];
+                    story.TriggerName = Data.JP.NameToId.First(x => x.Value == i.support_card_id).Key;
+                    story.IsSupportCard = true;
+                    story.Choices = choices.Select(choice => new List<Choice>
+                    {
+                        new()
+                        {
+                            Option = choice.Option,
+                            SuccessEffect = choice.Effect,
+                            SuccessEffectValue = Choice.ParseEffectValue(choice.Effect)
+                        }
+                    }).ToList();
+                }
                 if (i.gallery_main_scenario != 0)
                 {
                     story.TriggerName = i.gallery_main_scenario switch
                     {
-                        0 => "通用",
                         1 => "URA",
-                        2 => "青春杯",
-                        3 => "偶像杯",
-                        4 => "巅峰杯",
-                        5 => "女神杯",
                         6 => "LArc",
                         7 => "UAF",
-                        8 => "田园杯",
-                        9 => "机甲杯",
-                        10 => "传奇杯",
-                        11 => "野人杯",
-                        12 => "温泉杯",
-                        _ => "新剧本"
+                        _ => Data.TranslateScenarioId(i.gallery_main_scenario)
                     };
                 }
                 else
