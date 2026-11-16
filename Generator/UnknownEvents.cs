@@ -78,6 +78,33 @@
                     stories.Add(story);
                     continue;
                 }
+                if (i.story_id == 400015106)
+                {
+                    story.TriggerName = "祭典杯";
+                    story.Choices = new List<List<Choice>>
+                        {
+                            new()
+                            {
+                                new Choice
+                                {
+                                    Option = "はい、追加稽古を提案しようかと",
+                                    SuccessEffect = "体力-5、スキルPt+20、吾妻の絆ゲージ+5、直前のトレーニング能力+20、最低演目ゲージ+1、バッドコンディション1つ解消",
+                                    FailedEffect = ""
+                                }
+                            },
+                            new()
+                            {
+                                new Choice
+                                {
+                                    Option = "……いえ、これ以上はやめておきます",
+                                    SuccessEffect = "体力+5、直前のトレーニング能力+5",
+                                    FailedEffect = ""
+                                }
+                            },
+                        };
+                    stories.Add(story);
+                    continue;
+                }
                 if (i.Name == "成長のヒント")
                 {
                     if (i.story_id.ToString()[0] == '4') continue;
@@ -111,6 +138,9 @@
                         10 => "传奇杯",
                         11 => "野人杯",
                         12 => "温泉杯",
+                        13 => "美国杯",
+                        14 => "拉面杯",
+                        15 => "祭典杯",
                         _ => "新剧本"
                     };
                 }

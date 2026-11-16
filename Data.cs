@@ -367,6 +367,9 @@ namespace UmamusumeDeserializeDB5
             10 => "传奇杯",
             11 => "野人杯",
             12 => "温泉杯",
+            13 => "美国杯",
+            14 => "拉面杯",
+            15 => "祭典杯",
             _ => "新剧本"
         };
         public static void UseTw()
